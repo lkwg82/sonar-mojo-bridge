@@ -45,6 +45,7 @@ public class MavenInvoker {
     request.setPomFile(pom);
     request.setOutputHandler(handler);
     request.setGoals(Collections.singletonList(goal.goal()));
+    request.setUpdateSnapshots(true);
 
     Invoker invoker = new DefaultInvoker();
     invoker.execute(request);
