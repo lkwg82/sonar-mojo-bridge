@@ -28,11 +28,30 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @RunWith(ConcurrentTestRunner.class)
 public class InvokerTest {
   static {
+
+    Set<String> keySet = System.getenv().keySet();
+    List<String> keyList = new ArrayList<String>(keySet);
+    Collections.sort(keyList, new Comparator<String>() {
+
+      @Override
+      public int compare(final String o1, final String o2) {
+        return o1.toLowerCase().compareTo(o2.toLowerCase());
+      }
+    });
+
+    for (String key : keyList) {
+      System.err.println(String.format("%30s %s", key, System.getenv().get(key)));
+    }
+
     final String currentProgramm = System.getenv("_");
     if (currentProgramm == null) {
       throw new IllegalStateException("as of now, we need maven to run the test, could not run without");
