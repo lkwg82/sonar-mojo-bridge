@@ -5,9 +5,15 @@ sonar-maven-integration
 
 like to have some checks on a maven project, represented by its pom.xml
 
+# links #
+* CI : https://sonarplugins.ci.cloudbees.com/job/maven-checks/
+
+
 ## first realized checks ##
 * have a more recent versions of a dependency available
 * have a more recent versions of a plugin available
+
+
 
 # roadmap #
 
