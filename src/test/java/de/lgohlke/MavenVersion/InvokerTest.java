@@ -32,6 +32,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 @RunWith(ConcurrentTestRunner.class)
 public class InvokerTest {
   static {
@@ -77,23 +79,26 @@ public class InvokerTest {
   public void testGoal_DISPLAY_DEPENDENCY_UPDATES() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_DEPENDENCY_UPDATES, "pom.xml");
 
-    Assert.assertEquals(2, handler.getUpdates().size());
+    assertThat(handler.getUpdates().size()).
+        as("update list").
+        isEqualTo(2);
   }
 
   @Test
-  @Ignore("maybe because of maven 3 vs. 2?")
+  // @Ignore("maybe because of maven 3 vs. 2?")
   public void testGoal_DISPLAY_DEPENDENCY_UPDATES_tooLongLines() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_DEPENDENCY_UPDATES, "toolongline.xml");
 
     boolean found = false;
     for (ArtifactUpdate update : handler.getUpdates()) {
       if (!found && update.getArtifactId().equals("plexus-container-default")) {
-        Assert.assertTrue(update.getOldVersion().equals("1.0-alpha-9-stable-1"));
+        assertThat(update.getOldVersion()).
+            as("artifactId").isEqualTo("1.0-alpha-9-stable-1");
         found = true;
       }
     }
 
-    Assert.assertTrue(found);
+    assertThat(found).as("found the long line version").isEqualTo(true);
   }
 
   @Test
