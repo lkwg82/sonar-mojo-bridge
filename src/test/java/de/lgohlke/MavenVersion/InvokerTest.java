@@ -24,6 +24,7 @@ import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
 import de.lgohlke.MavenVersion.handler.GOAL;
 import de.lgohlke.MavenVersion.handler.UpdateHandler;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -102,6 +103,7 @@ public class InvokerTest {
   }
 
   @Test
+  @Ignore
   public void testGoal_DISPLAY_PLUGIN_UPDATES_MissingMavenVersion() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_PLUGIN_UPDATES, "pom_missing_maven_version.xml");
     Assert.assertEquals(0, handler.getUpdates().size());
