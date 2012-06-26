@@ -1,20 +1,66 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>MavenInvoker</groupId>
-	<artifactId>sonar-maven-plugin</artifactId>
-	<packaging>sonar-plugin</packaging>
-	<version>0.0.1-SNAPSHOT</version>
 
 	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<groupId>org.codehaus.sonar-plugins</groupId>
+		<artifactId>parent</artifactId>
+		<version>13</version>
+		<relativePath>../parent</relativePath>
 	</parent>
 
-	<properties>
+	<artifactId>sonar-maven-plugin</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>sonar-plugin</packaging>
+	<name>Sonar maven checks plugin</name>
+	<description>uses maven mojos to introduce some checks into sonar and raises violations</description>
+	<inceptionYear>2011</inceptionYear>
 
-		<sonar.version>3.1</sonar.version>
+	<licenses>
+		<license>
+			<name>GNU LGPL 3</name>
+			<url>http://www.gnu.org/licenses/lgpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://jira.codehaus.org/browse/SONARPLUGINS/component/MY-COMPONENT-ID</url>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:https://github.com/SonarCommunity/sonar-maven-checks</connection>
+		<developerConnection>scm:git:https://github.com/SonarCommunity/sonar-maven-checks</developerConnection>
+		<url>https://github.com/SonarCommunity/sonar-maven-checks</url>
+	</scm>
+
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://sonarplugins.ci.cloudbees.com/job/maven-checks/</url>
+	</ciManagement>
+
+	<developers>
+		<developer>
+			<id>lkwg82</id>
+			<name>Lars Gohlke</name>
+			<timezone>+1</timezone>
+			<roles>
+				<role>project initiator</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>lkwg82ATis24</id>
+			<name>Lars Gohlke</name>
+			<timezone>+1</timezone>
+			<organization>Immobilienscout24</organization>
+			<organizationUrl>http://www.immobilienscout24.de</organizationUrl>
+		</developer>
+	</developers>
+
+	<properties>
+		<sonar.version>3.1.1</sonar.version>
+		<jdk.min.version>1.6</jdk.min.version>
 	</properties>
 
 	<dependencies>
@@ -23,6 +69,12 @@
 			<artifactId>maven-invoker-plugin</artifactId>
 			<version>1.6</version>
 			<type>maven-plugin</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.tempus-fugit</groupId>
@@ -46,7 +98,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.8.1</version>
+				<version>4.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.sonar</groupId>
@@ -74,7 +126,8 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.12</version>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
