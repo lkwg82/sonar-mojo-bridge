@@ -1,4 +1,24 @@
+/*
+ * Sonar maven checks plugin
+ * Copyright (C) 2011 ${owner}
+ * dev@sonar.codehaus.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
+ */
 package de.lgohlke.MavenVersion;
+
 import com.google.code.tempusfugit.concurrency.ConcurrentTestRunner;
 import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
 import de.lgohlke.MavenVersion.handler.GOAL;
@@ -13,11 +33,16 @@ import java.util.List;
 @RunWith(ConcurrentTestRunner.class)
 public class InvokerTest {
   static {
-    File mvnBinary = new File(System.getenv("_"));
-    if (mvnBinary != null) {
-      if (mvnBinary.exists())
-      {
-        System.setProperty("maven.home", mvnBinary.getParentFile().getParent());
+    final String currentProgramm = System.getenv("_");
+    if (currentProgramm == null) {
+      throw new IllegalStateException("as of now, we need maven to run the test, could not run without");
+    } else {
+      File mvnBinary = new File(currentProgramm);
+      if (mvnBinary != null) {
+        if (mvnBinary.exists())
+        {
+          System.setProperty("maven.home", mvnBinary.getParentFile().getParent());
+        }
       }
     }
   }
@@ -26,7 +51,7 @@ public class InvokerTest {
   public void testGoal_DISPLAY_DEPENDENCY_UPDATES() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_DEPENDENCY_UPDATES, "pom.xml");
 
-    Assert.assertEquals(3, handler.getUpdates().size());
+    Assert.assertEquals(2, handler.getUpdates().size());
   }
 
   @Test
