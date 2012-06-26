@@ -91,6 +91,11 @@
 			<artifactId>sonar-xml-plugin</artifactId>
 			<version>0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.easytesting</groupId>
+			<artifactId>fest-assert</artifactId>
+			<version>1.4</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -112,7 +117,6 @@
 			<plugin>
 				<groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-packaging-maven-plugin</artifactId>
-				<version>1.1</version>
 				<extensions>true</extensions>
 				<configuration>
 					<pluginClass>de.lgohlke.MavenVersion.sonar.MavenPlugin</pluginClass>
