@@ -28,39 +28,45 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @RunWith(ConcurrentTestRunner.class)
 public class InvokerTest {
   static {
+    // for debugging the maven executable
+    // Set<String> keySet = System.getenv().keySet();
+    // List<String> keyList = new ArrayList<String>(keySet);
+    // Collections.sort(keyList, new Comparator<String>() {
+    //
+    // @Override
+    // public int compare(final String o1, final String o2) {
+    // return o1.toLowerCase().compareTo(o2.toLowerCase());
+    // }
+    // });
+    //
+    // for (String key : keyList) {
+    // System.err.println(String.format("%30s %s", key, System.getenv().get(key)));
+    // }
 
-    Set<String> keySet = System.getenv().keySet();
-    List<String> keyList = new ArrayList<String>(keySet);
-    Collections.sort(keyList, new Comparator<String>() {
-
-      @Override
-      public int compare(final String o1, final String o2) {
-        return o1.toLowerCase().compareTo(o2.toLowerCase());
-      }
-    });
-
-    for (String key : keyList) {
-      System.err.println(String.format("%30s %s", key, System.getenv().get(key)));
+    // try to determine the maven.home
+    Map<String, String> envMap = System.getenv();
+    if (envMap.containsKey("maven.home")) {
+      // everthing seems to be ok
     }
-
-    final String currentProgramm = System.getenv("_");
-    if (currentProgramm == null) {
-      throw new IllegalStateException("as of now, we need maven to run the test, could not run without");
+    else if (envMap.containsKey("M2_HOME")) {
+      System.setProperty("maven.home", envMap.get("M2_HOME"));
     } else {
-      File mvnBinary = new File(currentProgramm);
-      if (mvnBinary != null) {
-        if (mvnBinary.exists())
-        {
-          System.setProperty("maven.home", mvnBinary.getParentFile().getParent());
+      final String currentProgramm = System.getenv("_");
+      if (currentProgramm == null) {
+        throw new IllegalStateException("as of now, we need maven to run the test, could not run without");
+      } else {
+        File mvnBinary = new File(currentProgramm);
+        if (mvnBinary != null) {
+          if (mvnBinary.exists())
+          {
+            System.setProperty("maven.home", mvnBinary.getParentFile().getParent());
+          }
         }
       }
     }
