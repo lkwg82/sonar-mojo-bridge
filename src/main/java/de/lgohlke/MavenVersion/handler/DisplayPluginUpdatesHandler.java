@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DisplayPluginUpdatesHandler extends UpdateHandler {
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private static final Logger log = LoggerFactory.getLogger(DisplayPluginUpdatesHandler.class);
   private static final String KEY = "The following plugin updates are available:";
   private boolean show = false;
 

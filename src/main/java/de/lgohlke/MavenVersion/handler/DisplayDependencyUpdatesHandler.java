@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DisplayDependencyUpdatesHandler extends UpdateHandler {
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private static final Logger log = LoggerFactory.getLogger(DisplayDependencyUpdatesHandler.class);
   private static final String KEY_DEPENDENCIES = "The following dependencies in Dependencies have newer versions:";
   private static final String KEY_DEPENDENCY_MGMT = "The following dependencies in Dependency Management have newer versions:";
   private boolean show = false;
