@@ -19,12 +19,16 @@
  */
 package de.lgohlke.MavenVersion.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DisplayDependencyUpdatesHandler extends UpdateHandler {
-  private final static String KEY_DEPENDENCIES = "The following dependencies in Dependencies have newer versions:";
-  private final static String KEY_DEPENDENCY_MGMT = "The following dependencies in Dependency Management have newer versions:";
+  private final Logger log = LoggerFactory.getLogger(getClass());
+  private static final String KEY_DEPENDENCIES = "The following dependencies in Dependencies have newer versions:";
+  private static final String KEY_DEPENDENCY_MGMT = "The following dependencies in Dependency Management have newer versions:";
   private boolean show = false;
   private boolean longLine = false;
 
@@ -47,17 +51,17 @@ public class DisplayDependencyUpdatesHandler extends UpdateHandler {
   }
 
   private void processLine(final String line) {
-    String VERSION_REGEX = "(\\d[^\\ ]*)";
-    String GROUPID_REGEX = "([^:]*):";
-    final String ARTIFACT_REGEX = "([^\\ ]*)[\\ .]*";
+    String versionRegex = "(\\d[^\\ ]*)";
+    String groupidRegex = "([^:]*):";
+    final String artifactRegex = "([^\\ ]*)[\\ .]*";
     final String trimmedLine = line.replaceFirst("[\\ ]*", "");
 
-    final String VERSIONS_REGEX = VERSION_REGEX + " -> " + VERSION_REGEX;
-    final String GROUP_ARTIFACT_REGEX = GROUPID_REGEX + ARTIFACT_REGEX;
-    final String ONLINE_REGEX = GROUP_ARTIFACT_REGEX + VERSIONS_REGEX;
+    final String versionsRegex = versionRegex + " -> " + versionRegex;
+    final String groupdidArtifactidRegex = groupidRegex + artifactRegex;
+    final String onelineRegex = groupdidArtifactidRegex + versionsRegex;
 
     if (longLine) {
-      Pattern pattern = Pattern.compile(VERSIONS_REGEX);
+      Pattern pattern = Pattern.compile(versionsRegex);
       Matcher matcher = pattern.matcher(trimmedLine);
       if (matcher.find()) {
         update.setOldVersion(matcher.group(1));
@@ -65,12 +69,12 @@ public class DisplayDependencyUpdatesHandler extends UpdateHandler {
         getUpdates().add(update);
         longLine = false;
       } else {
-        System.err.println(getClass() + " error matching [second] line: " + line);
+        log.error(getClass() + " error matching [second] line: " + line);
       }
     } else {
-      if (trimmedLine.matches(ONLINE_REGEX)) {
+      if (trimmedLine.matches(onelineRegex)) {
 
-        Pattern pattern = Pattern.compile(ONLINE_REGEX);
+        Pattern pattern = Pattern.compile(onelineRegex);
         Matcher matcher = pattern.matcher(trimmedLine);
         matcher.find();
         update = new ArtifactUpdate();
@@ -79,8 +83,8 @@ public class DisplayDependencyUpdatesHandler extends UpdateHandler {
         update.setOldVersion(matcher.group(3));
         update.setNewVersion(matcher.group(4));
         getUpdates().add(update);
-      } else if (trimmedLine.matches(GROUP_ARTIFACT_REGEX)) {
-        Pattern pattern = Pattern.compile(GROUP_ARTIFACT_REGEX);
+      } else if (trimmedLine.matches(groupdidArtifactidRegex)) {
+        Pattern pattern = Pattern.compile(groupdidArtifactidRegex);
         Matcher matcher = pattern.matcher(trimmedLine);
         matcher.find();
         update = new ArtifactUpdate();
@@ -88,7 +92,7 @@ public class DisplayDependencyUpdatesHandler extends UpdateHandler {
         update.setArtifactId(matcher.group(2));
         longLine = true;
       } else {
-        System.err.println(getClass() + " error matching  line: " + line);
+        log.error(getClass() + " error matching  line: " + line);
       }
     }
   }

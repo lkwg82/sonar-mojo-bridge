@@ -19,12 +19,16 @@
  */
 package de.lgohlke.MavenVersion.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DisplayPluginUpdatesHandler extends UpdateHandler {
-  final static String key = "The following plugin updates are available:";
-  boolean show = false;
+  private final Logger log = LoggerFactory.getLogger(getClass());
+  private static final String KEY = "The following plugin updates are available:";
+  private boolean show = false;
 
   private void processLine(final String line) {
     Pattern pattern = Pattern.compile("([^\\ ]*)[\\ .]*((\\d\\.?)+) -> ((\\d\\.?)+)");
@@ -36,7 +40,7 @@ public class DisplayPluginUpdatesHandler extends UpdateHandler {
       update.setNewVersion(matcher.group(4));
       getUpdates().add(update);
     } else {
-      System.err.println(getClass() + " error matching line: " + line);
+      log.error(getClass() + " error matching line: " + line);
     }
   }
 
@@ -51,7 +55,7 @@ public class DisplayPluginUpdatesHandler extends UpdateHandler {
     }
 
     if (!show) {
-      show = line.contains(key);
+      show = line.contains(KEY);
     }
   }
 }

@@ -24,6 +24,7 @@ import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
 import de.lgohlke.MavenVersion.handler.GOAL;
 import de.lgohlke.MavenVersion.handler.UpdateHandler;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class MavenVersionSensor implements Sensor {
     return getClass().getSimpleName();
   }
 
+  @Override
   public boolean shouldExecuteOnProject(final Project project) {
     String prop = (String) project.getProperty(MavenPlugin.ANALYSIS_ENABLED);
     if (prop == null) {
@@ -69,18 +71,20 @@ public class MavenVersionSensor implements Sensor {
     return propActive && mavenProject != null;
   }
 
+  @Override
   public void analyse(final Project project, final SensorContext context) {
 
     for (GOAL goal : GOAL.values()) {
       if (isCurrentRuleActive(goal.rule())) {
-        executeGoalForRule(project, context, goal);
+        executeGoalForRule(context, goal);
       } else {
         logger.info("skipping for " + goal.goal() + " rule inactive");
       }
     }
   }
 
-  private void executeGoalForRule(final Project project, final SensorContext context, final GOAL goal) {
+  private void executeGoalForRule(final SensorContext context, final GOAL goal) {
+
     try {
       UpdateHandler handler = goal.handler().newInstance();
       Log.info("testing for " + goal.goal());
@@ -94,7 +98,11 @@ public class MavenVersionSensor implements Sensor {
         violation.setMessage(goal.rule().formatMessage(update));
         context.saveViolation(violation);
       }
-    } catch (Exception e) {
+    } catch (InstantiationException e) {
+      logger.error(e.getMessage(), e);
+    } catch (IllegalAccessException e) {
+      logger.error(e.getMessage(), e);
+    } catch (MavenInvocationException e) {
       logger.error(e.getMessage(), e);
     }
   }

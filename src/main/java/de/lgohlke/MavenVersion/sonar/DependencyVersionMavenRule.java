@@ -25,18 +25,21 @@ import org.sonar.check.Rule;
 
 @Rule(key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME, description = DependencyVersionMavenRule.DESCRIPTION)
 public class DependencyVersionMavenRule implements MavenRule {
-  protected final static String KEY = "Old Dependency";
-  protected final static String NAME = "[POM] found an updated version for dependency";
-  protected final static String DESCRIPTION = "TODO";
+  protected static final String KEY = "Old Dependency";
+  protected static final String NAME = "[POM] found an updated version for dependency";
+  protected static final String DESCRIPTION = "TODO";
 
+  @Override
   public String getName() {
     return NAME;
   }
 
+  @Override
   public String getKey() {
     return KEY;
   }
 
+  @Override
   public String formatMessage(final ArtifactUpdate update) {
     return "update available for: " + update;
   }
