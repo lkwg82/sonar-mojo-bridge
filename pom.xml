@@ -14,7 +14,7 @@
 	<packaging>sonar-plugin</packaging>
 	<name>Sonar maven checks plugin</name>
 	<description>uses maven mojos to introduce some checks into sonar and raises violations</description>
-	<inceptionYear>2011</inceptionYear>
+	<inceptionYear>2012</inceptionYear>
 
 	<licenses>
 		<license>
