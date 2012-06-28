@@ -1,6 +1,6 @@
 /*
  * Sonar maven checks plugin
- * Copyright (C) 2011 ${owner}
+ * Copyright (C) 2012 ${owner}
  * dev@sonar.codehaus.org
  *
  * This program is free software; you can redistribute it and/or
