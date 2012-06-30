@@ -17,33 +17,18 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.sonar;
+package de.lgohlke.MavenVersion;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleRepository;
+import org.apache.maven.plugin.Mojo;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-public class RulesRepository extends RuleRepository {
+public interface MojoExecutionHandler {
 
-  private final AnnotationRuleParser ruleParser;
+  void beforeExecution(final Mojo mojo);
 
-  public RulesRepository(final AnnotationRuleParser ruleParser) {
-    super(MavenPlugin.REPOSITORY_KEY, "java");
-    setName(MavenPlugin.REPOSITORY_NAME);
-    this.ruleParser = ruleParser;
-  }
+  void afterExecution(final Mojo mojo);
 
-  @Override
-  public List<Rule> createRules() {
-    return ruleParser.parse(MavenPlugin.REPOSITORY_KEY, getCheckedClasses());
-  }
-
-  @SuppressWarnings("rawtypes")
-  private static List<Class> getCheckedClasses() {
-    return Arrays.asList((Class) DependencyVersionMavenRule.class, PluginVersionMavenRule.class);
-  }
+  Map<String, Class<? extends Mojo>> getMojoMapping();
 
 }

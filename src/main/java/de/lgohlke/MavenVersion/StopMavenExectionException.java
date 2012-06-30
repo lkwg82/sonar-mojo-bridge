@@ -17,30 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.sonar;
+package de.lgohlke.MavenVersion;
 
-import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+public class StopMavenExectionException extends RuntimeException {
 
-@Rule(key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME, description = DependencyVersionMavenRule.DESCRIPTION)
-public class DependencyVersionMavenRule implements MavenRule {
-  protected static final String KEY = "Old Dependency";
-  protected static final String NAME = "[POM] found an updated version for dependency";
-  protected static final String DESCRIPTION = "TODO";
-
-  @Override
-  public String getName() {
-    return NAME;
+  public StopMavenExectionException(final String string) {
+    super(string);
   }
 
-  @Override
-  public String getKey() {
-    return KEY;
-  }
+  private static final long serialVersionUID = -1389760056221593656L;
 
-  @Override
-  public String formatMessage(final ArtifactUpdate update) {
-    return "update available for: " + update;
-  }
 }

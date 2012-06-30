@@ -17,30 +17,18 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.sonar;
+package de.lgohlke.MavenVersion;
 
-import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.invoker.HelpMojo;
 
-@Rule(key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME, description = DependencyVersionMavenRule.DESCRIPTION)
-public class DependencyVersionMavenRule implements MavenRule {
-  protected static final String KEY = "Old Dependency";
-  protected static final String NAME = "[POM] found an updated version for dependency";
-  protected static final String DESCRIPTION = "TODO";
-
+class MyHelpMojo extends HelpMojo {
   @Override
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public String getKey() {
-    return KEY;
-  }
-
-  @Override
-  public String formatMessage(final ArtifactUpdate update) {
-    return "update available for: " + update;
+  public void execute()
+      throws MojoExecutionException
+  {
+    System.out.println("x");
+    super.execute();
+    System.out.println("y");
   }
 }
