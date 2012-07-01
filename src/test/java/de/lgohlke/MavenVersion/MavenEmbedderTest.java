@@ -32,6 +32,8 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class MavenEmbedderTest {
+  private static final String MAVEN_HOME_KEY = "maven.home";
+  private static final String M2_HOME_KEY = "M2_HOME";
   // private static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   private static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 
@@ -90,9 +92,9 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void shouldFailOnWrongMavenHome() throws MavenEmbedderException {
-    System.setProperty("M2_HOME", "/x");
+    System.setProperty(M2_HOME_KEY, "/x");
     MavenSonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
@@ -101,8 +103,10 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = NullPointerException.class)
-  public void shouldFailOnWrongMavenHome2() throws MavenEmbedderException {
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldFailOnWrongMavenHomeIsNotExisting() throws MavenEmbedderException {
+    System.setProperty(M2_HOME_KEY, "wrong");
+    System.setProperty(MAVEN_HOME_KEY, "wrong");
     MavenSonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
@@ -111,8 +115,10 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = NullPointerException.class)
-  public void shouldFailOnWrongMavenHomeFile() throws MavenEmbedderException {
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldFailOnWrongMavenHomeIsFile() throws MavenEmbedderException {
+    System.setProperty(M2_HOME_KEY, "wrong");
+    System.setProperty(MAVEN_HOME_KEY, "wrong");
     MavenSonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
