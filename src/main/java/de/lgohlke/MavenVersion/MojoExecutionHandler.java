@@ -21,14 +21,24 @@ package de.lgohlke.MavenVersion;
 
 import org.apache.maven.plugin.Mojo;
 
-import java.util.Map;
+public abstract class MojoExecutionHandler<ORIGINAL_MOJO extends Mojo, REPLACING_MOJO extends Mojo> {
 
-public interface MojoExecutionHandler {
+  @SuppressWarnings("unchecked")
+  public final void beforeExecution(final Mojo mojo) {
+    beforeExecution2((REPLACING_MOJO) mojo);
+  }
 
-  void beforeExecution(final Mojo mojo);
+  protected abstract void beforeExecution2(final REPLACING_MOJO mojo);
 
-  void afterExecution(final Mojo mojo);
+  @SuppressWarnings("unchecked")
+  public final void afterExecution(final Mojo mojo) {
+    afterExecution2((REPLACING_MOJO) mojo);
+  }
 
-  Map<String, Class<? extends Mojo>> getMojoMapping();
+  protected abstract void afterExecution2(final REPLACING_MOJO mojo);
+
+  public abstract Class<ORIGINAL_MOJO> getOriginalMojo();
+
+  public abstract Class<REPLACING_MOJO> getReplacingMojo();
 
 }
