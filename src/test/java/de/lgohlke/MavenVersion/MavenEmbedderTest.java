@@ -22,6 +22,7 @@ package de.lgohlke.MavenVersion;
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
 import org.apache.maven.plugin.MojoNotFoundException;
+import org.codehaus.mojo.versions.HelpMojo;
 import org.fest.assertions.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -38,37 +39,47 @@ public class MavenEmbedderTest {
   private static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 
   @Test
-  public void testRun() throws Exception {
-
-    // final MojoExecutionHandler mojoExectionHandler = new MojoExecutionHandler() {
-    //
-    // @Override
-    // public void beforeExecution(final Mojo mojo) {
-    // assertThat(mojo).isNotNull();
-    // }
-    //
-    // @Override
-    // public void afterExecution(final Mojo mojo) {
-    // assertThat(mojo).isNotNull();
-    // }
-    //
-    // @Override
-    // public Map<String, Class<? extends Mojo>> getMojoMapping() {
-    // return new HashMap<String, Class<? extends Mojo>>() {
-    // private static final long serialVersionUID = -2694116074705405757L;
-    // {
-    // put(HelpMojo.class.getCanonicalName(), MyHelpMojo.class);
-    // put(DisplayDependencyUpdatesMojo.class.getCanonicalName(), MyDisplay.class);
-    // }
-    // };
-    // }
-    // };
+  public void testSimpleRun() throws Exception {
 
     MavenSonarEmbedder.configure().
         usePomFile("pom.xml").
         goal("versions:help").
         setAlternativeMavenHome(MAVEN_HOME).
         setMojoExecutionHandler(mock(MojoExecutionHandler.class)).
+        build().run();
+  }
+
+  @Test
+  public void testRunWithExecutionListener() throws Exception {
+
+    final MojoExecutionHandler<HelpMojo, MyHelpMojo> mojoExectionHandler = new MojoExecutionHandler<HelpMojo, MyHelpMojo>() {
+
+      @Override
+      protected void beforeExecution2(final MyHelpMojo mojo) {
+        assertThat(mojo).isNotNull();
+      }
+
+      @Override
+      protected void afterExecution2(final MyHelpMojo mojo) {
+        assertThat(mojo).isNotNull();
+      }
+
+      @Override
+      public Class<HelpMojo> getOriginalMojo() {
+        return HelpMojo.class;
+      }
+
+      @Override
+      public Class<MyHelpMojo> getReplacingMojo() {
+        return MyHelpMojo.class;
+      }
+    };
+
+    MavenSonarEmbedder.configure().
+        usePomFile("pom.xml").
+        goal("versions:help").
+        setAlternativeMavenHome(MAVEN_HOME).
+        setMojoExecutionHandler(mojoExectionHandler).
         build().run();
   }
 
