@@ -21,6 +21,7 @@ package de.lgohlke.MavenVersion;
 
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoNotFoundException;
 import org.codehaus.mojo.versions.HelpMojo;
 import org.fest.assertions.Assertions;
@@ -36,6 +37,15 @@ public class MavenEmbedderTest {
   private static final String M2_HOME_KEY = "M2_HOME";
   // private static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   private static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
+
+  public static class MyHelpMojo extends HelpMojo {
+    @Override
+    public void execute()
+        throws MojoExecutionException
+    {
+      super.execute();
+    }
+  }
 
   @Test
   public void testSimpleRunWithExecutionListener() throws Exception {
