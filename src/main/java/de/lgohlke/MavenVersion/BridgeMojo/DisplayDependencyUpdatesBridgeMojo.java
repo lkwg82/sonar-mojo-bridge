@@ -17,13 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion;
+package de.lgohlke.MavenVersion.BridgeMojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.versions.DisplayDependencyUpdatesMojo;
 
-class MyDisplay extends DisplayDependencyUpdatesMojo {
+class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
