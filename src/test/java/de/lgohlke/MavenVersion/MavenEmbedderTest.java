@@ -30,7 +30,6 @@ import org.mockito.Mockito;
 import java.io.File;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class MavenEmbedderTest {
   private static final String MAVEN_HOME_KEY = "maven.home";
@@ -39,18 +38,7 @@ public class MavenEmbedderTest {
   private static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 
   @Test
-  public void testSimpleRun() throws Exception {
-
-    MavenSonarEmbedder.configure().
-        usePomFile("pom.xml").
-        goal("versions:help").
-        setAlternativeMavenHome(MAVEN_HOME).
-        setMojoExecutionHandler(mock(MojoExecutionHandler.class)).
-        build().run();
-  }
-
-  @Test
-  public void testRunWithExecutionListener() throws Exception {
+  public void testSimpleRunWithExecutionListener() throws Exception {
 
     final MojoExecutionHandler<HelpMojo, MyHelpMojo> mojoExectionHandler = new MojoExecutionHandler<HelpMojo, MyHelpMojo>() {
 
