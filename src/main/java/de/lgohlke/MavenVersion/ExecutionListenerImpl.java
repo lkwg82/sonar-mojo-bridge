@@ -57,7 +57,7 @@ public class ExecutionListenerImpl implements ExecutionListener {
 
   @Override
   public void projectStarted(final ExecutionEvent event) {
-    System.out.println(event);
+    // ok
   }
 
   @Override
@@ -152,7 +152,7 @@ public class ExecutionListenerImpl implements ExecutionListener {
   private void manipulatePluginDescriptor(final PluginDescriptor pluginDescriptor, final Map<String, Class<? extends Mojo>> mojoMapping) {
 
     for (ComponentDescriptor<?> c : pluginDescriptor.getComponents()) {
-      System.out.println(c.getImplementation());
+      // System.out.println(c.getImplementation());
       // change mapping
       if (mojoMapping.containsKey(c.getImplementation())) {
         c.setImplementationClass(mojoMapping.get(c.getImplementation()));
