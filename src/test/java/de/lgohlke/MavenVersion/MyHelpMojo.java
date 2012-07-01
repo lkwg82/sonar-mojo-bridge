@@ -27,8 +27,6 @@ class MyHelpMojo extends HelpMojo {
   public void execute()
       throws MojoExecutionException
   {
-    System.out.println("x");
     super.execute();
-    System.out.println("y");
   }
 }
