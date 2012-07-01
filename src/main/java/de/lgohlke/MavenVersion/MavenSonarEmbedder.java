@@ -30,6 +30,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MavenSonarEmbedder {
@@ -99,9 +100,11 @@ public class MavenSonarEmbedder {
       return this;
     }
 
+    @SuppressWarnings("unchecked")
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
-        Map<String, String> envMap = System.getenv();
+        Map<String, String> envMap = new HashMap<String, String>(System.getenv());
+        envMap.putAll((Map) System.getProperties());
         if (envMap.containsKey("maven.home")) {
           mavenHome = new File(envMap.get("maven.home"));
         }
