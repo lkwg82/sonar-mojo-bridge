@@ -50,9 +50,9 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
   private LegacySupport legacySupport;
   private boolean initialized = false;
 
-  private final MojoExecutionHandler mojoExecutionHandler;
+  private final MojoExecutionHandler<?, ?> mojoExecutionHandler;
 
-  public MyDefaultBuildPluginManager(final MavenEmbedder embedder, final MojoExecutionHandler handler) {
+  public MyDefaultBuildPluginManager(final MavenEmbedder embedder, final MojoExecutionHandler<?, ?> handler) {
     this.mojoExecutionHandler = handler;
     try {
       mavenPluginManager = embedder.lookup(MavenPluginManager.class);

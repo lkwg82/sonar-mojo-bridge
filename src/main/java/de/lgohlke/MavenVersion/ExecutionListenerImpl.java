@@ -22,21 +22,18 @@ package de.lgohlke.MavenVersion;
 import hudson.maven.MavenEmbedder;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionListener;
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-import java.util.Map;
-
 public class ExecutionListenerImpl implements ExecutionListener {
 
   protected MavenEmbedder embedder;
-  private final MojoExecutionHandler mojoExectionHandler;
+  private final MojoExecutionHandler<?, ?> mojoExectionHandler;
 
-  public ExecutionListenerImpl(final MojoExecutionHandler mojoExectionHandler) {
+  public ExecutionListenerImpl(final MojoExecutionHandler<?, ?> mojoExectionHandler) {
     this.mojoExectionHandler = mojoExectionHandler;
   }
 
@@ -138,7 +135,7 @@ public class ExecutionListenerImpl implements ExecutionListener {
 
       MojoExecution mojoExecution = event.getMojoExecution();
       MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
-      manipulatePluginDescriptor(mojoDescriptor.getPluginDescriptor(), mojoExectionHandler.getMojoMapping());
+      manipulatePluginDescriptor(mojoDescriptor.getPluginDescriptor());
 
       new MyDefaultBuildPluginManager(embedder, mojoExectionHandler).
           init().
@@ -149,13 +146,13 @@ public class ExecutionListenerImpl implements ExecutionListener {
     throw new StopMavenExectionException("this is correct flow, just to deny executing twice");
   }
 
-  private void manipulatePluginDescriptor(final PluginDescriptor pluginDescriptor, final Map<String, Class<? extends Mojo>> mojoMapping) {
+  private void manipulatePluginDescriptor(final PluginDescriptor pluginDescriptor) {
 
+    final String canonicalNameOfOriginalMojo = mojoExectionHandler.getOriginalMojo().getCanonicalName();
     for (ComponentDescriptor<?> c : pluginDescriptor.getComponents()) {
-      // System.out.println(c.getImplementation());
       // change mapping
-      if (mojoMapping.containsKey(c.getImplementation())) {
-        c.setImplementationClass(mojoMapping.get(c.getImplementation()));
+      if (canonicalNameOfOriginalMojo.equals(c.getImplementation())) {
+        c.setImplementationClass(mojoExectionHandler.getReplacingMojo());
       }
     }
   }

@@ -97,13 +97,13 @@ public class MavenSonarEmbedder {
       return this;
     }
 
-    public MavenSonarEmbedderBuilder setMojoExecutionHandler(final MojoExecutionHandler mojoExectionHandler) {
+    public MavenSonarEmbedderBuilder setMojoExecutionHandler(final MojoExecutionHandler<?, ?> mojoExectionHandler) {
       Preconditions.checkNotNull(mojoExectionHandler);
       this.mojoExectionHandler = mojoExectionHandler;
       return this;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());
