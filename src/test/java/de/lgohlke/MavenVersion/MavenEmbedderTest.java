@@ -94,11 +94,11 @@ public class MavenEmbedderTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldFailOnWrongMavenHome() throws MavenEmbedderException {
-    System.setProperty(M2_HOME_KEY, "/x");
+    System.setProperty(M2_HOME_KEY, "wrong");
+    System.setProperty(MAVEN_HOME_KEY, "wrong");
     MavenSonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
-        // setAlternativeMavenHome(MAVEN_HOME).
         setMojoExecutionHandler(Mockito.mock(MojoExecutionHandler.class)).
         build();
   }
