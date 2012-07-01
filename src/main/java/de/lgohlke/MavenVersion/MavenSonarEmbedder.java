@@ -24,8 +24,11 @@ import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
 import org.apache.maven.InternalErrorException;
+import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MavenSonarEmbedder {
-
+  private final static Logger logger = LoggerFactory.getLogger(MavenSonarEmbedder.class);
   private final MavenRequest mavenRequest;
   private final MavenEmbedder embedder;
 
@@ -137,6 +140,8 @@ public class MavenSonarEmbedder {
       mavenRequest.setPom(pom);
       mavenRequest.setShowErrors(true);
       mavenRequest.setGoals(Arrays.asList(goal));
+      mavenRequest.setLoggingLevel(1);
+      mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new MyPlexusLogger(logger)));
       detectMavenHomeIfNull();
 
       try {
@@ -149,6 +154,12 @@ public class MavenSonarEmbedder {
       final ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
       mavenRequest.setExecutionListener(executionListener);
       final MavenEmbedder embedder = new MavenEmbedder(mavenHome, mavenRequest);
+      // try {
+      // System.out.println("this issa " + embedder.lookup(MavenLoggerManager.class));
+      // } catch (ComponentLookupException e) {
+      // // TODO Auto-generated catch block
+      // e.printStackTrace();
+      // }
       executionListener.setEmbedder(embedder);
       return new MavenSonarEmbedder(embedder, mavenRequest);
     }
