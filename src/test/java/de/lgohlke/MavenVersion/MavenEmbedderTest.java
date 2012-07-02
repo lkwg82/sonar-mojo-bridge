@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoNotFoundException;
 import org.codehaus.mojo.versions.HelpMojo;
 import org.fest.assertions.Assertions;
 import org.mockito.Mockito;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -48,7 +49,8 @@ public class MavenEmbedderTest {
     }
   }
 
-  @BeforeTest()
+  @BeforeTest(alwaysRun = true)
+  @BeforeMethod(alwaysRun = true)
   public void setUp() {
     System.getProperties().remove(M2_HOME_KEY);
     System.getProperties().remove(MAVEN_HOME_KEY);
