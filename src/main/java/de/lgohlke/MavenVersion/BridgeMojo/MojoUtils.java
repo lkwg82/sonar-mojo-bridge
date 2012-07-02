@@ -19,7 +19,6 @@
  */
 package de.lgohlke.MavenVersion.BridgeMojo;
 
-import de.lgohlke.MavenVersion.BridgeMojo.MojoUtilsTest.A;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +46,7 @@ public class MojoUtils {
 
   }
 
-  public static Object invokePrivateMethod(final Class<A> clazz, final String methodname) throws MojoExecutionException {
+  public static Object invokePrivateMethod(final Class<?> clazz, final String methodname) throws MojoExecutionException {
     return invokePrivateMethod(clazz, methodname, new Object[] {}, new Class<?>[] {});
   }
 }
