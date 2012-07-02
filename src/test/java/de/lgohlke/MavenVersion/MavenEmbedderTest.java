@@ -25,8 +25,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoNotFoundException;
 import org.codehaus.mojo.versions.HelpMojo;
 import org.fest.assertions.Assertions;
-import org.junit.Test;
 import org.mockito.Mockito;
+import org.testng.annotations.Test;
 
 import java.io.File;
 
@@ -83,7 +83,7 @@ public class MavenEmbedderTest {
 
   final String goal = "versions:display-dependency-updates";
 
-  @Test(expected = NullPointerException.class)
+  @Test(expectedExceptions = NullPointerException.class)
   public void shouldFailOnMissingPom() throws MavenEmbedderException {
     MavenSonarEmbedder.configure().
         goal(goal).
@@ -92,7 +92,7 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expectedExceptions = NullPointerException.class)
   public void shouldFailOnMissingGoal() throws MavenEmbedderException {
     MavenSonarEmbedder.configure().
         usePomFile("pom.xml").
@@ -101,7 +101,7 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void shouldFailOnWrongMavenHome() throws MavenEmbedderException {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
@@ -112,7 +112,7 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void shouldFailOnWrongMavenHomeIsNotExisting() throws MavenEmbedderException {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
@@ -124,7 +124,7 @@ public class MavenEmbedderTest {
         build();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void shouldFailOnWrongMavenHomeIsFile() throws MavenEmbedderException {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");

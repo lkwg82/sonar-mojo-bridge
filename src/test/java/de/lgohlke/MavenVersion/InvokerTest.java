@@ -19,14 +19,12 @@
  */
 package de.lgohlke.MavenVersion;
 
-import com.google.code.tempusfugit.concurrency.ConcurrentTestRunner;
 import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
 import de.lgohlke.MavenVersion.handler.GOAL;
 import de.lgohlke.MavenVersion.handler.UpdateHandler;
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.List;
@@ -34,7 +32,6 @@ import java.util.Map;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-@RunWith(ConcurrentTestRunner.class)
 public class InvokerTest {
   static {
     // for debugging the maven executable
