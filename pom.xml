@@ -59,9 +59,10 @@
   </developers>
 
   <properties>
-    <sonar.version>3.1.1</sonar.version>
-    <mavenVersion>3.0.4</mavenVersion>
+    <animal-sniffer.signature.artifactId>java16</animal-sniffer.signature.artifactId>
     <jdk.min.version>1.6</jdk.min.version>
+    <mavenVersion>3.0.4</mavenVersion>
+    <sonar.version>3.1.1</sonar.version>
   </properties>
 
   <dependencies>
