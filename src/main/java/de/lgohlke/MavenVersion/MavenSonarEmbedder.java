@@ -34,9 +34,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MavenSonarEmbedder {
   private final static Logger logger = LoggerFactory.getLogger(MavenSonarEmbedder.class);
@@ -127,8 +132,24 @@ public class MavenSonarEmbedder {
             }
           }
         }
+
+        // for debugging the maven executable
+        Set<String> keySet = System.getenv().keySet();
+        List<String> keyList = new ArrayList<String>(keySet);
+        Collections.sort(keyList, new Comparator<String>() {
+
+          @Override
+          public int compare(final String o1, final String o2) {
+            return o1.toLowerCase().compareTo(o2.toLowerCase());
+          }
+        });
+
+        for (String key : keyList) {
+          System.err.println(String.format("%30s %s", key, System.getenv().get(key)));
+        }
+
         Preconditions.checkNotNull(mavenHome, "we did not find the maven directory");
-        Preconditions.checkArgument(mavenHome.isDirectory(), "maveHome is " + mavenHome);
+        Preconditions.checkArgument(mavenHome.isDirectory(), "maveHome is " + mavenHome + ", but a directory is needed");
       }
     }
 
