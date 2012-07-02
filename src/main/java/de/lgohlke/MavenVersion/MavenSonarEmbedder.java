@@ -128,7 +128,7 @@ public class MavenSonarEmbedder {
           }
         }
         Preconditions.checkNotNull(mavenHome, "we did not find the maven directory");
-        Preconditions.checkArgument(mavenHome.isDirectory());
+        Preconditions.checkArgument(mavenHome.isDirectory(), "maveHome is " + mavenHome);
       }
     }
 
