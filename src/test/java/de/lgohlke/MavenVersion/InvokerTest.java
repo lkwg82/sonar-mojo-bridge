@@ -23,56 +23,55 @@ import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
 import de.lgohlke.MavenVersion.handler.GOAL;
 import de.lgohlke.MavenVersion.handler.UpdateHandler;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import static org.fest.assertions.Assertions.assertThat;
 
+@Deprecated
 public class InvokerTest {
-  static {
-    // for debugging the maven executable
-    // Set<String> keySet = System.getenv().keySet();
-    // List<String> keyList = new ArrayList<String>(keySet);
-    // Collections.sort(keyList, new Comparator<String>() {
-    //
-    // @Override
-    // public int compare(final String o1, final String o2) {
-    // return o1.toLowerCase().compareTo(o2.toLowerCase());
-    // }
-    // });
-    //
-    // for (String key : keyList) {
-    // System.err.println(String.format("%30s %s", key, System.getenv().get(key)));
-    // }
+  // static {
+  // // for debugging the maven executable
+  // // Set<String> keySet = System.getenv().keySet();
+  // // List<String> keyList = new ArrayList<String>(keySet);
+  // // Collections.sort(keyList, new Comparator<String>() {
+  // //
+  // // @Override
+  // // public int compare(final String o1, final String o2) {
+  // // return o1.toLowerCase().compareTo(o2.toLowerCase());
+  // // }
+  // // });
+  // //
+  // // for (String key : keyList) {
+  // // System.err.println(String.format("%30s %s", key, System.getenv().get(key)));
+  // // }
+  //
+  // // try to determine the maven.home
+  // Map<String, String> envMap = System.getenv();
+  // if (envMap.containsKey("maven.home")) {
+  // // everthing seems to be ok
+  // }
+  // else if (envMap.containsKey("M2_HOME")) {
+  // System.setProperty("maven.home", envMap.get("M2_HOME"));
+  // } else {
+  // final String currentProgramm = System.getenv("_");
+  // if (currentProgramm == null) {
+  // throw new IllegalStateException("as of now, we need maven to run the test, could not run without");
+  // } else {
+  // File mvnBinary = new File(currentProgramm);
+  // if (mvnBinary != null) {
+  // if (mvnBinary.exists())
+  // {
+  // System.setProperty("maven.home", mvnBinary.getParentFile().getParent());
+  // }
+  // }
+  // }
+  // }
+  // }
 
-    // try to determine the maven.home
-    Map<String, String> envMap = System.getenv();
-    if (envMap.containsKey("maven.home")) {
-      // everthing seems to be ok
-    }
-    else if (envMap.containsKey("M2_HOME")) {
-      System.setProperty("maven.home", envMap.get("M2_HOME"));
-    } else {
-      final String currentProgramm = System.getenv("_");
-      if (currentProgramm == null) {
-        throw new IllegalStateException("as of now, we need maven to run the test, could not run without");
-      } else {
-        File mvnBinary = new File(currentProgramm);
-        if (mvnBinary != null) {
-          if (mvnBinary.exists())
-          {
-            System.setProperty("maven.home", mvnBinary.getParentFile().getParent());
-          }
-        }
-      }
-    }
-  }
-
-  @Test
+  @Test(enabled = false)
   public void testGoal_DISPLAY_DEPENDENCY_UPDATES() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_DEPENDENCY_UPDATES, "pom.xml");
 
@@ -81,7 +80,7 @@ public class InvokerTest {
         isEqualTo(2);
   }
 
-  @Test
+  @Test(enabled = false)
   // @Ignore("maybe because of maven 3 vs. 2?")
   public void testGoal_DISPLAY_DEPENDENCY_UPDATES_tooLongLines() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_DEPENDENCY_UPDATES, "toolongline.xml");
@@ -98,21 +97,20 @@ public class InvokerTest {
     assertThat(found).as("found the long line version").isEqualTo(true);
   }
 
-  @Test
+  @Test(enabled = false)
   public void testGoal_DISPLAY_DEPENDENCY_UPDATES_withDependencyMgmt() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_DEPENDENCY_UPDATES, "pom-sonar-squid.xml");
 
     Assert.assertTrue(handler.getUpdates().size() > 0);
   }
 
-  @Test
-  @Ignore
+  @Test(enabled = false)
   public void testGoal_DISPLAY_PLUGIN_UPDATES_MissingMavenVersion() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_PLUGIN_UPDATES, "pom_missing_maven_version.xml");
     Assert.assertEquals(0, handler.getUpdates().size());
   }
 
-  @Test
+  @Test(enabled = false)
   public void testGoal_DISPLAY_PLUGIN_UPDATES() throws Exception {
     UpdateHandler handler = executeRequest(GOAL.DISPLAY_PLUGIN_UPDATES, "pom.xml");
     final List<ArtifactUpdate> updates = handler.getUpdates();
