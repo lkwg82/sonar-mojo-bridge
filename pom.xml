@@ -320,6 +320,7 @@
           <version>2.12</version>
           <configuration>
             <parallel>both</parallel>
+            <runOrder>random</runOrder>
           </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build
