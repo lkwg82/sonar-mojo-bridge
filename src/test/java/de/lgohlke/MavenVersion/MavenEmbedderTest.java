@@ -36,7 +36,7 @@ public class MavenEmbedderTest {
   private static final String MAVEN_HOME_KEY = "maven.home";
   private static final String M2_HOME_KEY = "M2_HOME";
   // private static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
-  private static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
+  public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 
   public static class MyHelpMojo extends HelpMojo {
     @Override
