@@ -19,7 +19,50 @@
  */
 package de.lgohlke.MavenVersion.BridgeMojo;
 
+import de.lgohlke.MavenVersion.MavenEmbedderTest;
+import de.lgohlke.MavenVersion.MavenSonarEmbedder;
+import de.lgohlke.MavenVersion.MojoExecutionHandler;
+import hudson.maven.MavenEmbedderException;
+import org.codehaus.mojo.versions.DisplayDependencyUpdatesMojo;
+import org.testng.annotations.Test;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 public class DisplayDependencyUpdatesBridgeMojoTest {
 
+  @Test
+  public void test() throws MavenEmbedderException {
+
+    final MojoExecutionHandler<DisplayDependencyUpdatesMojo, DisplayDependencyUpdatesBridgeMojo> mojoExectionHandler = new MojoExecutionHandler<DisplayDependencyUpdatesMojo, DisplayDependencyUpdatesBridgeMojo>() {
+
+      @Override
+      protected void beforeExecution2(final DisplayDependencyUpdatesBridgeMojo mojo) {
+        assertThat(mojo).isNotNull();
+        assertThat(mojo.getUpdateMap()).isEmpty();
+      }
+
+      @Override
+      protected void afterExecution2(final DisplayDependencyUpdatesBridgeMojo mojo) {
+        assertThat(mojo).isNotNull();
+        assertThat(mojo.getUpdateMap()).isNotEmpty();
+      }
+
+      @Override
+      public Class<DisplayDependencyUpdatesMojo> getOriginalMojo() {
+        return DisplayDependencyUpdatesMojo.class;
+      }
+
+      @Override
+      public Class<DisplayDependencyUpdatesBridgeMojo> getReplacingMojo() {
+        return DisplayDependencyUpdatesBridgeMojo.class;
+      }
+    };
+
+    MavenSonarEmbedder.configure().
+        usePomFile("src/test/resources/pom-sonar-squid.xml").
+        setAlternativeMavenHome(MavenEmbedderTest.MAVEN_HOME).
+        setMojoExecutionHandler(mojoExectionHandler).
+        build().run();
+
+  }
 }
