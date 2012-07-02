@@ -20,12 +20,14 @@
 package de.lgohlke.MavenVersion;
 
 import com.google.common.base.Preconditions;
+import de.lgohlke.MavenVersion.BridgeMojo.Goal;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
 import org.apache.maven.InternalErrorException;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
+import org.apache.maven.plugin.Mojo;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +72,7 @@ public class MavenSonarEmbedder {
     private String pom;
     private String goal;
     private File mavenHome;
-    MojoExecutionHandler mojoExectionHandler;
+    private MojoExecutionHandler<?, ?> mojoExectionHandler;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
       Preconditions.checkNotNull(pomFile);
@@ -133,8 +135,13 @@ public class MavenSonarEmbedder {
     public MavenSonarEmbedder build() throws MavenEmbedderException {
 
       Preconditions.checkNotNull(pom, "missing pom");
-      Preconditions.checkNotNull(goal, "missing goal");
       Preconditions.checkNotNull(mojoExectionHandler, "missing mojoExectionHandler");
+      if (goal == null) {
+        useBridgeMojo(mojoExectionHandler.getReplacingMojo());
+      }
+
+      Preconditions.checkNotNull(goal, "missing goal");
+      Preconditions.checkState(!goal.isEmpty(), "goal is empty");
 
       MavenRequest mavenRequest = new MavenRequest();
       mavenRequest.setPom(pom);
@@ -162,6 +169,15 @@ public class MavenSonarEmbedder {
       // }
       executionListener.setEmbedder(embedder);
       return new MavenSonarEmbedder(embedder, mavenRequest);
+    }
+
+    public MavenSonarEmbedderBuilder useBridgeMojo(final Class<? extends Mojo> clazz) throws MavenEmbedderException {
+      Goal goalAnnotation = clazz.getAnnotation(Goal.class);
+      if (goalAnnotation == null) {
+        throw new MavenEmbedderException("mojos need " + Goal.class + " annotation to identify the goal, this is missing in " + clazz);
+      }
+
+      return goal(goalAnnotation.value());
     }
   }
 }
