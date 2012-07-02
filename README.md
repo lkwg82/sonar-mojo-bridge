@@ -21,7 +21,7 @@ like to have some checks on a maven project, represented by its pom.xml
 * check with sonar (done)
 * check remote run, on teamcity cluster
 * publish, according to http://docs.codehaus.org/display/SONAR/Plugin+Hosting
-* try using the Mojos directly (almost complete)
+* try using the Mojos directly (complete test, need migration)
 * adding enforcer maven-plugin
 
 
