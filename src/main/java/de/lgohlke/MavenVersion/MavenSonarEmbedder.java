@@ -142,7 +142,7 @@ public class MavenSonarEmbedder {
       }
 
       Preconditions.checkNotNull(goal, "missing goal");
-      Preconditions.checkState(!goal.isEmpty(), "goal is empty");
+      Preconditions.checkState(goal.length() > 0, "goal is empty");
 
       MavenRequest mavenRequest = new MavenRequest();
       mavenRequest.setPom(pom);

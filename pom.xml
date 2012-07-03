@@ -59,7 +59,6 @@
   </developers>
 
   <properties>
-    <animal-sniffer.signature.artifactId>java16</animal-sniffer.signature.artifactId>
     <jdk.min.version>1.6</jdk.min.version>
     <mavenVersion>3.0.4</mavenVersion>
     <sonar.version>3.1.1</sonar.version>
@@ -92,6 +91,7 @@
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-xml-plugin</artifactId>
       <version>0.2</version>
+      <type>sonar-plugin</type>
     </dependency>
     <dependency>
       <groupId>org.easytesting</groupId>
