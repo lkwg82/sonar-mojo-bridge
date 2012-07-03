@@ -19,6 +19,8 @@
  */
 package de.lgohlke.MavenVersion.sonar;
 
+import de.lgohlke.sonar.plugin.MavenRule;
+
 import de.lgohlke.sonar.plugin.MavenPlugin;
 
 import de.lgohlke.MavenVersion.MavenInvoker;

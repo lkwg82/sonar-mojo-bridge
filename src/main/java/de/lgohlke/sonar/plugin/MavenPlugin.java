@@ -20,8 +20,6 @@
 package de.lgohlke.sonar.plugin;
 
 import de.lgohlke.MavenVersion.sonar.MavenVersionSensor;
-import de.lgohlke.MavenVersion.sonar.PomSourceImporter;
-import de.lgohlke.MavenVersion.sonar.RulesRepository;
 
 import org.sonar.api.Properties;
 import org.sonar.api.Property;

@@ -19,6 +19,8 @@
  */
 package de.lgohlke.MavenVersion.sonar;
 
+import de.lgohlke.sonar.plugin.MavenRule;
+
 import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;

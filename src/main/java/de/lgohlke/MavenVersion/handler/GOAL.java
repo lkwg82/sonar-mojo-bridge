@@ -19,8 +19,9 @@
  */
 package de.lgohlke.MavenVersion.handler;
 
+import de.lgohlke.sonar.plugin.MavenRule;
+
 import de.lgohlke.MavenVersion.sonar.DependencyVersionMavenRule;
-import de.lgohlke.MavenVersion.sonar.MavenRule;
 import de.lgohlke.MavenVersion.sonar.PluginVersionMavenRule;
 
 public enum GOAL {
