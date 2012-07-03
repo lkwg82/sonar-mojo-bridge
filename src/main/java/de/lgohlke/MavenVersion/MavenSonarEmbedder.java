@@ -162,12 +162,7 @@ public class MavenSonarEmbedder {
       final ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
       mavenRequest.setExecutionListener(executionListener);
       final MavenEmbedder embedder = new MavenEmbedder(mavenHome, mavenRequest);
-      // try {
-      // System.out.println("this issa " + embedder.lookup(MavenLoggerManager.class));
-      // } catch (ComponentLookupException e) {
-      // // TODO Auto-generated catch block
-      // e.printStackTrace();
-      // }
+
       executionListener.setEmbedder(embedder);
       return new MavenSonarEmbedder(embedder, mavenRequest);
     }
