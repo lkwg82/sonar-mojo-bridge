@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar.plugin;
 
-import de.lgohlke.sonar.maven.versions.MavenVersionSensor;
+import de.lgohlke.sonar.maven.plugin.versions.MavenVersionSensor;
 
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
