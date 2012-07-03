@@ -17,7 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.sonar;
+package de.lgohlke.sonar.plugin;
+
+import de.lgohlke.MavenVersion.sonar.MavenVersionSensor;
+import de.lgohlke.MavenVersion.sonar.PomSourceImporter;
+import de.lgohlke.MavenVersion.sonar.RulesRepository;
 
 import org.sonar.api.Properties;
 import org.sonar.api.Property;

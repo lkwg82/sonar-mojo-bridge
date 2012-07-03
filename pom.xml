@@ -306,7 +306,7 @@
         <artifactId>sonar-packaging-maven-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <pluginClass>de.lgohlke.MavenVersion.sonar.MavenPlugin</pluginClass>
+          <pluginClass>de.lgohlke.sonar.plugin.MavenPlugin</pluginClass>
         </configuration>
       </plugin>
     </plugins>
