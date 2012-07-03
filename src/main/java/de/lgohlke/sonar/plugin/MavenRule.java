@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar.plugin;
 
-import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
+import de.lgohlke.sonar.maven.handler.ArtifactUpdate;
 
 public interface MavenRule {
   String getName();

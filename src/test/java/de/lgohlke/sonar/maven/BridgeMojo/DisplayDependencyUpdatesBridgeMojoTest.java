@@ -17,11 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.BridgeMojo;
+package de.lgohlke.sonar.maven.BridgeMojo;
 
 import de.lgohlke.MavenVersion.MavenEmbedderTest;
-import de.lgohlke.MavenVersion.MavenSonarEmbedder;
-import de.lgohlke.MavenVersion.MojoExecutionHandler;
+import de.lgohlke.sonar.maven.MavenSonarEmbedder;
+import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import hudson.maven.MavenEmbedderException;
 import org.codehaus.mojo.versions.DisplayDependencyUpdatesMojo;
 import org.testng.annotations.Test;

@@ -17,10 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion;
+package de.lgohlke.sonar.maven;
+
+
+import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
+import de.lgohlke.sonar.maven.extension.MyPlexusLogger;
+import de.lgohlke.sonar.maven.extension.StopMavenExectionException;
 
 import com.google.common.base.Preconditions;
-import de.lgohlke.MavenVersion.BridgeMojo.Goal;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;

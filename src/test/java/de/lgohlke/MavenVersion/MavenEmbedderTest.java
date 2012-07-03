@@ -19,6 +19,9 @@
  */
 package de.lgohlke.MavenVersion;
 
+import de.lgohlke.sonar.maven.MavenSonarEmbedder;
+import de.lgohlke.sonar.maven.MojoExecutionHandler;
+
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
 import org.apache.maven.plugin.MojoExecutionException;

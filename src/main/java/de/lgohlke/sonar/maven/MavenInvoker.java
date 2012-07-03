@@ -17,10 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion;
+package de.lgohlke.sonar.maven;
 
-import de.lgohlke.MavenVersion.handler.GOAL;
-import de.lgohlke.MavenVersion.handler.UpdateHandler;
+import de.lgohlke.sonar.maven.handler.GOAL;
+import de.lgohlke.sonar.maven.handler.UpdateHandler;
+
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;

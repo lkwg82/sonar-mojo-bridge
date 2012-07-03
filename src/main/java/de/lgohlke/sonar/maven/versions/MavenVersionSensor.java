@@ -17,16 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.sonar;
+package de.lgohlke.sonar.maven.versions;
+
+import de.lgohlke.sonar.maven.MavenInvoker;
+import de.lgohlke.sonar.maven.handler.ArtifactUpdate;
+import de.lgohlke.sonar.maven.handler.GOAL;
+import de.lgohlke.sonar.maven.handler.UpdateHandler;
 
 import de.lgohlke.sonar.plugin.MavenRule;
 
 import de.lgohlke.sonar.plugin.MavenPlugin;
 
-import de.lgohlke.MavenVersion.MavenInvoker;
-import de.lgohlke.MavenVersion.handler.ArtifactUpdate;
-import de.lgohlke.MavenVersion.handler.GOAL;
-import de.lgohlke.MavenVersion.handler.UpdateHandler;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.jfree.util.Log;

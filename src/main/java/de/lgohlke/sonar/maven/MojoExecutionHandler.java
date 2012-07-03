@@ -17,14 +17,28 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion;
+package de.lgohlke.sonar.maven;
 
-public class StopMavenExectionException extends RuntimeException {
+import org.apache.maven.plugin.Mojo;
 
-  public StopMavenExectionException(final String string) {
-    super(string);
+public abstract class MojoExecutionHandler<ORIGINAL_MOJO extends Mojo, REPLACING_MOJO extends Mojo> {
+
+  @SuppressWarnings("unchecked")
+  public final void beforeExecution(final Mojo mojo) {
+    beforeExecution2((REPLACING_MOJO) mojo);
   }
 
-  private static final long serialVersionUID = -1389760056221593656L;
+  protected abstract void beforeExecution2(final REPLACING_MOJO mojo);
+
+  @SuppressWarnings("unchecked")
+  public final void afterExecution(final Mojo mojo) {
+    afterExecution2((REPLACING_MOJO) mojo);
+  }
+
+  protected abstract void afterExecution2(final REPLACING_MOJO mojo);
+
+  public abstract Class<ORIGINAL_MOJO> getOriginalMojo();
+
+  public abstract Class<REPLACING_MOJO> getReplacingMojo();
 
 }

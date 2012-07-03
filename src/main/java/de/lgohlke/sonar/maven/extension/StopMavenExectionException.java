@@ -17,19 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.BridgeMojo;
+package de.lgohlke.sonar.maven.extension;
 
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class StopMavenExectionException extends RuntimeException {
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+  public StopMavenExectionException(final String string) {
+    super(string);
+  }
 
-@Retention(RUNTIME)
-@Target(TYPE)
-@Inherited
-public @interface Goal {
-  String value();
+  private static final long serialVersionUID = -1389760056221593656L;
 
 }

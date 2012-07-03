@@ -17,12 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion.handler;
+package de.lgohlke.sonar.maven.handler;
+
+import de.lgohlke.sonar.maven.versions.DependencyVersionMavenRule;
+import de.lgohlke.sonar.maven.versions.PluginVersionMavenRule;
 
 import de.lgohlke.sonar.plugin.MavenRule;
 
-import de.lgohlke.MavenVersion.sonar.DependencyVersionMavenRule;
-import de.lgohlke.MavenVersion.sonar.PluginVersionMavenRule;
 
 public enum GOAL {
   DISPLAY_DEPENDENCY_UPDATES {

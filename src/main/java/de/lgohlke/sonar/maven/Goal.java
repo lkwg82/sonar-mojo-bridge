@@ -17,28 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion;
+package de.lgohlke.sonar.maven;
 
-import org.apache.maven.plugin.Mojo;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public abstract class MojoExecutionHandler<ORIGINAL_MOJO extends Mojo, REPLACING_MOJO extends Mojo> {
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-  @SuppressWarnings("unchecked")
-  public final void beforeExecution(final Mojo mojo) {
-    beforeExecution2((REPLACING_MOJO) mojo);
-  }
-
-  protected abstract void beforeExecution2(final REPLACING_MOJO mojo);
-
-  @SuppressWarnings("unchecked")
-  public final void afterExecution(final Mojo mojo) {
-    afterExecution2((REPLACING_MOJO) mojo);
-  }
-
-  protected abstract void afterExecution2(final REPLACING_MOJO mojo);
-
-  public abstract Class<ORIGINAL_MOJO> getOriginalMojo();
-
-  public abstract Class<REPLACING_MOJO> getReplacingMojo();
+@Retention(RUNTIME)
+@Target(TYPE)
+@Inherited
+public @interface Goal {
+  String value();
 
 }
