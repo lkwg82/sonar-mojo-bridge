@@ -181,12 +181,12 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-model</artifactId>
-        <version>3.0.4</version>
+        <version>${mavenVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-settings</artifactId>
-        <version>3.0.4</version>
+        <version>${mavenVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
@@ -196,7 +196,7 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-repository-metadata</artifactId>
-        <version>3.0.4</version>
+        <version>${mavenVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
@@ -206,7 +206,7 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-aether-provider</artifactId>
-        <version>3.0.4</version>
+        <version>${mavenVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.sonatype.sisu</groupId>
