@@ -91,7 +91,6 @@
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-xml-plugin</artifactId>
       <version>0.2</version>
-      <type>sonar-plugin</type>
     </dependency>
     <dependency>
       <groupId>org.easytesting</groupId>
