@@ -17,7 +17,9 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.BridgeMojo;
+package de.lgohlke.sonar.maven.plugin.versions;
+
+import de.lgohlke.sonar.maven.MojoUtils;
 
 import de.lgohlke.sonar.maven.Goal;
 
