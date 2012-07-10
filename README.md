@@ -19,6 +19,10 @@ like to have some checks on a maven project, represented by its pom.xml
 
 * simple prototype (done)
 * check with sonar (done)
+* integrate with MavenPluginExecutor for maven3
+* check way to do this with maven2 
+* publish two artifacts for maven2 and maven3 injection
+* reintegrate into the plugin
 * check remote run, on teamcity cluster
 * publish, according to http://docs.codehaus.org/display/SONAR/Plugin+Hosting
 * try using the Mojos directly (complete test, need migration)
