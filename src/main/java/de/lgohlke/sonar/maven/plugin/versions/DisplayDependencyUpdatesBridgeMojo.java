@@ -1,6 +1,6 @@
 /*
  * Sonar maven checks plugin
- * Copyright (C) 2012 ${owner}
+ * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
  * This program is free software; you can redistribute it and/or
@@ -19,10 +19,8 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
-import de.lgohlke.sonar.maven.MojoUtils;
-
 import de.lgohlke.sonar.maven.Goal;
-
+import de.lgohlke.sonar.maven.MojoUtils;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.model.Dependency;
@@ -39,10 +37,10 @@ import java.util.TreeSet;
 
 @SuppressWarnings("deprecation")
 @Goal("versions:display-dependency-updates")
-class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo {
+public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo {
 
-  private static final String DEPENDENCIES = "Dependencies";
-  private static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
+  public static final String DEPENDENCIES = "Dependencies";
+  public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
 
   private final Map<String, Map<Dependency, ArtifactVersions>> updateMap = new HashMap<String, Map<Dependency, ArtifactVersions>>();
 

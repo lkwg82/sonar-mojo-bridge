@@ -1,6 +1,6 @@
 /*
  * Sonar maven checks plugin
- * Copyright (C) 2012 ${owner}
+ * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
  * This program is free software; you can redistribute it and/or
@@ -19,12 +19,10 @@
  */
 package de.lgohlke.sonar.maven;
 
-
+import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
 import de.lgohlke.sonar.maven.extension.MyPlexusLogger;
 import de.lgohlke.sonar.maven.extension.StopMavenExectionException;
-
-import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
@@ -47,7 +45,7 @@ public class MavenSonarEmbedder {
   private final MavenRequest mavenRequest;
   private final MavenEmbedder embedder;
 
-  public MavenSonarEmbedder(final MavenEmbedder embedder, final MavenRequest mavenRequest) {
+  private MavenSonarEmbedder(final MavenEmbedder embedder, final MavenRequest mavenRequest) {
     this.embedder = embedder;
     this.mavenRequest = mavenRequest;
   }
