@@ -1,6 +1,6 @@
 /*
  * Sonar maven checks plugin
- * Copyright (C) 2012 ${owner}
+ * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
  * This program is free software; you can redistribute it and/or
@@ -19,12 +19,9 @@
  */
 package de.lgohlke.sonar.plugin;
 
-import de.lgohlke.sonar.maven.handler.ArtifactUpdate;
 
 public interface MavenRule {
   String getName();
 
   String getKey();
-
-  String formatMessage(final ArtifactUpdate update);
 }
