@@ -71,18 +71,6 @@
       <version>3.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-invoker-plugin</artifactId>
-      <version>1.6</version>
-      <type>maven-plugin</type>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <scope>provided</scope>
@@ -135,6 +123,18 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-batch</artifactId>
+      <version>${sonar.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-maven3-plugin</artifactId>
+      <version>${sonar.version}</version>
+      <type>maven-plugin</type>
     </dependency>
   </dependencies>
 
@@ -317,6 +317,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.12</version>
           <configuration>
+            <useSystemClassLoader>true</useSystemClassLoader>
             <parallel>both</parallel>
             <runOrder>random</runOrder>
           </configuration>

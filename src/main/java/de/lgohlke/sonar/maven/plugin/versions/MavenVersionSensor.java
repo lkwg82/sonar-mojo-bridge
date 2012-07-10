@@ -1,6 +1,6 @@
 /*
  * Sonar maven checks plugin
- * Copyright (C) 2012 ${owner}
+ * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
  * This program is free software; you can redistribute it and/or
@@ -19,45 +19,46 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
-import de.lgohlke.sonar.maven.MavenInvoker;
-import de.lgohlke.sonar.maven.handler.ArtifactUpdate;
-import de.lgohlke.sonar.maven.handler.GOAL;
-import de.lgohlke.sonar.maven.handler.UpdateHandler;
-
-import de.lgohlke.sonar.plugin.MavenRule;
-
+import de.lgohlke.sonar.maven.MavenPluginExecutorFactory;
 import de.lgohlke.sonar.plugin.MavenPlugin;
-
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.bootstrap.ProjectDefinition;
+import org.sonar.api.batch.maven.DependsUponMavenPlugin;
+import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
-import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
-import org.sonar.plugins.xml.language.Xml;
+import org.sonar.batch.MavenPluginExecutor;
 
 @Phase(name = Phase.Name.DEFAULT)
-public class MavenVersionSensor implements Sensor {
+public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
+  // private final List<? extends MavenGoalExecutor> executors = Arrays.asList(new DependencyVersionExecutor());
   private final MavenProject mavenProject;
   private final RulesProfile rulesProfile;
 
-  public MavenVersionSensor(final MavenProject mavenProject, final RulesProfile profile) {
+  private final MavenPluginExecutor mavenPluginExecutor;
+
+  private final ProjectDefinition projectDefinition;
+
+  private final Project project;
+
+  public MavenVersionSensor(final MavenProject mavenProject, final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor, final Project project,
+      final ProjectDefinition projectDefinition) {
     this.mavenProject = mavenProject;
     this.rulesProfile = profile;
+    this.project = project;
+    this.projectDefinition = projectDefinition;
+    this.mavenPluginExecutor = MavenPluginExecutorFactory.createInstance(mavenProject, mavenPluginExecutor);
   }
 
   public MavenVersionSensor() {
-    this(null, null);
+    this(null, null, null, null, null);
   }
 
   @Override
@@ -79,45 +80,83 @@ public class MavenVersionSensor implements Sensor {
   @Override
   public void analyse(final Project project, final SensorContext context) {
 
-    for (GOAL goal : GOAL.values()) {
-      if (isCurrentRuleActive(goal.rule())) {
-        executeGoalForRule(context, goal);
-      } else {
-        logger.info("skipping for " + goal.goal() + " rule inactive");
-      }
-    }
+    final MavenPluginHandler handler = getMavenPluginHandler(project);
+    mavenPluginExecutor.execute(project, projectDefinition, handler);
+
+    // for (MavenGoalExecutor executor : executors) {
+    // logger.debug("checking if executor {} needs to be executed", executor.getClass());
+    // executor.setRulesProfile(rulesProfile);
+    // if (executor.needsToBeExecuted()) {
+    // logger.debug("executing", executor.getClass());
+    // executor.execute(mavenProject, context);
+    // }
+    // }
+    // for (GOAL goal : GOAL.values()) {
+    // if (isCurrentRuleActive(goal.rule())) {
+    // executeGoalForRule(context, goal);
+    // } else {
+    // logger.info("skipping for " + goal.goal() + " rule inactive");
+    // }
+    // }
   }
 
-  private void executeGoalForRule(final SensorContext context, final GOAL goal) {
+  @Override
+  public MavenPluginHandler getMavenPluginHandler(final Project project) {
+    return new MavenPluginHandler() {
 
-    try {
-      UpdateHandler handler = goal.handler().newInstance();
-      Log.info("testing for " + goal.goal());
-      new MavenInvoker(mavenProject.getFile(), handler).run(goal);
-
-      Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, goal.rule().getKey());
-      final File file = new File("", mavenProject.getFile().getName());
-      file.setLanguage(Xml.INSTANCE);
-      for (ArtifactUpdate update : handler.getUpdates()) {
-        Violation violation = Violation.create(rule, file);
-        violation.setMessage(goal.rule().formatMessage(update));
-        context.saveViolation(violation);
-      }
-    } catch (InstantiationException e) {
-      logger.error(e.getMessage(), e);
-    } catch (IllegalAccessException e) {
-      logger.error(e.getMessage(), e);
-    } catch (MavenInvocationException e) {
-      logger.error(e.getMessage(), e);
-    }
-  }
-
-  private boolean isCurrentRuleActive(final MavenRule rule) {
-    for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
-      if (activeRule.getConfigKey().equals(rule.getKey()) && activeRule.getRepositoryKey().equals(MavenPlugin.REPOSITORY_KEY)) {
+      @Override
+      public boolean isFixedVersion() {
         return true;
       }
-    }
-    return false;
+
+      @Override
+      public String getVersion() {
+        return "1.3.1";
+      }
+
+      @Override
+      public String getGroupId() {
+        return "org.codehaus.mojo";
+      }
+
+      @Override
+      public String[] getGoals() {
+        return new String[] {"help"};
+      }
+
+      @Override
+      public String getArtifactId() {
+        return "versions-maven-plugin";
+      }
+
+      @Override
+      public void configure(final Project project, final org.sonar.api.batch.maven.MavenPlugin plugin) {
+        // ko
+      }
+    };
   }
+
+  // private void executeGoalForRule(final SensorContext context, final GOAL goal) {
+  //
+  // try {
+  // UpdateHandler handler = goal.handler().newInstance();
+  // Log.info("testing for " + goal.goal());
+  // new MavenInvoker(mavenProject.getFile(), handler).run(goal);
+  //
+  // Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, goal.rule().getKey());
+  // final File file = new File("", mavenProject.getFile().getName());
+  // file.setLanguage(Xml.INSTANCE);
+  // for (ArtifactUpdate update : handler.getUpdates()) {
+  // Violation violation = Violation.create(rule, file);
+  // violation.setMessage(goal.rule().formatMessage(update));
+  // context.saveViolation(violation);
+  // }
+  // } catch (InstantiationException e) {
+  // logger.error(e.getMessage(), e);
+  // } catch (IllegalAccessException e) {
+  // logger.error(e.getMessage(), e);
+  // } catch (MavenInvocationException e) {
+  // logger.error(e.getMessage(), e);
+  // }
+  // }
 }
