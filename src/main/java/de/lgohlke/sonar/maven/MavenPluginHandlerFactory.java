@@ -33,7 +33,7 @@ public class MavenPluginHandlerFactory {
 
   public static MavenPluginHandler createHandler(final String groupArtifactVersionGoalString) {
     Preconditions.checkNotNull(groupArtifactVersionGoalString);
-    Preconditions.checkState(!groupArtifactVersionGoalString.isEmpty(), "no empty string allowed");
+    Preconditions.checkState(groupArtifactVersionGoalString.length() > 0, "no empty string allowed");
 
     final String[] parts = groupArtifactVersionGoalString.split(":");
 
