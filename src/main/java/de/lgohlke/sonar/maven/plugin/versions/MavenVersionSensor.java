@@ -20,7 +20,9 @@
 package de.lgohlke.sonar.maven.plugin.versions;
 
 import de.lgohlke.sonar.maven.MavenPluginExecutorFactory;
+import de.lgohlke.sonar.maven.MavenPluginExecutorWithExecutionListener;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
+import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
@@ -43,7 +45,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final MavenProject mavenProject;
   private final RulesProfile rulesProfile;
 
-  private final MavenPluginExecutor mavenPluginExecutor;
+  private final MavenPluginExecutorWithExecutionListener mavenPluginExecutor;
 
   private final ProjectDefinition projectDefinition;
 
@@ -82,6 +84,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   public void analyse(final Project project, final SensorContext context) {
 
     final MavenPluginHandler handler = getMavenPluginHandler(project);
+    mavenPluginExecutor.setExecutionListener(new ExecutionListenerImpl(new DependencyVersionExecutor().getMojoExectionHandler()));
     mavenPluginExecutor.execute(project, projectDefinition, handler);
 
     // for (MavenGoalExecutor executor : executors) {

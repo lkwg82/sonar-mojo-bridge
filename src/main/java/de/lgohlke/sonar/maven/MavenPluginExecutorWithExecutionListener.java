@@ -19,25 +19,14 @@
  */
 package de.lgohlke.sonar.maven;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.lifecycle.LifecycleExecutor;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.execution.ExecutionListener;
 import org.sonar.batch.MavenPluginExecutor;
 
-import static org.fest.reflect.core.Reflection.field;
-
-public class MavenPluginExecutorFactory {
-
-  public static MavenPluginExecutorWithExecutionListener createInstance(final MavenProject mavenProject, final MavenPluginExecutor mavenPluginExecutor) {
-
-    LifecycleExecutor lifecycleExecutor = field("lifecycleExecutor").
-        ofType(LifecycleExecutor.class).
-        in(mavenPluginExecutor).get();
-
-    MavenSession mavenSession = field("mavenSession").
-        ofType(MavenSession.class).
-        in(mavenPluginExecutor).get();
-
-    return new Maven3PluginExecutorWithExecutionListener(lifecycleExecutor, mavenSession);
-  }
+/**
+ * extends {@link MavenPluginExecutor} with adding {@link ExecutionListener}
+ * @author Lars Gohlke
+ *
+ */
+public interface MavenPluginExecutorWithExecutionListener extends MavenPluginExecutor {
+  void setExecutionListener(final ExecutionListener executionListener);
 }
