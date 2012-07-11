@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven.plugin.versions;
 
 import de.lgohlke.sonar.maven.Goal;
-import de.lgohlke.sonar.maven.MojoUtils;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.model.Dependency;
@@ -29,11 +28,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.versions.DisplayDependencyUpdatesMojo;
 import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.codehaus.mojo.versions.utils.DependencyComparator;
+import org.fest.reflect.reference.TypeRef;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static org.fest.reflect.core.Reflection.staticMethod;
 
 @SuppressWarnings("deprecation")
 @Goal("versions:display-dependency-updates")
@@ -57,7 +59,12 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
     if (!Boolean.FALSE.equals(processDependencyManagement)) {
       final Object[] args = new Object[] {dependencies, dependencyManagement};
       final Class<?>[] parameterTypes = new Class<?>[] {Set.class, Set.class};
-      dependencies = (Set<Dependency>) MojoUtils.invokePrivateMethod(getClass().getSuperclass(), "removeDependencyManagment", args, parameterTypes);
+      dependencies = staticMethod("removeDependencyManagment").
+          withReturnType(new TypeRef<Set<Dependency>>() {
+          }).
+          withParameterTypes(parameterTypes).
+          in(getClass().getSuperclass()).
+          invoke(args);
     }
 
     try
