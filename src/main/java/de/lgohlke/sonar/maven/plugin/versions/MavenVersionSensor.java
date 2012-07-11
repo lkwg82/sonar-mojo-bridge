@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.plugin.versions;
 
 import de.lgohlke.sonar.maven.MavenPluginExecutorFactory;
+import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
@@ -102,38 +103,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return new MavenPluginHandler() {
-
-      @Override
-      public boolean isFixedVersion() {
-        return true;
-      }
-
-      @Override
-      public String getVersion() {
-        return "1.3.1";
-      }
-
-      @Override
-      public String getGroupId() {
-        return "org.codehaus.mojo";
-      }
-
-      @Override
-      public String[] getGoals() {
-        return new String[] {"help"};
-      }
-
-      @Override
-      public String getArtifactId() {
-        return "versions-maven-plugin";
-      }
-
-      @Override
-      public void configure(final Project project, final org.sonar.api.batch.maven.MavenPlugin plugin) {
-        // ko
-      }
-    };
+    return MavenPluginHandlerFactory.createHandler("org.codehaus.mojo:versions-maven-plugin:1.3.1:help");
   }
 
   // private void executeGoalForRule(final SensorContext context, final GOAL goal) {
