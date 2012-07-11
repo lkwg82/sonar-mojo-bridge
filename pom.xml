@@ -302,6 +302,15 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <configuration>
+          <properties>
+            <owner>Lars Gohlke</owner>
+          </properties>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.sonar</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
         <extensions>true</extensions>
