@@ -7,12 +7,10 @@ target/
 *.ipr
 .idea/
 sonar-server/src/main/webapp/WEB-INF/.rakeTasks
-
 # Eclipse
 .classpath
 .project
 .settings
-
 # ---- Mac OS X
 .DS_Store?
 Icon?
@@ -21,12 +19,11 @@ Icon?
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
-
 # ---- Windows
 # Windows image file caches
 Thumbs.db
 # Folder config file
 Desktop.ini
-
 # ---- testNG
 test-output/
+/C:\nppdf32Log\debuglog.txt
