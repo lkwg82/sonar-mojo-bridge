@@ -20,30 +20,18 @@
 package de.lgohlke.sonar.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.fest.reflect.exception.ReflectionError;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import static org.fest.reflect.core.Reflection.staticMethod;
 
 public class MojoUtils {
 
   public static Object invokePrivateMethod(final Class<?> clazz, final String methodname, final Object[] args, final Class<?>[] parameterTypes) throws MojoExecutionException {
-    Method method = null;
     try {
-      method = clazz.getDeclaredMethod(methodname, parameterTypes);
-      method.setAccessible(true);
-      return method.invoke(clazz, args);
-    } catch (NoSuchMethodException e) {
+      return staticMethod(methodname).withParameterTypes(parameterTypes).in(clazz).invoke(args);
+    } catch (ReflectionError e) {
       throw new MojoExecutionException(e.getMessage(), e);
-    } catch (IllegalAccessException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    } catch (InvocationTargetException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    } finally {
-      if (method != null) {
-        method.setAccessible(false);
-      }
     }
-
   }
 
   public static Object invokePrivateMethod(final Class<?> clazz, final String methodname) throws MojoExecutionException {

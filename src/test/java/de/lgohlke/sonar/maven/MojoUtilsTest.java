@@ -19,9 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.MojoUtils;
-
 import org.apache.maven.plugin.MojoExecutionException;
+import org.fest.reflect.exception.ReflectionError;
 import org.testng.annotations.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -44,7 +43,7 @@ public class MojoUtilsTest {
     try {
       MojoUtils.invokePrivateMethod(A.class, "hello");
     } catch (MojoExecutionException e) {
-      assertThat(e.getCause()).isExactlyInstanceOf(NoSuchMethodException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(ReflectionError.class);
     }
   }
 
