@@ -55,6 +55,7 @@ class Maven3PluginExecutorWithExecutionListener extends AbstractMavenPluginExecu
     }
   }
 
+  @Override
   public void setExecutionListener(final ExecutionListener executionListener) {
     this.executionListener = executionListener;
   }
