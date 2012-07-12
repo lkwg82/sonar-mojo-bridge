@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.plugin.versions;
 import de.lgohlke.sonar.maven.MavenPluginExecutorFactory;
 import de.lgohlke.sonar.maven.MavenPluginExecutorWithExecutionListener;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
+import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.project.MavenProject;
@@ -37,7 +38,7 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
 
-@Phase(name = Phase.Name.DEFAULT)
+@Phase(name = Phase.Name.PRE)
 public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -84,7 +85,8 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   public void analyse(final Project project, final SensorContext context) {
 
     final MavenPluginHandler handler = getMavenPluginHandler(project);
-    mavenPluginExecutor.setExecutionListener(new ExecutionListenerImpl(new DependencyVersionExecutor().getMojoExectionHandler()));
+    final MojoExecutionHandler<?, ?> mojoExectionHandler = new DependencyVersionExecutor().getMojoExectionHandler();
+    mavenPluginExecutor.setExecutionListener(new ExecutionListenerImpl(mojoExectionHandler, mavenPluginExecutor));
     mavenPluginExecutor.execute(project, projectDefinition, handler);
 
     // for (MavenGoalExecutor executor : executors) {
@@ -106,7 +108,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler("org.codehaus.mojo:versions-maven-plugin:1.3.1:help");
+    return MavenPluginHandlerFactory.createHandler("org.codehaus.mojo:versions-maven-plugin:1.3.1:display-dependency-updates");
   }
 
   // private void executeGoalForRule(final SensorContext context, final GOAL goal) {

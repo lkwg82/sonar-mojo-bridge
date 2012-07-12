@@ -19,11 +19,12 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
-import de.lgohlke.sonar.maven.MojoExecutionHandler;
-
 import com.thoughtworks.xstream.InitializationException;
-import hudson.maven.MavenEmbedder;
+import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.lifecycle.LifecycleExecutor;
+import org.apache.maven.lifecycle.internal.MojoExecutor;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.DefaultBuildPluginManager;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MavenPluginManager;
@@ -39,30 +40,32 @@ import org.apache.maven.plugin.PluginResolutionException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.sonar.batch.MavenPluginExecutor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 
+import static org.fest.reflect.core.Reflection.field;
+
 public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
 
-  private MavenPluginManager mavenPluginManager;
+  private final MavenPluginManager mavenPluginManager;
 
-  private LegacySupport legacySupport;
+  private final LegacySupport legacySupport;
   private boolean initialized = false;
 
   private final MojoExecutionHandler<?, ?> mojoExecutionHandler;
 
-  public MyDefaultBuildPluginManager(final MavenEmbedder embedder, final MojoExecutionHandler<?, ?> handler) {
+  public MyDefaultBuildPluginManager(final MavenPluginExecutor mavenPluginExecutor, final MojoExecutionHandler<?, ?> handler) {
     this.mojoExecutionHandler = handler;
-    try {
-      mavenPluginManager = embedder.lookup(MavenPluginManager.class);
-      legacySupport = embedder.lookup(LegacySupport.class);
 
-    } catch (ComponentLookupException e) {
-      throw new IllegalStateException(e);
-    }
+    LifecycleExecutor lifecycleExecutor = field("lifecycleExecutor").ofType(LifecycleExecutor.class).in(mavenPluginExecutor).get();
+    MojoExecutor mojoExecutor = field("mojoExecutor").ofType(MojoExecutor.class).in(lifecycleExecutor).get();
+    BuildPluginManager pluginManager = field("pluginManager").ofType(BuildPluginManager.class).in(mojoExecutor).get();
+    legacySupport = field("legacySupport").ofType(LegacySupport.class).in(pluginManager).get();
+    mavenPluginManager = field("mavenPluginManager").ofType(MavenPluginManager.class).in(mojoExecutor).get();
+
   }
 
   private void setPrivateFieldOfSuperClass(final String fieldName, final Object value) throws NoSuchFieldException, SecurityException, IllegalArgumentException,
@@ -78,6 +81,7 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
 
   public MyDefaultBuildPluginManager init() throws InitializationException {
 
+    // field("mavenPluginManager").ofType(MavenPluginManager.class).in(this).set(mavenPluginManager);
     try {
       setPrivateFieldOfSuperClass("mavenPluginManager", mavenPluginManager);
       setPrivateFieldOfSuperClass("legacySupport", legacySupport);

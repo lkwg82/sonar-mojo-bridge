@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.base.Preconditions;
-import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
 import de.lgohlke.sonar.maven.extension.MyPlexusLogger;
 import de.lgohlke.sonar.maven.extension.StopMavenExectionException;
 import hudson.maven.MavenEmbedder;
@@ -161,11 +160,11 @@ public class MavenSonarEmbedder {
         throw new MavenEmbedderException(e1);
       }
 
-      final ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
-      mavenRequest.setExecutionListener(executionListener);
+      // final ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
+      // mavenRequest.setExecutionListener(executionListener);
       final MavenEmbedder embedder = new MavenEmbedder(mavenHome, mavenRequest);
-
-      executionListener.setEmbedder(embedder);
+      //
+      // executionListener.setEmbedder(embedder);
       return new MavenSonarEmbedder(embedder, mavenRequest);
     }
 

@@ -19,24 +19,23 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
+import de.lgohlke.sonar.maven.MavenPluginExecutorWithExecutionListener;
 import de.lgohlke.sonar.maven.MojoExecutionHandler;
-
-import hudson.maven.MavenEmbedder;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionListener;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 public class ExecutionListenerImpl implements ExecutionListener {
 
-  protected MavenEmbedder embedder;
   private final MojoExecutionHandler<?, ?> mojoExectionHandler;
+  private final MavenPluginExecutorWithExecutionListener mavenPluginExecutor;
 
-  public ExecutionListenerImpl(final MojoExecutionHandler<?, ?> mojoExectionHandler) {
+  public ExecutionListenerImpl(final MojoExecutionHandler<?, ?> mojoExectionHandler, final MavenPluginExecutorWithExecutionListener mavenPluginExecutor) {
     this.mojoExectionHandler = mojoExectionHandler;
+    this.mavenPluginExecutor = mavenPluginExecutor;
   }
 
   @Override
@@ -124,14 +123,6 @@ public class ExecutionListenerImpl implements ExecutionListener {
     // ok
   }
 
-  public void setEmbedder(final MavenEmbedder embedder) {
-    this.embedder = embedder;
-  }
-
-  public Object lookup(final Class<?> role) throws ComponentLookupException {
-    return embedder.lookup(role);
-  }
-
   public void handleMojo(final ExecutionEvent event) {
     try {
 
@@ -139,7 +130,7 @@ public class ExecutionListenerImpl implements ExecutionListener {
       MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
       manipulatePluginDescriptor(mojoDescriptor.getPluginDescriptor());
 
-      new MyDefaultBuildPluginManager(embedder, mojoExectionHandler).
+      new MyDefaultBuildPluginManager(mavenPluginExecutor, mojoExectionHandler).
           init().
           executeMojo(event.getSession(), mojoExecution);
     } catch (Exception e) {
