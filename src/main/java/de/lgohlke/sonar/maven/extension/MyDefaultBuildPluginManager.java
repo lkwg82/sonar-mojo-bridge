@@ -22,9 +22,6 @@ package de.lgohlke.sonar.maven.extension;
 import com.thoughtworks.xstream.InitializationException;
 import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.lifecycle.LifecycleExecutor;
-import org.apache.maven.lifecycle.internal.MojoExecutor;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.DefaultBuildPluginManager;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MavenPluginManager;
@@ -40,16 +37,13 @@ import org.apache.maven.plugin.PluginResolutionException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.sonar.batch.MavenPluginExecutor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 
-import static org.fest.reflect.core.Reflection.field;
 
 public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
-
   private final MavenPluginManager mavenPluginManager;
 
   private final LegacySupport legacySupport;
@@ -57,19 +51,15 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
 
   private final MojoExecutionHandler<?, ?> mojoExecutionHandler;
 
-  public MyDefaultBuildPluginManager(final MavenPluginExecutor mavenPluginExecutor, final MojoExecutionHandler<?, ?> handler) {
+  public MyDefaultBuildPluginManager(final MojoLookupStrategy lookuper, final MojoExecutionHandler<?, ?> handler) {
     this.mojoExecutionHandler = handler;
 
-    LifecycleExecutor lifecycleExecutor = field("lifecycleExecutor").ofType(LifecycleExecutor.class).in(mavenPluginExecutor).get();
-    MojoExecutor mojoExecutor = field("mojoExecutor").ofType(MojoExecutor.class).in(lifecycleExecutor).get();
-    BuildPluginManager pluginManager = field("pluginManager").ofType(BuildPluginManager.class).in(mojoExecutor).get();
-    legacySupport = field("legacySupport").ofType(LegacySupport.class).in(pluginManager).get();
-    mavenPluginManager = field("mavenPluginManager").ofType(MavenPluginManager.class).in(mojoExecutor).get();
-
+    legacySupport = lookuper.lookupLegacySupport();
+    mavenPluginManager = lookuper.lookupMavenPluginManager();
   }
 
   private void setPrivateFieldOfSuperClass(final String fieldName, final Object value) throws NoSuchFieldException, SecurityException, IllegalArgumentException,
-      IllegalAccessException {
+                                                                                              IllegalAccessException {
     Field f = getClass().getSuperclass().getDeclaredField(fieldName);
     try {
       f.setAccessible(true);
@@ -80,7 +70,6 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
   }
 
   public MyDefaultBuildPluginManager init() throws InitializationException {
-
     // field("mavenPluginManager").ofType(MavenPluginManager.class).in(this).set(mavenPluginManager);
     try {
       setPrivateFieldOfSuperClass("mavenPluginManager", mavenPluginManager);
@@ -124,7 +113,7 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
    * @throws MojoFailureException
    */
   private void doExecuteMojo(final MavenSession session, final MojoExecution mojoExecution) throws PluginManagerException, PluginConfigurationException, MojoExecutionException,
-      MojoFailureException {
+                             MojoFailureException {
     MavenProject project = session.getCurrentProject();
 
     MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
