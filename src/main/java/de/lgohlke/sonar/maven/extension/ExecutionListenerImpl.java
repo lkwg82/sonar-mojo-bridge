@@ -19,7 +19,6 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
-import de.lgohlke.sonar.maven.MavenPluginExecutorWithExecutionListener;
 import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionListener;
@@ -28,14 +27,13 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
 
+
 public class ExecutionListenerImpl implements ExecutionListener {
-
+  private MojoLookupStrategy lookuper;
   private final MojoExecutionHandler<?, ?> mojoExectionHandler;
-  private final MavenPluginExecutorWithExecutionListener mavenPluginExecutor;
 
-  public ExecutionListenerImpl(final MojoExecutionHandler<?, ?> mojoExectionHandler, final MavenPluginExecutorWithExecutionListener mavenPluginExecutor) {
+  public ExecutionListenerImpl(final MojoExecutionHandler<?, ?> mojoExectionHandler) {
     this.mojoExectionHandler = mojoExectionHandler;
-    this.mavenPluginExecutor = mavenPluginExecutor;
   }
 
   @Override
@@ -123,14 +121,14 @@ public class ExecutionListenerImpl implements ExecutionListener {
     // ok
   }
 
+
   public void handleMojo(final ExecutionEvent event) {
     try {
-
       MojoExecution mojoExecution = event.getMojoExecution();
       MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
       manipulatePluginDescriptor(mojoDescriptor.getPluginDescriptor());
 
-      new MyDefaultBuildPluginManager(mavenPluginExecutor, mojoExectionHandler).
+      new MyDefaultBuildPluginManager(lookuper, mojoExectionHandler).
           init().
           executeMojo(event.getSession(), mojoExecution);
     } catch (Exception e) {
@@ -140,13 +138,18 @@ public class ExecutionListenerImpl implements ExecutionListener {
   }
 
   private void manipulatePluginDescriptor(final PluginDescriptor pluginDescriptor) {
-
     final String canonicalNameOfOriginalMojo = mojoExectionHandler.getOriginalMojo().getCanonicalName();
     for (ComponentDescriptor<?> c : pluginDescriptor.getComponents()) {
       // change mapping
       if (canonicalNameOfOriginalMojo.equals(c.getImplementation())) {
-        c.setImplementationClass(mojoExectionHandler.getReplacingMojo());
+        Class<?> newImplementationClass = mojoExectionHandler.getReplacingMojo();
+        c.setImplementation(newImplementationClass.getCanonicalName());
+        c.setImplementationClass(newImplementationClass);
       }
     }
+  }
+
+  public void setLookuper(final MojoLookupStrategy lookuper) {
+    this.lookuper = lookuper;
   }
 }
