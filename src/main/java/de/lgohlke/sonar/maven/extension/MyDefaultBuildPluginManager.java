@@ -70,7 +70,6 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
   }
 
   public MyDefaultBuildPluginManager init() throws InitializationException {
-    // field("mavenPluginManager").ofType(MavenPluginManager.class).in(this).set(mavenPluginManager);
     try {
       setPrivateFieldOfSuperClass("mavenPluginManager", mavenPluginManager);
       setPrivateFieldOfSuperClass("legacySupport", legacySupport);
