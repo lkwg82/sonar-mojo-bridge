@@ -21,7 +21,6 @@ package de.lgohlke.MavenVersion;
 
 import de.lgohlke.sonar.maven.MavenSonarEmbedder;
 import de.lgohlke.sonar.maven.MojoExecutionHandler;
-
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,14 +33,17 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class MavenEmbedderTest {
   private static final String MAVEN_HOME_KEY = "maven.home";
   private static final String M2_HOME_KEY = "M2_HOME";
-  // private static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
-  public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
+  public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
+
+  // public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 
   public static class MyHelpMojo extends HelpMojo {
     @Override
@@ -62,16 +64,20 @@ public class MavenEmbedderTest {
   @Test
   public void testSimpleRunWithExecutionListener() throws Exception {
 
+    final List<String> statePassed = new ArrayList<String>();
+
     final MojoExecutionHandler<HelpMojo, MyHelpMojo> mojoExectionHandler = new MojoExecutionHandler<HelpMojo, MyHelpMojo>() {
 
       @Override
       protected void beforeExecution2(final MyHelpMojo mojo) {
         assertThat(mojo).isNotNull();
+        statePassed.add("before");
       }
 
       @Override
       protected void afterExecution2(final MyHelpMojo mojo) {
         assertThat(mojo).isNotNull();
+        statePassed.add("after");
       }
 
       @Override
@@ -91,6 +97,8 @@ public class MavenEmbedderTest {
         setAlternativeMavenHome(MAVEN_HOME).
         setMojoExecutionHandler(mojoExectionHandler).
         build().run();
+
+    assertThat(statePassed).containsExactly("before", "after");
   }
 
   final String goal = "versions:display-dependency-updates";
