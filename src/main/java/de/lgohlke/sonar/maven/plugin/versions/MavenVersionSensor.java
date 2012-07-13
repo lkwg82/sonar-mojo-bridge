@@ -21,7 +21,6 @@ package de.lgohlke.sonar.maven.plugin.versions;
 
 import de.lgohlke.sonar.maven.MavenPluginExecutorFactory;
 import de.lgohlke.sonar.maven.MavenPluginExecutorWithExecutionListener;
-import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
 import de.lgohlke.sonar.plugin.MavenPlugin;
@@ -74,19 +73,22 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   public boolean shouldExecuteOnProject(final Project project) {
     String prop = (String) project.getProperty(MavenPlugin.ANALYSIS_ENABLED);
     if (prop == null) {
-
       prop = MavenPlugin.DEFAULT;
     }
+
     final boolean propActive = Boolean.parseBoolean(prop);
-    return propActive && mavenProject != null;
+    return propActive && (mavenProject != null);
   }
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-
     final MavenPluginHandler handler = getMavenPluginHandler(project);
-    final MojoExecutionHandler<?, ?> mojoExectionHandler = new DependencyVersionExecutor().getMojoExectionHandler();
-    mavenPluginExecutor.setExecutionListener(new ExecutionListenerImpl(mojoExectionHandler, mavenPluginExecutor));
+
+    // final MojoExecutionHandler<?, ?> mojoExectionHandler = new DependencyVersionExecutor().getMojoExectionHandler();
+    final MojoExecutionHandler<?, ?> mojoExectionHandler = new VersionHelpExecutor().getMojoExectionHandler();
+    ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
+    executionListener.setLookuper(new VersionMojoLookupStratey(mavenPluginExecutor));
+    mavenPluginExecutor.setExecutionListener(executionListener);
     mavenPluginExecutor.execute(project, projectDefinition, handler);
 
     // for (MavenGoalExecutor executor : executors) {
@@ -108,7 +110,8 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler("org.codehaus.mojo:versions-maven-plugin:1.3.1:display-dependency-updates");
+    // return MavenVersionsPluginHandlerFactory.DisplayDependencyUpdates.pluginHandler();
+    return MavenVersionsPluginHandlerFactory.create(MavenVersionsGoal.Help);
   }
 
   // private void executeGoalForRule(final SensorContext context, final GOAL goal) {
