@@ -37,7 +37,6 @@ import org.apache.maven.plugin.PluginResolutionException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -56,9 +55,14 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
 
     legacySupport = lookuper.lookupLegacySupport();
     mavenPluginManager = lookuper.lookupMavenPluginManager();
+
+    // PlexusContainer container = field("container").ofType(PlexusContainer.class).in(mavenPluginManager).get();
+    // container.
   }
 
-  private void setPrivateFieldOfSuperClass(final String fieldName, final Object value) throws NoSuchFieldException, SecurityException, IllegalArgumentException,
+  private void setPrivateFieldOfSuperClass(final String fieldName, final Object value) throws NoSuchFieldException,
+                                                                                              SecurityException,
+                                                                                              IllegalArgumentException,
                                                                                               IllegalAccessException {
     Field f = getClass().getSuperclass().getDeclaredField(fieldName);
     try {
@@ -91,9 +95,9 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
   // ----------------------------------------------------------------------
 
   @Override
-  public void executeMojo(final MavenSession session, final MojoExecution mojoExecution) throws MojoFailureException, MojoExecutionException, PluginConfigurationException,
-      PluginManagerException
-  {
+  public void executeMojo(final MavenSession session, final MojoExecution mojoExecution)
+                   throws MojoFailureException, MojoExecutionException, PluginConfigurationException,
+                          PluginManagerException {
     if (initialized) {
       doExecuteMojo(session, mojoExecution);
     } else {
@@ -111,7 +115,8 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
    * @throws MojoExecutionException
    * @throws MojoFailureException
    */
-  private void doExecuteMojo(final MavenSession session, final MojoExecution mojoExecution) throws PluginManagerException, PluginConfigurationException, MojoExecutionException,
+  private void doExecuteMojo(final MavenSession session, final MojoExecution mojoExecution)
+                      throws PluginManagerException, PluginConfigurationException, MojoExecutionException,
                              MojoFailureException {
     MavenProject project = session.getCurrentProject();
 
@@ -120,11 +125,9 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
     Mojo mojo = null;
 
     ClassRealm pluginRealm;
-    try
-    {
+    try {
       pluginRealm = getPluginRealm(session, mojoDescriptor.getPluginDescriptor());
-    } catch (PluginResolutionException e)
-    {
+    } catch (PluginResolutionException e) {
       throw new PluginExecutionException(mojoExecution, project, e);
     }
 
@@ -133,8 +136,7 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
 
     MavenSession oldSession = legacySupport.getSession();
 
-    try
-    {
+    try {
       mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, mojoExecution);
 
       legacySupport.setSession(session);
@@ -142,55 +144,47 @@ public class MyDefaultBuildPluginManager extends DefaultBuildPluginManager {
       // NOTE: DuplicateArtifactAttachmentException is currently unchecked, so be careful removing this try/catch!
       // This is necessary to avoid creating compatibility problems for existing plugins that use
       // MavenProjectHelper.attachArtifact(..).
-      try
-      {
+      try {
         mojoExecutionHandler.beforeExecution(mojo);
         mojo.execute();
         mojoExecutionHandler.afterExecution(mojo);
-      } catch (ClassCastException e)
-      {
+      } catch (ClassCastException e) {
         // to be processed in the outer catch block
         throw e;
-      } catch (RuntimeException e)
-      {
+      } catch (RuntimeException e) {
         throw new PluginExecutionException(mojoExecution, project, e);
       }
-    } catch (PluginContainerException e)
-    {
+    } catch (PluginContainerException e) {
       throw new PluginExecutionException(mojoExecution, project, e);
-    } catch (NoClassDefFoundError e)
-    {
+    } catch (NoClassDefFoundError e) {
       ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
       PrintStream ps = new PrintStream(os);
-      ps.println("A required class was missing while executing " + mojoDescriptor.getId() + ": "
-        + e.getMessage());
+      ps.println("A required class was missing while executing " + mojoDescriptor.getId() + ": " +
+        e.getMessage());
       pluginRealm.display(ps);
 
       Exception wrapper = new PluginContainerException(mojoDescriptor, pluginRealm, os.toString(), e);
 
       throw new PluginExecutionException(mojoExecution, project, wrapper);
-    } catch (LinkageError e)
-    {
+    } catch (LinkageError e) {
       ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
       PrintStream ps = new PrintStream(os);
-      ps.println("An API incompatibility was encountered while executing " + mojoDescriptor.getId() + ": "
-        + e.getClass().getName() + ": " + e.getMessage());
+      ps.println("An API incompatibility was encountered while executing " + mojoDescriptor.getId() + ": " +
+        e.getClass().getName() + ": " + e.getMessage());
       pluginRealm.display(ps);
 
       Exception wrapper = new PluginContainerException(mojoDescriptor, pluginRealm, os.toString(), e);
 
       throw new PluginExecutionException(mojoExecution, project, wrapper);
-    } catch (ClassCastException e)
-    {
+    } catch (ClassCastException e) {
       ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
       PrintStream ps = new PrintStream(os);
-      ps.println("A type incompatibility occured while executing " + mojoDescriptor.getId() + ": "
-        + e.getMessage());
+      ps.println("A type incompatibility occured while executing " + mojoDescriptor.getId() + ": " +
+        e.getMessage());
       pluginRealm.display(ps);
 
       throw new PluginExecutionException(mojoExecution, project, os.toString(), e);
-    } finally
-    {
+    } finally {
       mavenPluginManager.releaseMojo(mojo, mojoExecution);
 
       Thread.currentThread().setContextClassLoader(oldClassLoader);
