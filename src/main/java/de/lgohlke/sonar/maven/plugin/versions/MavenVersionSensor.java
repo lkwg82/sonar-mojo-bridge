@@ -19,10 +19,7 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
-import de.lgohlke.sonar.maven.MavenPluginExecutorFactory;
-import de.lgohlke.sonar.maven.MavenPluginExecutorWithExecutionListener;
-import de.lgohlke.sonar.maven.MojoExecutionHandler;
-import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
+import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
@@ -30,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
@@ -41,27 +37,17 @@ import org.sonar.batch.MavenPluginExecutor;
 public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  // private final List<? extends MavenGoalExecutor> executors = Arrays.asList(new DependencyVersionExecutor());
   private final MavenProject mavenProject;
   private final RulesProfile rulesProfile;
 
-  private final MavenPluginExecutorWithExecutionListener mavenPluginExecutor;
-
-  private final ProjectDefinition projectDefinition;
-
-  private final Project project;
-
-  public MavenVersionSensor(final MavenProject mavenProject, final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor, final Project project,
-      final ProjectDefinition projectDefinition) {
+  public MavenVersionSensor(final MavenProject mavenProject, final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor) {
     this.mavenProject = mavenProject;
     this.rulesProfile = profile;
-    this.project = project;
-    this.projectDefinition = projectDefinition;
-    this.mavenPluginExecutor = MavenPluginExecutorFactory.createInstance(mavenProject, mavenPluginExecutor);
+    MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor);
   }
 
   public MavenVersionSensor() {
-    this(null, null, null, null, null);
+    this(null, null, null);
   }
 
   @Override
@@ -82,14 +68,14 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    final MavenPluginHandler handler = getMavenPluginHandler(project);
+    // final MavenPluginHandler handler = getMavenPluginHandler(project);
 
     // final MojoExecutionHandler<?, ?> mojoExectionHandler = new DependencyVersionExecutor().getMojoExectionHandler();
-    final MojoExecutionHandler<?, ?> mojoExectionHandler = new VersionHelpExecutor().getMojoExectionHandler();
-    ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
-    executionListener.setLookuper(new VersionMojoLookupStratey(mavenPluginExecutor));
-    mavenPluginExecutor.setExecutionListener(executionListener);
-    mavenPluginExecutor.execute(project, projectDefinition, handler);
+    // final MojoExecutionHandler<?, ?> mojoExectionHandler = new VersionHelpExecutor().getMojoExectionHandler();
+    // ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
+    // executionListener.setLookuper(new VersionMojoLookupStratey(mavenPluginExecutor));
+    // mavenPluginExecutor.setExecutionListener(executionListener);
+    // mavenPluginExecutor.execute(project, projectDefinition, handler);
 
     // for (MavenGoalExecutor executor : executors) {
     // logger.debug("checking if executor {} needs to be executed", executor.getClass());
