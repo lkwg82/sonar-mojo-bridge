@@ -22,8 +22,6 @@ package de.lgohlke.sonar.maven.plugin.versions;
 import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -35,7 +33,7 @@ import org.sonar.batch.MavenPluginExecutor;
 
 @Phase(name = Phase.Name.PRE)
 public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
-  private final Logger logger = LoggerFactory.getLogger(getClass());
+  // private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private final MavenProject mavenProject;
   private final RulesProfile rulesProfile;
@@ -97,7 +95,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
     // return MavenVersionsPluginHandlerFactory.DisplayDependencyUpdates.pluginHandler();
-    return MavenVersionsPluginHandlerFactory.create(MavenVersionsGoal.Help);
+    return MavenVersionsPluginHandlerFactory.create(MavenVersionsGoal.DisplayDependencyUpdates);
   }
 
   // private void executeGoalForRule(final SensorContext context, final GOAL goal) {
