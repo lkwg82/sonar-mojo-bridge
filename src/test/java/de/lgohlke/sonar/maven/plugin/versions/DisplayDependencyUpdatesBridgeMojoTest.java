@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
-import de.lgohlke.sonar.maven.plugin.versions.DisplayDependencyUpdatesBridgeMojo;
-
 import de.lgohlke.MavenVersion.MavenEmbedderTest;
 import de.lgohlke.sonar.maven.MavenSonarEmbedder;
 import de.lgohlke.sonar.maven.MojoExecutionHandler;
@@ -32,7 +30,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class DisplayDependencyUpdatesBridgeMojoTest {
 
-  @Test
+  @Test(enabled = false)
   public void test() throws MavenEmbedderException {
 
     final MojoExecutionHandler<DisplayDependencyUpdatesMojo, DisplayDependencyUpdatesBridgeMojo> mojoExectionHandler = new MojoExecutionHandler<DisplayDependencyUpdatesMojo, DisplayDependencyUpdatesBridgeMojo>() {
