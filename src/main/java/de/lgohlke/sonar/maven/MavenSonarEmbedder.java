@@ -20,13 +20,10 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.base.Preconditions;
-import de.lgohlke.sonar.maven.extension.ExecutionListenerImpl;
 import de.lgohlke.sonar.maven.extension.MyPlexusLogger;
-import de.lgohlke.sonar.maven.extension.StopMavenExectionException;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
-import org.apache.maven.InternalErrorException;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.plugin.Mojo;
@@ -55,11 +52,7 @@ public class MavenSonarEmbedder {
       MavenExecutionResult result = embedder.execute(mavenRequest);
       if (result.hasExceptions()) {
         final Throwable firstException = result.getExceptions().get(0);
-        if (firstException instanceof InternalErrorException && firstException.getCause() != null && firstException.getCause() instanceof StopMavenExectionException) {
-          // everything ok, this is the workaround
-        } else {
-          throw new MavenEmbedderException(firstException);
-        }
+        throw new MavenEmbedderException(firstException);
       }
     } catch (ComponentLookupException e) {
       throw new MavenEmbedderException(e);
@@ -161,11 +154,7 @@ public class MavenSonarEmbedder {
         throw new MavenEmbedderException(e1);
       }
 
-      final ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
-      mavenRequest.setExecutionListener(executionListener);
       final MavenEmbedder embedder = new MavenEmbedder(mavenHome, mavenRequest);
-
-      executionListener.setLookuper(new SonarMavenEmbeddedLookupStrategy(embedder));
       return new MavenSonarEmbedder(embedder, mavenRequest);
     }
 
