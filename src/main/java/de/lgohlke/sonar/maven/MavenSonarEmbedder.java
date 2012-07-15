@@ -26,7 +26,6 @@ import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
-import org.apache.maven.plugin.Mojo;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +66,6 @@ public class MavenSonarEmbedder {
     private String pom;
     private String goal;
     private File mavenHome;
-    private MojoExecutionHandler<?, ?> mojoExectionHandler;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
       Preconditions.checkNotNull(pomFile);
@@ -91,12 +89,6 @@ public class MavenSonarEmbedder {
       if (this.mavenHome == null && mavenHome.isDirectory()) {
         this.mavenHome = mavenHome;
       }
-      return this;
-    }
-
-    public MavenSonarEmbedderBuilder setMojoExecutionHandler(final MojoExecutionHandler<?, ?> mojoExectionHandler) {
-      Preconditions.checkNotNull(mojoExectionHandler);
-      this.mojoExectionHandler = mojoExectionHandler;
       return this;
     }
 
@@ -131,10 +123,6 @@ public class MavenSonarEmbedder {
     public MavenSonarEmbedder build() throws MavenEmbedderException {
 
       Preconditions.checkNotNull(pom, "missing pom");
-      Preconditions.checkNotNull(mojoExectionHandler, "missing mojoExectionHandler");
-      if (goal == null) {
-        useBridgeMojo(mojoExectionHandler.getReplacingMojo());
-      }
 
       Preconditions.checkNotNull(goal, "missing goal");
       Preconditions.checkState(goal.length() > 0, "goal is empty");
@@ -156,15 +144,6 @@ public class MavenSonarEmbedder {
 
       final MavenEmbedder embedder = new MavenEmbedder(mavenHome, mavenRequest);
       return new MavenSonarEmbedder(embedder, mavenRequest);
-    }
-
-    public MavenSonarEmbedderBuilder useBridgeMojo(final Class<? extends Mojo> clazz) throws MavenEmbedderException {
-      Goal goalAnnotation = clazz.getAnnotation(Goal.class);
-      if (goalAnnotation == null) {
-        throw new MavenEmbedderException("mojos need " + Goal.class + " annotation to identify the goal, this is missing in " + clazz);
-      }
-
-      return goal(goalAnnotation.value());
     }
   }
 }

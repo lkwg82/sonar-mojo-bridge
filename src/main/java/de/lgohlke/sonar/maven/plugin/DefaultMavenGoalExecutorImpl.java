@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven.plugin;
 
 import de.lgohlke.sonar.maven.MavenSonarEmbedder;
-import de.lgohlke.sonar.maven.MojoExecutionHandler;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import de.lgohlke.sonar.plugin.MavenRule;
 import hudson.maven.MavenEmbedderException;
@@ -67,8 +66,6 @@ public abstract class DefaultMavenGoalExecutorImpl implements MavenGoalExecutor 
 
   protected abstract List<? extends MavenRule> getMavenRules();
 
-  protected abstract MojoExecutionHandler<?, ?> getMojoExectionHandler();
-
   @Override
   public void execute(final MavenProject project, final SensorContext context) {
 
@@ -81,7 +78,6 @@ public abstract class DefaultMavenGoalExecutorImpl implements MavenGoalExecutor 
     try {
       MavenSonarEmbedder.configure().
           usePomFile(project.getFile().getAbsolutePath()).
-          setMojoExecutionHandler(getMojoExectionHandler()).
           build().run();
     } catch (MavenEmbedderException e) {
       throw new SonarException(e);
