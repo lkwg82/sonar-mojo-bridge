@@ -27,3 +27,4 @@ Desktop.ini
 # ---- testNG
 test-output/
 /C:\nppdf32Log\debuglog.txt
+/*.log
