@@ -17,22 +17,31 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar.maven.extension;
 
-import java.lang.reflect.InvocationHandler;
+import org.apache.maven.plugin.MavenPluginManager;
 
-abstract class DynamicProxy<T> implements InvocationHandler {
-  private T underlying;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
-  public DynamicProxy(final T underlying) {
-    this.underlying = underlying;
+public class MavenPluginManagerProxy<T extends MavenPluginManager> extends DynamicProxy<T> {
+
+  private final ClassLoader classloader;
+
+  public MavenPluginManagerProxy(final T underlying, final ClassLoader cl) {
+    super(underlying);
+    this.classloader = cl;
   }
 
-  public T getUnderLying() {
-    return underlying;
-  }
-
-  public void setUnderlying(final T underlying) {
-    this.underlying = underlying;
+  @Override
+  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    if (method.getName().equals("setupPluginRealm")) {
+      args[2] = classloader;
+      final List<String> imports = new ArrayList<String>();
+      imports.add("de.lgohlke");
+      args[3] = imports;
+    }
+    return method.invoke(getUnderLying(), args);
   }
 }
