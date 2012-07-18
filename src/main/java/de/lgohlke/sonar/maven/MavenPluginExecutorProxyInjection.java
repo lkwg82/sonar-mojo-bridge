@@ -19,80 +19,112 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.plugin.versions.DisplayDependencyMojoProxy;
+import de.lgohlke.sonar.maven.extension.MavenPluginManagerProxy;
+
+import de.lgohlke.sonar.maven.extension.DynamicProxy;
+import de.lgohlke.sonar.maven.extension.PlexusContainerProxy;
+
+import de.lgohlke.sonar.maven.plugin.versions.DisplayDependencyUpdatesBridgeMojo;
+import de.lgohlke.sonar.maven.plugin.versions.ResultHandler;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.lifecycle.LifecycleExecutor;
-import org.apache.maven.lifecycle.internal.MojoExecutor;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.Mojo;
+import org.codehaus.mojo.versions.DisplayDependencyUpdatesMojo;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import static org.fest.reflect.core.Reflection.field;
 
 public class MavenPluginExecutorProxyInjection {
 
-  public static void inject(final MavenPluginExecutor mavenPluginExecutor) {
-    if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
-      decorateMaven3ExecutionProcess(mavenPluginExecutor);
+  public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final ResultHandler handler) {
+    try {
+      if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
+        decorateMaven3ExecutionProcess(mavenPluginExecutor, classLoader, handler);
+      }
+    } catch (NoClassDefFoundError e) {
+      decorateMaven2ExecutionProcess(mavenPluginExecutor, classLoader, handler);
     }
   }
 
-  private static void decorateMaven3ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor) {
+  private static void decorateMaven2ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final ResultHandler handler) {
+    System.out.println(mavenPluginExecutor);
+  }
+
+  private static void decorateMaven3ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final ResultHandler handler) {
     try {
-      LifecycleExecutor lifecycleExecutor = field("lifecycleExecutor").ofType(LifecycleExecutor.class).in(mavenPluginExecutor).get();
       MavenSession mavenSession = field("mavenSession").ofType(MavenSession.class).in(mavenPluginExecutor).get();
-      MojoExecutor mojoExecutor = field("mojoExecutor").ofType(MojoExecutor.class).in(lifecycleExecutor).get();
-      BuildPluginManager pluginManager = field("pluginManager").ofType(BuildPluginManager.class).in(mojoExecutor).get();
       PlexusContainer container = field("container").ofType(PlexusContainer.class).in(mavenSession).get();
       MavenPluginManager mavenPluginManager = container.lookup(MavenPluginManager.class);
-      mavenPluginManager = getMavenPluginManagerProxy(MavenPluginManager.class, mavenPluginManager);
+      BuildPluginManager pluginManager = container.lookup(BuildPluginManager.class);
+      field("container").ofType(PlexusContainer.class).in(mavenPluginManager).set(getPlexusContainerProxy(PlexusContainer.class, container, handler));
+      mavenPluginManager = getMavenPluginManagerProxy(MavenPluginManager.class, mavenPluginManager, classLoader);
       field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
   }
 
+  public static <T extends MavenPluginManager> T getMavenPluginManagerProxy(final Class<T> intf, final T obj, final ClassLoader cl) {
+    return newInstance(obj, intf, new MavenPluginManagerProxy<T>(obj, cl));
+  }
+
+  public static <T extends PlexusContainer> T getPlexusContainerProxy(final Class<T> intf, final T obj, final ResultHandler handler) {
+    return newInstance(obj, intf, new PlexusContainerProxy<T>(obj, handler));
+  }
+
   @SuppressWarnings("unchecked")
-  public static <T extends MavenPluginManager> T getMavenPluginManagerProxy(final Class<T> intf,
-      final T obj) {
-    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[] {intf}, new MavenPluginManagerProxy<T>(obj));
+  private static <T> T newInstance(final Object obj, final Class<T> interfaze, final DynamicProxy<?> proxy) {
+    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[] {interfaze}, proxy);
+  }
+}
+
+class MyMojoExecutionHandler extends MojoExecutionHandler<DisplayDependencyUpdatesMojo, DisplayDependencyUpdatesBridgeMojo> {
+
+  @Override
+  protected void beforeExecution2(final DisplayDependencyUpdatesBridgeMojo mojo) {
+    System.out.println(mojo);
+  }
+
+  @Override
+  protected void afterExecution2(final DisplayDependencyUpdatesBridgeMojo mojo) {
+    System.out.println(mojo);
+  }
+
+  @Override
+  public Class<DisplayDependencyUpdatesMojo> getOriginalMojo() {
+    return DisplayDependencyUpdatesMojo.class;
+  }
+
+  @Override
+  public Class<DisplayDependencyUpdatesBridgeMojo> getReplacingMojo() {
+    return DisplayDependencyUpdatesBridgeMojo.class;
   }
 
 }
 
-class MavenPluginManagerProxy<T extends MavenPluginManager> extends DynamicProxy<T> {
+abstract class MojoExecutionHandler<ORIGINAL_MOJO extends Mojo, REPLACING_MOJO extends Mojo> {
 
-  public MavenPluginManagerProxy(final T underlying) {
-    super(underlying);
+  @SuppressWarnings("unchecked")
+  public final void beforeExecution(final Mojo mojo) {
+    beforeExecution2((REPLACING_MOJO) mojo);
   }
 
-  @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    Object result = method.invoke(getUnderLying(), args);
-    if (method.getName().equals("getConfiguredMojo")) {
+  protected abstract void beforeExecution2(final REPLACING_MOJO mojo);
 
-      final ClassLoader classLoader = result.getClass().getClassLoader();
-      {
-        ClassRealm x = (ClassRealm) classLoader;
-        x.importFrom(getClass().getClassLoader(), "de.lgohlke");
-        System.out.println(x + "");
-      }
-
-      Class<?> clazz = classLoader.loadClass(DisplayDependencyMojoProxy.class.getCanonicalName());
-      // final HelpMojoProxy<Mojo> proxymojo = new HelpMojoProxy<Mojo>();
-      DisplayDependencyMojoProxy<Mojo> proxymojo = (DisplayDependencyMojoProxy<Mojo>) clazz.newInstance();
-      // new DisplayDependencyMojoProxy<Mojo>();
-      proxymojo.setUnderlying((Mojo) result);
-      result = Proxy.newProxyInstance(result.getClass().getClassLoader(), new Class<?>[] {Mojo.class}, proxymojo);
-    }
-
-    return result;
+  @SuppressWarnings("unchecked")
+  public final void afterExecution(final Mojo mojo) {
+    afterExecution2((REPLACING_MOJO) mojo);
   }
+
+  protected abstract void afterExecution2(final REPLACING_MOJO mojo);
+
+  public abstract Class<ORIGINAL_MOJO> getOriginalMojo();
+
+  public abstract Class<REPLACING_MOJO> getReplacingMojo();
+
 }
