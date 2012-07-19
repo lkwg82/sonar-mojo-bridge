@@ -19,13 +19,12 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.extension.MavenPluginManagerProxy;
+import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojo;
 
 import de.lgohlke.sonar.maven.extension.DynamicProxy;
+import de.lgohlke.sonar.maven.extension.MavenPluginManagerProxy;
 import de.lgohlke.sonar.maven.extension.PlexusContainerProxy;
-
-import de.lgohlke.sonar.maven.plugin.versions.DisplayDependencyUpdatesBridgeMojo;
-import de.lgohlke.sonar.maven.plugin.versions.ResultHandler;
+import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
@@ -41,7 +40,7 @@ import static org.fest.reflect.core.Reflection.field;
 
 public class MavenPluginExecutorProxyInjection {
 
-  public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final ResultHandler handler) {
+  public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
       if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
         decorateMaven3ExecutionProcess(mavenPluginExecutor, classLoader, handler);
@@ -51,11 +50,11 @@ public class MavenPluginExecutorProxyInjection {
     }
   }
 
-  private static void decorateMaven2ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final ResultHandler handler) {
+  private static void decorateMaven2ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     System.out.println(mavenPluginExecutor);
   }
 
-  private static void decorateMaven3ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final ResultHandler handler) {
+  private static void decorateMaven3ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
       MavenSession mavenSession = field("mavenSession").ofType(MavenSession.class).in(mavenPluginExecutor).get();
       PlexusContainer container = field("container").ofType(PlexusContainer.class).in(mavenSession).get();
@@ -73,7 +72,7 @@ public class MavenPluginExecutorProxyInjection {
     return newInstance(obj, intf, new MavenPluginManagerProxy<T>(obj, cl));
   }
 
-  public static <T extends PlexusContainer> T getPlexusContainerProxy(final Class<T> intf, final T obj, final ResultHandler handler) {
+  public static <T extends PlexusContainer> T getPlexusContainerProxy(final Class<T> intf, final T obj, final BridgeMojoMapper handler) {
     return newInstance(obj, intf, new PlexusContainerProxy<T>(obj, handler));
   }
 

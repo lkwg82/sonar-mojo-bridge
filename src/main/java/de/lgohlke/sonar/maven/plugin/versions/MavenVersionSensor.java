@@ -21,8 +21,6 @@ package de.lgohlke.sonar.maven.plugin.versions;
 
 import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.plugin.MavenPlugin;
-import org.apache.maven.model.Dependency;
-import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -32,32 +30,16 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 @Phase(name = Phase.Name.PRE)
 public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   // private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private final RulesProfile rulesProfile;
-  private final ResultHandler handler = new ResultHandler() {
-
-    private Object result;
-
-    @Override
-    public void setResult(final Object o) {
-      result = o;
-    }
-
-    @Override
-    public Object getResult() {
-      return result;
-    }
-  };
+  private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper();
 
   public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor) {
     this.rulesProfile = profile;
-    MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), handler);
+    MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
   }
 
   public MavenVersionSensor() {
@@ -82,14 +64,14 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   @Override
   public void analyse(final Project project, final SensorContext context) {
 
-    @SuppressWarnings("unchecked")
-    Map<String, Map<Dependency, ArtifactVersions>> updateMap = (Map<String, Map<Dependency, ArtifactVersions>>) handler.getResult();
-    for (Entry<String, Map<Dependency, ArtifactVersions>> entry : updateMap.entrySet()) {
-      System.out.println("section " + entry.getKey());
-      for (Entry<Dependency, ArtifactVersions> update : entry.getValue().entrySet()) {
-        System.out.println(update.getKey() + " -> " + update.getValue());
-      }
-    }
+    // @SuppressWarnings("unchecked")
+    // Map<String, Map<Dependency, ArtifactVersions>> updateMap = (Map<String, Map<Dependency, ArtifactVersions>>) handler.getResult();
+    // for (Entry<String, Map<Dependency, ArtifactVersions>> entry : updateMap.entrySet()) {
+    // System.out.println("section " + entry.getKey());
+    // for (Entry<Dependency, ArtifactVersions> update : entry.getValue().entrySet()) {
+    // System.out.println(update.getKey() + " -> " + update.getValue());
+    // }
+    // }
     // final MavenPluginHandler handler = getMavenPluginHandler(project);
 
     // final MojoExecutionHandler<?, ?> mojoExectionHandler = new DependencyVersionExecutor().getMojoExectionHandler();

@@ -19,9 +19,8 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
-import de.lgohlke.sonar.maven.plugin.versions.DisplayDependencyUpdatesBridgeMojo;
-import de.lgohlke.sonar.maven.plugin.versions.ResultHandler;
-import de.lgohlke.sonar.maven.plugin.versions.ResultHandlerHolder;
+import de.lgohlke.sonar.maven.plugin.BridgeMojo;
+import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
 
@@ -31,25 +30,27 @@ import static org.fest.reflect.core.Reflection.field;
 
 public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
 
-  private final ResultHandler handler;
+  private final BridgeMojoMapper bridgeMojoMapper;
 
-  public PlexusContainerProxy(final T underlying, final ResultHandler handler) {
+  public PlexusContainerProxy(final T underlying, final BridgeMojoMapper bridgeMojoMapper) {
     super(underlying);
-    this.handler = handler;
+    this.bridgeMojoMapper = bridgeMojoMapper;
   }
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (method.getName().equals("addComponentDescriptor")) {
       MojoDescriptor descriptor = (MojoDescriptor) args[0];
-      if (descriptor.getGoal().equals("display-dependency-updates")) {
-        field("implementation").ofType(String.class).in(descriptor).set(DisplayDependencyUpdatesBridgeMojo.class.getCanonicalName());
+      Class<?> bridgeMojoClass = bridgeMojoMapper.getBridgeMojoClassFor(descriptor.getGoal());
+      if (bridgeMojoClass != null) {
+        field("implementation").ofType(String.class).in(descriptor).set(bridgeMojoClass.getCanonicalName());
       }
     }
     Object result = method.invoke(getUnderLying(), args);
+
     if (method.getName().equals("lookup")) {
-      if (result instanceof ResultHandlerHolder) {
-        ((ResultHandlerHolder) result).injectResultHandler(handler);
+      if (result instanceof BridgeMojo) {
+        bridgeMojoMapper.injectResultTransferHandler((BridgeMojo<?>) result);
       }
     }
     return result;
