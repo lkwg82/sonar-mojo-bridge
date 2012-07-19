@@ -20,17 +20,22 @@
 package de.lgohlke.sonar.maven.plugin.versions;
 
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.versions.DisplayDependencyUpdatesMojo;
 import org.codehaus.mojo.versions.api.ArtifactVersions;
+import org.codehaus.mojo.versions.api.UpdateScope;
 import org.codehaus.mojo.versions.utils.DependencyComparator;
 import org.fest.reflect.reference.TypeRef;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,7 +46,7 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   public static final String DEPENDENCIES = "Dependencies";
   public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
 
-  private final Map<String, Map<Dependency, ArtifactVersions>> updateMap = new HashMap<String, Map<Dependency, ArtifactVersions>>();
+  private final Map<String, List<ArtifactUpdate>> updateMap = new HashMap<String, List<ArtifactUpdate>>();
 
   protected Boolean processDependencyManagement;
   protected Boolean processDependencies;
@@ -81,6 +86,12 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
     handler.setResult(updateMap);
   }
 
+  /**
+   * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment( Set, Set )}
+   * @param dependencies
+   * @param dependencyManagement
+   * @return
+   */
   private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
 
     final Object[] args = new Object[] {dependencies, dependencyManagement};
@@ -95,11 +106,33 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
 
   private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section)
   {
-    updateMap.put(section, updates);
-  }
+    List<ArtifactUpdate> artiFactUpdates = new ArrayList<ArtifactUpdate>(updates.size());
 
-  public Map<String, Map<Dependency, ArtifactVersions>> getUpdateMap() {
-    return updateMap;
+    for (Entry<Dependency, ArtifactVersions> entry : updates.entrySet()) {
+
+      ArtifactVersions versions = entry.getValue();
+      ArtifactVersion latest = null;
+      if (versions.isCurrentVersionDefined())
+      {
+        latest = versions.getNewestUpdate(UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
+      }
+      else
+      {
+        ArtifactVersion newestVersion = versions.getNewestVersion(versions.getArtifact().getVersionRange(), Boolean.TRUE.equals(allowSnapshots));
+        if (newestVersion != null) {
+          latest = versions.getNewestUpdate(newestVersion, UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
+          if (ArtifactVersions.isVersionInRange(latest, versions.getArtifact().getVersionRange())) {
+            latest = null;
+          }
+        }
+      }
+
+      if (latest != null) {
+        ArtifactUpdate update = new ArtifactUpdate(entry.getKey(), latest);
+        artiFactUpdates.add(update);
+      }
+    }
+    updateMap.put(section, artiFactUpdates);
   }
 
   @Override
