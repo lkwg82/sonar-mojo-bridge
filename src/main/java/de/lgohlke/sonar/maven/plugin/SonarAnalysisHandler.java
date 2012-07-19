@@ -17,10 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions;
+package de.lgohlke.sonar.maven.plugin;
 
-public interface ResultHandler {
-  Object getResult();
+import org.sonar.api.batch.SensorContext;
+import org.sonar.api.resources.Project;
 
-  public abstract void setResult(Object o);
+public interface SonarAnalysisHandler {
+  /**
+   * The method that is going to be run when the sensor is called
+   *
+   * @param project the project the sensor runs on
+   * @param context the context
+   */
+  void analyse(Project project, SensorContext context);
 }
