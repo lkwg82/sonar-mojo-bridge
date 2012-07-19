@@ -17,8 +17,15 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions;
+package de.lgohlke.sonar.maven.plugin.versions.bridgeMojos;
 
+import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
+import de.lgohlke.sonar.maven.plugin.versions.Goals;
+
+import com.google.common.base.Preconditions;
+import de.lgohlke.sonar.maven.Goal;
+import de.lgohlke.sonar.maven.plugin.BridgeMojo;
+import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -41,7 +48,9 @@ import java.util.TreeSet;
 
 import static org.fest.reflect.core.Reflection.staticMethod;
 
-public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements ResultHandlerHolder {
+@SuppressWarnings("deprecation")
+@Goal(Goals.DISPLAY_DEPENDENCY_UPDATES)
+public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayDependencyUpdatesBridgeMojoResultHandler> {
 
   public static final String DEPENDENCIES = "Dependencies";
   public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
@@ -50,7 +59,7 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
 
   protected Boolean processDependencyManagement;
   protected Boolean processDependencies;
-  private ResultHandler handler;
+  private DisplayDependencyUpdatesBridgeMojoResultHandler handler;
 
   @SuppressWarnings("unchecked")
   @Override
@@ -78,12 +87,12 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
     } catch (InvalidVersionSpecificationException e)
     {
       throw new MojoExecutionException(e.getMessage(), e);
-    } catch (@SuppressWarnings("deprecation") ArtifactMetadataRetrievalException e)
+    } catch (ArtifactMetadataRetrievalException e)
     {
       throw new MojoExecutionException(e.getMessage(), e);
     }
 
-    handler.setResult(updateMap);
+    handler.setUpdates(updateMap);
   }
 
   /**
@@ -136,7 +145,9 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   }
 
   @Override
-  public void injectResultHandler(final ResultHandler handler) {
-    this.handler = handler;
+  public void injectResultHandler(final ResultTransferHandler<?> handler) {
+    Preconditions.checkArgument(handler instanceof DisplayDependencyUpdatesBridgeMojoResultHandler, "handler needs to be instance of %s",
+        DisplayDependencyUpdatesBridgeMojoResultHandler.class);
+    this.handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) handler;
   }
 }
