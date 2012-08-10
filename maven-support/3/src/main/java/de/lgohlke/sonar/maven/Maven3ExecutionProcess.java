@@ -20,11 +20,8 @@
 package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.maven.extension.DynamicProxy;
-import de.lgohlke.sonar.maven.extension.MavenPluginManagerProxy;
 import de.lgohlke.sonar.maven.extension.PlexusContainerProxy;
 import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.codehaus.plexus.PlexusContainer;
 import org.sonar.batch.MavenPluginExecutor;
@@ -37,20 +34,13 @@ public class Maven3ExecutionProcess {
 
   public static void decorate(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
-      MavenSession mavenSession = field("mavenSession").ofType(MavenSession.class).in(mavenPluginExecutor).get();
-      PlexusContainer container = field("container").ofType(PlexusContainer.class).in(mavenSession).get();
+      PlexusContainer container = field("mavenSession.container").ofType(PlexusContainer.class).in(mavenPluginExecutor).get();
       MavenPluginManager mavenPluginManager = container.lookup(MavenPluginManager.class);
-      BuildPluginManager pluginManager = container.lookup(BuildPluginManager.class);
       field("container").ofType(PlexusContainer.class).in(mavenPluginManager).set(getPlexusContainerProxy(PlexusContainer.class, container, handler));
-      mavenPluginManager = getMavenPluginManagerProxy(MavenPluginManager.class, mavenPluginManager, classLoader);
-      field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
+
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  private static <T extends MavenPluginManager> T getMavenPluginManagerProxy(final Class<T> intf, final T obj, final ClassLoader cl) {
-    return newInstance(obj, intf, new MavenPluginManagerProxy<T>(obj, cl));
   }
 
   private static <T extends PlexusContainer> T getPlexusContainerProxy(final Class<T> intf, final T obj, final BridgeMojoMapper handler) {

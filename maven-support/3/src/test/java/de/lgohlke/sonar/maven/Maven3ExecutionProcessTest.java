@@ -44,11 +44,28 @@ public class Maven3ExecutionProcessTest {
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
   final String SUB_GOAL = "help";
   final String GOAL = "versions:" + SUB_GOAL;
+  private MyResultTransferHandler handler;
+  private MavenSonarEmbedder embedder;
 
   @BeforeClass
   protected void setUp() throws Exception {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
+
+    embedder = MavenSonarEmbedder.configure().
+        usePomFile("pom.xml").
+        goal(GOAL).
+        setAlternativeMavenHome(MAVEN_HOME).
+        build();
+    MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
+
+    Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
+    ClassLoader classLoader = this.getClass().getClassLoader();
+    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
+
+    handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+
+    Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
   }
 
   class MyResultTransferHandler implements ResultTransferHandler<MyResultTransferHandler> {
@@ -64,7 +81,7 @@ public class Maven3ExecutionProcessTest {
     }
   }
 
-  public static class MyBridgeMojo extends HelpMojo implements BridgeMojo<MyResultTransferHandler> {
+  class MyBridgeMojo extends HelpMojo implements BridgeMojo<MyResultTransferHandler> {
 
     private MyResultTransferHandler handler;
 
@@ -78,11 +95,12 @@ public class Maven3ExecutionProcessTest {
       this.handler = (MyResultTransferHandler) handler;
     }
   }
+
   class MyBridgeMojoMapper extends BridgeMojoMapper
   {
     private final Map<String, ResultTransferHandler<?>> map = ImmutableMap.<String, ResultTransferHandler<?>>
     builder().
-        put(SUB_GOAL, new MyResultTransferHandler()).
+    put(SUB_GOAL, new MyResultTransferHandler()).
     build();
 
     @Override
@@ -94,31 +112,21 @@ public class Maven3ExecutionProcessTest {
     public Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
       return ImmutableMap.<String, Class<? extends BridgeMojo<?>>>
       builder().
-          put(SUB_GOAL, MyBridgeMojo.class).
+      put(SUB_GOAL, MyBridgeMojo.class).
       build();
     }
   }
 
   @Test
   public void shouldDecorate() throws MavenEmbedderException {
-
-    MavenSonarEmbedder embedder = MavenSonarEmbedder.configure().
-        usePomFile("pom.xml").
-        goal(GOAL).
-        setAlternativeMavenHome(MAVEN_HOME).
-        build();
-    MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
-
-    Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
-    ClassLoader classLoader = this.getClass().getClassLoader();
-    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
-
-    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
-
-    // Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
     embedder.run();
 
-
     assertThat(handler.isPing()).isTrue();
+  }
+
+  public static void main(final String[] args) throws Exception {
+    Maven3ExecutionProcessTest test = new Maven3ExecutionProcessTest();
+    test.setUp();
+    test.shouldDecorate();
   }
 }
