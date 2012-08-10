@@ -1,5 +1,5 @@
 /*
- * Sonar maven checks plugin
+ * Sonar maven checks plugin (maven3 support)
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -80,10 +80,10 @@ public class MavenSonarEmbedder {
     }
 
     /**
-     * could be called multiple times
-     * @param mavenHome
-     * @return
-     */
+    * could be called multiple times
+    * @param mavenHome
+    * @return
+    */
     public MavenSonarEmbedderBuilder setAlternativeMavenHome(final File mavenHome) {
       Preconditions.checkNotNull(mavenHome);
       if (this.mavenHome == null && mavenHome.isDirectory()) {

@@ -1,5 +1,5 @@
 /*
- * Sonar maven checks plugin
+ * Sonar maven checks plugin (maven3 support)
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *

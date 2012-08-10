@@ -35,7 +35,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   // private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private final RulesProfile rulesProfile;
-  private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper();
+  private final BridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
 
   public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor) {
     this.rulesProfile = profile;
