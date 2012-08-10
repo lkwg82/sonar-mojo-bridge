@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.MavenVersion;
+package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.maven.MavenSonarEmbedder;
 import hudson.maven.MavenEmbedderException;
@@ -32,7 +32,7 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class MavenEmbedderTest {
+public class MavenSonarEmbedderTest {
   private static final String MAVEN_HOME_KEY = "maven.home";
   private static final String M2_HOME_KEY = "M2_HOME";
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
