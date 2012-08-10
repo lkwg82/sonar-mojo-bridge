@@ -9,7 +9,7 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>sonar-maven-plugin</artifactId>
+  <artifactId>sonar-maven-checks</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>sonar-plugin</packaging>
   <name>Sonar maven checks plugin</name>
