@@ -21,15 +21,16 @@ package de.lgohlke.MavenVersion;
 
 import de.lgohlke.sonar.maven.MavenSonarEmbedder;
 import hudson.maven.MavenEmbedderException;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.mojo.versions.HelpMojo;
+import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
+import org.apache.maven.plugin.MojoNotFoundException;
+import org.codehaus.plexus.logging.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MavenEmbedderTest {
   private static final String MAVEN_HOME_KEY = "maven.home";
@@ -37,34 +38,11 @@ public class MavenEmbedderTest {
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 
-  public static class MyHelpMojo extends HelpMojo {
-    @Override
-    public void execute()
-        throws MojoExecutionException
-    {
-      super.execute();
-    }
-  }
-
   @BeforeTest(alwaysRun = true)
   @BeforeMethod(alwaysRun = true)
   public void setUp() {
     System.getProperties().remove(M2_HOME_KEY);
     System.getProperties().remove(MAVEN_HOME_KEY);
-  }
-
-  @Test(enabled = false)
-  public void testSimpleRunWithExecutionListener() throws Exception {
-
-    final List<String> statePassed = new ArrayList<String>();
-
-    MavenSonarEmbedder.configure().
-        usePomFile("pom.xml").
-        goal("versions:help").
-        setAlternativeMavenHome(MAVEN_HOME).
-        build().run();
-
-    // assertThat(statePassed).containsExactly("before", "after");
   }
 
   final String goal = "versions:display-dependency-updates";
@@ -127,8 +105,7 @@ public class MavenEmbedderTest {
           build().
           run();
     } catch (MavenEmbedderException e) {
-
-      // assertThat(e.getCause()).isExactlyInstanceOf(LifecyclePhaseNotFoundException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LifecyclePhaseNotFoundException.class);
     }
   }
 
@@ -136,14 +113,14 @@ public class MavenEmbedderTest {
   public void shouldFailOnWrongGoalNoPluginFound2() throws MavenEmbedderException {
     try {
       MavenSonarEmbedder.configure().
+          logLevel(Logger.LEVEL_WARN).
           usePomFile("pom.xml").
           goal("versions:helps").
           setAlternativeMavenHome(MAVEN_HOME).
           build().
           run();
     } catch (MavenEmbedderException e) {
-      // assertThat(e.getCause()).isExactlyInstanceOf(MojoNotFoundException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(MojoNotFoundException.class);
     }
   }
-
 }

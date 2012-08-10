@@ -66,6 +66,7 @@ public class MavenSonarEmbedder {
     private String pom;
     private String goal;
     private File mavenHome;
+    private int logLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
       Preconditions.checkNotNull(pomFile);
@@ -80,10 +81,35 @@ public class MavenSonarEmbedder {
     }
 
     /**
-    * could be called multiple times
-    * @param mavenHome
-    * @return
-    */
+     * <pre>
+     * int LEVEL_DEBUG = 0;
+     * 
+     * int LEVEL_INFO = 1;
+     * 
+     * int LEVEL_WARN = 2;
+     * 
+     * int LEVEL_ERROR = 3;
+     * 
+     * int LEVEL_FATAL = 4;
+     * 
+     * int LEVEL_DISABLED = 5;
+     * </pre>
+     * 
+     * @param level
+     * @return
+     */
+    public MavenSonarEmbedderBuilder logLevel(final int level) {
+      Preconditions.checkArgument(level > -1 && level < 6);
+      this.logLevel = level;
+      return this;
+    }
+
+    /**
+     * could be called multiple times
+     * 
+     * @param mavenHome
+     * @return
+     */
     public MavenSonarEmbedderBuilder setAlternativeMavenHome(final File mavenHome) {
       Preconditions.checkNotNull(mavenHome);
       if (this.mavenHome == null && mavenHome.isDirectory()) {
@@ -131,7 +157,7 @@ public class MavenSonarEmbedder {
       mavenRequest.setPom(pom);
       mavenRequest.setShowErrors(true);
       mavenRequest.setGoals(Arrays.asList(goal));
-      mavenRequest.setLoggingLevel(1);
+      mavenRequest.setLoggingLevel(logLevel);
       mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new MyPlexusLogger(logger)));
       detectMavenHomeIfNull();
 
