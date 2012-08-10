@@ -21,6 +21,11 @@ package de.lgohlke.sonar.maven.extension;
 
 import org.codehaus.plexus.logging.Logger;
 
+/**
+ * need for setting log level of maven-subsystem
+ * 
+ * @author Lars Gohlke *
+ */
 public class MyPlexusLogger implements Logger {
 
   private final org.slf4j.Logger log;
