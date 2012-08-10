@@ -66,6 +66,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-maven-checks-maven-support-3</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.jvnet.hudson</groupId>
       <artifactId>hudson-maven-embedder</artifactId>
       <version>3.2</version>
