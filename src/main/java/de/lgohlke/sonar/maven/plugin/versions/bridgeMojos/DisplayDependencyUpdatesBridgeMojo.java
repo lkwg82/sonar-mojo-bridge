@@ -19,13 +19,12 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions.bridgeMojos;
 
-import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
-import de.lgohlke.sonar.maven.plugin.versions.Goals;
-
 import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.maven.Goal;
 import de.lgohlke.sonar.maven.plugin.BridgeMojo;
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
+import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
+import de.lgohlke.sonar.maven.plugin.versions.Goals;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -60,6 +59,10 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   protected Boolean processDependencyManagement;
   protected Boolean processDependencies;
   private DisplayDependencyUpdatesBridgeMojoResultHandler handler;
+
+  public DisplayDependencyUpdatesBridgeMojo() {
+    super();
+  }
 
   @SuppressWarnings("unchecked")
   @Override
