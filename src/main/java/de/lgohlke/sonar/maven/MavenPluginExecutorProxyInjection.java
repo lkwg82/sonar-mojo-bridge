@@ -30,11 +30,13 @@ public class MavenPluginExecutorProxyInjection {
     try {
       if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
         Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
-      } else if (mavenPluginExecutor instanceof Maven2PluginExecutor) {
-        Maven2ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
       }
     } catch (NoClassDefFoundError e) {
-      e.printStackTrace();
+      if (mavenPluginExecutor instanceof Maven2PluginExecutor) {
+        Maven2ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
+      } else {
+        e.printStackTrace();
+      }
     }
   }
 }
