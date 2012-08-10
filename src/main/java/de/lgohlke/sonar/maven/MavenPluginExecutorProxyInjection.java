@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.maven.Maven2PluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
 public class MavenPluginExecutorProxyInjection {
@@ -29,14 +30,11 @@ public class MavenPluginExecutorProxyInjection {
     try {
       if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
         Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
+      } else if (mavenPluginExecutor instanceof Maven2PluginExecutor) {
+        Maven2ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
       }
     } catch (NoClassDefFoundError e) {
-      decorateMaven2ExecutionProcess(mavenPluginExecutor, classLoader, handler);
+      e.printStackTrace();
     }
   }
-
-  private static void decorateMaven2ExecutionProcess(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
-    System.out.println(mavenPluginExecutor);
-  }
-
 }
