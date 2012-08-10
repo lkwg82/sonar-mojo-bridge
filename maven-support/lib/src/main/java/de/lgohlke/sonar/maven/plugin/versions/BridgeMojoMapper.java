@@ -1,5 +1,5 @@
 /*
- * Sonar maven checks plugin
+ * Sonar maven checks plugin (lib)
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -19,25 +19,18 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
-import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojo;
-import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import de.lgohlke.sonar.maven.Goal;
 import de.lgohlke.sonar.maven.plugin.BridgeMojo;
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 
 import java.util.Map;
 
-public class BridgeMojoMapper {
-  private final Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = ImmutableMap.<String, ResultTransferHandler<?>> builder().
-      put(Goals.DISPLAY_DEPENDENCY_UPDATES, new DisplayDependencyUpdatesBridgeMojoResultHandler()).
-      build();
+public abstract class BridgeMojoMapper {
 
-  private final Map<String, Class<? extends BridgeMojo<?>>> goalToBridgeMojoMap = ImmutableMap.<String, Class<? extends BridgeMojo<?>>> builder().
-      put(Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class).
-      build();
+  public abstract Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap();
+
+  public abstract Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap();
 
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
@@ -48,14 +41,14 @@ public class BridgeMojoMapper {
     Preconditions.checkArgument(bridgeMojo.getClass().isAnnotationPresent(Goal.class), "each %s needs an annotation %s", BridgeMojo.class, Goal.class);
 
     String goal = bridgeMojo.getClass().getAnnotation(Goal.class).value();
+    Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = getGoalToTransferHandlerMap();
     if (goalToTransferHandlerMap.containsKey(goal)) {
-
       bridgeMojo.injectResultHandler(goalToTransferHandlerMap.get(goal));
     }
   }
 
   public Class<? extends BridgeMojo<?>> getBridgeMojoClassFor(final String goal) {
-    return goalToBridgeMojoMap.get(goal);
+    return getGoalToBridgeMojoMap().get(goal);
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Sonar maven checks plugin
+ * Sonar maven checks plugin (lib)
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,8 +17,20 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions;
+package de.lgohlke.sonar.maven;
 
-public interface Goals {
-  String DISPLAY_DEPENDENCY_UPDATES = "display-dependency-updates";
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+
+@Inherited
+@Retention(RUNTIME)
+@Target({ TYPE, FIELD })
+public @interface Goal {
+  String value();
+
 }

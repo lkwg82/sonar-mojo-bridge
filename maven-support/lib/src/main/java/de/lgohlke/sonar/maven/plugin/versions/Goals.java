@@ -1,5 +1,5 @@
 /*
- * Sonar maven checks plugin
+ * Sonar maven checks plugin (lib)
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,13 +17,8 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin;
+package de.lgohlke.sonar.maven.plugin.versions;
 
-/**
- * marker interface for transfer object between bridge mojo and sensor
- * @author Lars Gohlke
- *
- * @param <T>
- */
-public interface ResultTransferHandler<T> {
+public interface Goals {
+  String DISPLAY_DEPENDENCY_UPDATES = "display-dependency-updates";
 }
