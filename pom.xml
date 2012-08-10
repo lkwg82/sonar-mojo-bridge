@@ -71,11 +71,6 @@
       <version>0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.hudson</groupId>
-      <artifactId>hudson-maven-embedder</artifactId>
-      <version>3.2</version>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <scope>provided</scope>
@@ -138,12 +133,6 @@
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-batch</artifactId>
       <version>${sonar.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar</groupId>
-      <artifactId>sonar-maven3-plugin</artifactId>
-      <version>${sonar.version}</version>
-      <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>org.easytesting</groupId>
