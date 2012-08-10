@@ -19,7 +19,6 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.MavenSonarEmbedder;
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
 import org.apache.maven.plugin.MojoNotFoundException;
@@ -45,7 +44,7 @@ public class MavenSonarEmbedderTest {
     System.getProperties().remove(MAVEN_HOME_KEY);
   }
 
-  final String goal = "versions:display-dependency-updates";
+  final String goal = "versions:help";
 
   @Test(expectedExceptions = NullPointerException.class)
   public void shouldFailOnMissingPom() throws MavenEmbedderException {
@@ -93,6 +92,16 @@ public class MavenSonarEmbedderTest {
         goal(goal).
         setAlternativeMavenHome(new File("pom.xml")).
         build();
+  }
+
+  @Test
+  public void shouldRun() throws MavenEmbedderException {
+    MavenSonarEmbedder.configure().
+        usePomFile("pom.xml").
+        goal(goal).
+        setAlternativeMavenHome(MAVEN_HOME).
+        build().
+        run();
   }
 
   @Test
