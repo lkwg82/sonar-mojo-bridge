@@ -31,7 +31,7 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class MavenSonarEmbedderTest {
+public class Maven3SonarEmbedderTest {
   private static final String MAVEN_HOME_KEY = "maven.home";
   private static final String M2_HOME_KEY = "M2_HOME";
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
@@ -48,7 +48,7 @@ public class MavenSonarEmbedderTest {
 
   @Test(expectedExceptions = NullPointerException.class)
   public void shouldFailOnMissingPom() throws MavenEmbedderException {
-    MavenSonarEmbedder.configure().
+    Maven3SonarEmbedder.configure().
         goal(goal).
         setAlternativeMavenHome(MAVEN_HOME).
         build();
@@ -56,7 +56,7 @@ public class MavenSonarEmbedderTest {
 
   @Test(expectedExceptions = NullPointerException.class)
   public void shouldFailOnMissingGoal() throws MavenEmbedderException {
-    MavenSonarEmbedder.configure().
+    Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         setAlternativeMavenHome(MAVEN_HOME).
         build();
@@ -66,7 +66,7 @@ public class MavenSonarEmbedderTest {
   public void shouldFailOnWrongMavenHome() throws MavenEmbedderException {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
-    MavenSonarEmbedder.configure().
+    Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
         build();
@@ -76,7 +76,7 @@ public class MavenSonarEmbedderTest {
   public void shouldFailOnWrongMavenHomeIsNotExisting() throws MavenEmbedderException {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
-    MavenSonarEmbedder.configure().
+    Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
         setAlternativeMavenHome(new File("x")).
@@ -87,7 +87,7 @@ public class MavenSonarEmbedderTest {
   public void shouldFailOnWrongMavenHomeIsFile() throws MavenEmbedderException {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
-    MavenSonarEmbedder.configure().
+    Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
         setAlternativeMavenHome(new File("pom.xml")).
@@ -96,7 +96,7 @@ public class MavenSonarEmbedderTest {
 
   @Test
   public void shouldRun() throws MavenEmbedderException {
-    MavenSonarEmbedder.configure().
+    Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(goal).
         setAlternativeMavenHome(MAVEN_HOME).
@@ -107,7 +107,7 @@ public class MavenSonarEmbedderTest {
   @Test
   public void shouldFailOnWrongGoalNoPluginFound() throws MavenEmbedderException {
     try {
-      MavenSonarEmbedder.configure().
+      Maven3SonarEmbedder.configure().
           usePomFile("pom.xml").
           goal("not-present").
           setAlternativeMavenHome(MAVEN_HOME).
@@ -121,7 +121,7 @@ public class MavenSonarEmbedderTest {
   @Test
   public void shouldFailOnWrongGoalNoPluginFound2() throws MavenEmbedderException {
     try {
-      MavenSonarEmbedder.configure().
+      Maven3SonarEmbedder.configure().
           logLevel(Logger.LEVEL_WARN).
           usePomFile("pom.xml").
           goal("versions:helps").

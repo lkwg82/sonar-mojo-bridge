@@ -36,12 +36,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MavenSonarEmbedder {
-  private final static Logger logger = LoggerFactory.getLogger(MavenSonarEmbedder.class);
+public class Maven3SonarEmbedder {
+  private final static Logger logger = LoggerFactory.getLogger(Maven3SonarEmbedder.class);
   private final MavenRequest mavenRequest;
   private final MavenEmbedder embedder;
 
-  private MavenSonarEmbedder(final MavenEmbedder embedder, final MavenRequest mavenRequest) {
+  private Maven3SonarEmbedder(final MavenEmbedder embedder, final MavenRequest mavenRequest) {
     this.embedder = embedder;
     this.mavenRequest = mavenRequest;
   }
@@ -146,7 +146,7 @@ public class MavenSonarEmbedder {
       }
     }
 
-    public MavenSonarEmbedder build() throws MavenEmbedderException {
+    public Maven3SonarEmbedder build() throws MavenEmbedderException {
 
       Preconditions.checkNotNull(pom, "missing pom");
 
@@ -169,7 +169,7 @@ public class MavenSonarEmbedder {
       }
 
       final MavenEmbedder embedder = new MavenEmbedder(mavenHome, mavenRequest);
-      return new MavenSonarEmbedder(embedder, mavenRequest);
+      return new Maven3SonarEmbedder(embedder, mavenRequest);
     }
   }
 }

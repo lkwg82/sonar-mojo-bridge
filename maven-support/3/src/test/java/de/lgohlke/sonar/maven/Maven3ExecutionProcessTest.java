@@ -43,14 +43,14 @@ public class Maven3ExecutionProcessTest {
   final String SUB_GOAL = "help";
   final String GOAL = "versions:" + SUB_GOAL;
   private MyResultTransferHandler handler;
-  private MavenSonarEmbedder embedder;
+  private Maven3SonarEmbedder embedder;
 
   @BeforeClass
   protected void setUp() throws Exception {
     System.setProperty(M2_HOME_KEY, "wrong");
     System.setProperty(MAVEN_HOME_KEY, "wrong");
 
-    embedder = MavenSonarEmbedder.configure().
+    embedder = Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(GOAL).
         setAlternativeMavenHome(MAVEN_HOME).
