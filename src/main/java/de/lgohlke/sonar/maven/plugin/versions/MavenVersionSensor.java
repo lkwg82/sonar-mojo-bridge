@@ -34,7 +34,6 @@ import org.sonar.batch.MavenPluginExecutor;
 
 @Phase(name = Phase.Name.PRE)
 public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
-  // private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private final RulesProfile rulesProfile;
   private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
@@ -69,68 +68,10 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
     handler.setMavenProject(mavenProject);
     handler.analyse(project, context);
-
-    // @SuppressWarnings("unchecked")
-    // Map<String, Map<Dependency, ArtifactVersions>> updateMap = (Map<String, Map<Dependency, ArtifactVersions>>) handler.getResult();
-    // for (Entry<String, Map<Dependency, ArtifactVersions>> entry : updateMap.entrySet()) {
-    // System.out.println("section " + entry.getKey());
-    // for (Entry<Dependency, ArtifactVersions> update : entry.getValue().entrySet()) {
-    // System.out.println(update.getKey() + " -> " + update.getValue());
-    // }
-    // }
-    // final MavenPluginHandler handler = getMavenPluginHandler(project);
-
-    // final MojoExecutionHandler<?, ?> mojoExectionHandler = new DependencyVersionExecutor().getMojoExectionHandler();
-    // final MojoExecutionHandler<?, ?> mojoExectionHandler = new VersionHelpExecutor().getMojoExectionHandler();
-    // ExecutionListenerImpl executionListener = new ExecutionListenerImpl(mojoExectionHandler);
-    // executionListener.setLookuper(new VersionMojoLookupStratey(mavenPluginExecutor));
-    // mavenPluginExecutor.setExecutionListener(executionListener);
-    // mavenPluginExecutor.execute(project, projectDefinition, handler);
-
-    // for (MavenGoalExecutor executor : executors) {
-    // logger.debug("checking if executor {} needs to be executed", executor.getClass());
-    // executor.setRulesProfile(rulesProfile);
-    // if (executor.needsToBeExecuted()) {
-    // logger.debug("executing", executor.getClass());
-    // executor.execute(mavenProject, context);
-    // }
-    // }
-    // for (GOAL goal : GOAL.values()) {
-    // if (isCurrentRuleActive(goal.rule())) {
-    // executeGoalForRule(context, goal);
-    // } else {
-    // logger.info("skipping for " + goal.goal() + " rule inactive");
-    // }
-    // }
   }
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    // return MavenVersionsPluginHandlerFactory.DisplayDependencyUpdates.pluginHandler();
     return MavenVersionsPluginHandlerFactory.create(MavenVersionsGoal.DisplayDependencyUpdates);
   }
-
-  // private void executeGoalForRule(final SensorContext context, final GOAL goal) {
-  //
-  // try {
-  // UpdateHandler handler = goal.handler().newInstance();
-  // Log.info("testing for " + goal.goal());
-  // new MavenInvoker(mavenProject.getFile(), handler).run(goal);
-  //
-  // Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, goal.rule().getKey());
-  // final File file = new File("", mavenProject.getFile().getName());
-  // file.setLanguage(Xml.INSTANCE);
-  // for (ArtifactUpdate update : handler.getUpdates()) {
-  // Violation violation = Violation.create(rule, file);
-  // violation.setMessage(goal.rule().formatMessage(update));
-  // context.saveViolation(violation);
-  // }
-  // } catch (InstantiationException e) {
-  // logger.error(e.getMessage(), e);
-  // } catch (IllegalAccessException e) {
-  // logger.error(e.getMessage(), e);
-  // } catch (MavenInvocationException e) {
-  // logger.error(e.getMessage(), e);
-  // }
-  // }
 }
