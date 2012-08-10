@@ -25,8 +25,6 @@ import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.mojo.versions.HelpMojo;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -81,20 +79,7 @@ public class Maven3ExecutionProcessTest {
     }
   }
 
-  class MyBridgeMojo extends HelpMojo implements BridgeMojo<MyResultTransferHandler> {
 
-    private MyResultTransferHandler handler;
-
-    @Override
-    public void execute() throws MojoExecutionException {
-      handler.setPing(true);
-    }
-
-    @Override
-    public void injectResultHandler(final ResultTransferHandler<?> handler) {
-      this.handler = (MyResultTransferHandler) handler;
-    }
-  }
 
   class MyBridgeMojoMapper extends BridgeMojoMapper
   {
@@ -118,15 +103,9 @@ public class Maven3ExecutionProcessTest {
   }
 
   @Test
-  public void shouldDecorate() throws MavenEmbedderException {
+  public void shouldDecorate() throws MavenEmbedderException, ClassNotFoundException {
     embedder.run();
 
     assertThat(handler.isPing()).isTrue();
-  }
-
-  public static void main(final String[] args) throws Exception {
-    Maven3ExecutionProcessTest test = new Maven3ExecutionProcessTest();
-    test.setUp();
-    test.shouldDecorate();
   }
 }
