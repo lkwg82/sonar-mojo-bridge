@@ -51,10 +51,11 @@ public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTr
     file.setLanguage(Xml.INSTANCE);
 
     for (List<ArtifactUpdate> updates : updateMap.values()) {
-      ArtifactUpdate update = updates.get(0);
-      Violation violation = Violation.create(rule, file);
-      violation.setMessage(update.toString());
-      context.saveViolation(violation);
+      for (ArtifactUpdate update : updates) {
+        Violation violation = Violation.create(rule, file);
+        violation.setMessage(update.toString());
+        context.saveViolation(violation);
+      }
     }
   }
 

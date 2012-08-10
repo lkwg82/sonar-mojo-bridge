@@ -29,20 +29,22 @@ import java.util.Map;
 
 public class MavenVersionsBridgeMojoMapper extends BridgeMojoMapper {
 
+  private final Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = ImmutableMap.<String, ResultTransferHandler<?>>
+      builder().
+      put(Goals.DISPLAY_DEPENDENCY_UPDATES, new DisplayDependencyUpdatesBridgeMojoResultHandler()).
+      build();
+
   @Override
   public Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap() {
-    return ImmutableMap.<String, ResultTransferHandler<?>>
-        builder().
-        put(Goals.DISPLAY_DEPENDENCY_UPDATES, new DisplayDependencyUpdatesBridgeMojoResultHandler()).
-        build();
+    return goalToTransferHandlerMap;
   }
 
   @Override
   public Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
     return ImmutableMap.<String, Class<? extends BridgeMojo<?>>>
-        builder().
-        put(Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class).
-        build();
+    builder().
+    put(Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class).
+    build();
   }
 
 }
