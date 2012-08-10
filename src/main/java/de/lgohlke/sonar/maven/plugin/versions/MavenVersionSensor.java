@@ -20,7 +20,9 @@
 package de.lgohlke.sonar.maven.plugin.versions;
 
 import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
+import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import de.lgohlke.sonar.plugin.MavenPlugin;
+import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -36,14 +38,16 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
   private final RulesProfile rulesProfile;
   private final BridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
+  private final MavenProject mavenProject;
 
-  public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor) {
+  public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
     this.rulesProfile = profile;
     MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
+    this.mavenProject = mavenProject;
   }
 
   public MavenVersionSensor() {
-    this(null, null);
+    this(null, null, null);
   }
 
   @Override
@@ -63,6 +67,12 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
+
+    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(
+        Goals.DISPLAY_DEPENDENCY_UPDATES);
+
+    handler.setMavenProject(mavenProject);
+    handler.analyse(project, context);
 
     // @SuppressWarnings("unchecked")
     // Map<String, Map<Dependency, ArtifactVersions>> updateMap = (Map<String, Map<Dependency, ArtifactVersions>>) handler.getResult();

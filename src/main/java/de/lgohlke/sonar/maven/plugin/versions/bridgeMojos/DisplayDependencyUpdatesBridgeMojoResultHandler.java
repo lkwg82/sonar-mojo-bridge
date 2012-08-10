@@ -19,19 +19,25 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions.bridgeMojos;
 
-import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
-
-import de.lgohlke.sonar.maven.plugin.SonarAnalysisHandler;
-
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
+import de.lgohlke.sonar.maven.plugin.SonarAnalysisHandler;
+import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
+import de.lgohlke.sonar.maven.plugin.versions.rules.DependencyVersionMavenRule;
+import de.lgohlke.sonar.plugin.MavenPlugin;
+import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.Violation;
+import org.sonar.plugins.xml.language.Xml;
 
 import java.util.List;
 import java.util.Map;
 
 public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTransferHandler<DisplayDependencyUpdatesBridgeMojoResultHandler>, SonarAnalysisHandler {
 
+  private MavenProject mavenProject;
   private Map<String, List<ArtifactUpdate>> updateMap;
 
   public void setUpdates(final Map<String, List<ArtifactUpdate>> updateMap) {
@@ -40,7 +46,20 @@ public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTr
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    System.out.println(updateMap.size());
+    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
+    final File file = new File("", mavenProject.getFile().getName());
+    file.setLanguage(Xml.INSTANCE);
+
+    for (List<ArtifactUpdate> updates : updateMap.values()) {
+      ArtifactUpdate update = updates.get(0);
+      Violation violation = Violation.create(rule, file);
+      violation.setMessage(update.toString());
+      context.saveViolation(violation);
+    }
+  }
+
+  public void setMavenProject(final MavenProject mavenProject) {
+    this.mavenProject = mavenProject;
   }
 
 }
