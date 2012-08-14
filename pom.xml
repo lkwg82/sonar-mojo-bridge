@@ -64,21 +64,11 @@
     <sonar.version>3.1.1</sonar.version>
   </properties>
 
-  <dependencies>
+   <dependencies>
     <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-support-2</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-support-3</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar</groupId>
-      <artifactId>sonar-maven3-plugin</artifactId>
-      <version>${sonar.version}</version>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>hudson-maven-embedder</artifactId>
+      <version>3.2</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
@@ -143,6 +133,18 @@
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-batch</artifactId>
       <version>${sonar.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-maven3-plugin</artifactId>
+      <version>${sonar.version}</version>
+      <type>maven-plugin</type>
+    </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert-core</artifactId>
+      <version>2.0M7</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.easytesting</groupId>
@@ -314,31 +316,6 @@
   </dependencyManagement>
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce</id>
-            <configuration>
-              <rules>
-                <DependencyConvergence />
-              </rules>
-              <skip>true</skip>
-              <requirePluginVersions>
-                <message>Best Practice is to always define plugin versions!</message>
-                <banLatest>false</banLatest>
-                <banRelease>false</banRelease>
-                <banSnapshots>false</banSnapshots>
-                <phases>clean,deploy,site</phases>
-              </requirePluginVersions>
-            </configuration>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
