@@ -57,7 +57,7 @@ public class Maven3ExecutionProcessTest {
     Collections.sort(keys);
 
     for (String key : keys) {
-      System.out.println(String.format("%-20s : %20s", key, System.getenv(key)));
+      System.out.println(String.format("%-20s : %-20s", key, System.getenv(key)));
     }
 
     embedder = Maven3SonarEmbedder.configure().
