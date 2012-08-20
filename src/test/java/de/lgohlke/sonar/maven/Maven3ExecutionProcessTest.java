@@ -20,60 +20,35 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.plugin.BridgeMojo;
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import hudson.maven.MavenEmbedderException;
 import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
 
 public class Maven3ExecutionProcessTest {
-  private static final String MAVEN_HOME_KEY = "maven.home";
-  private static final String M2_HOME_KEY = "M2_HOME";
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
   final String SUB_GOAL = "help";
   final String GOAL = "versions:" + SUB_GOAL;
-  private MyResultTransferHandler handler;
   private Maven3SonarEmbedder embedder;
 
-  @BeforeClass
-  protected void setUp() throws Exception {
-    // System.setProperty(M2_HOME_KEY, "wrong");
-    // System.setProperty(MAVEN_HOME_KEY, "wrong");
-
-    List<String> keys = Lists.newArrayList(System.getenv().keySet());
-    Collections.sort(keys);
-
-    for (String key : keys) {
-      System.out.println(String.format("%-20s : %-20s", key, System.getenv(key)));
-    }
-
+  @BeforeTest
+  protected void beforeTest() throws Exception {
     embedder = Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
         goal(GOAL).
         setAlternativeMavenHome(MAVEN_HOME).
         build();
-    MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
-
-    Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
-    ClassLoader classLoader = this.getClass().getClassLoader();
-    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
-
-    handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
-
-    Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
   }
 
   class MyResultTransferHandler implements ResultTransferHandler<MyResultTransferHandler> {
@@ -114,8 +89,26 @@ public class Maven3ExecutionProcessTest {
 
   @Test
   public void shouldDecorate() throws MavenEmbedderException, ClassNotFoundException {
+    MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
+    Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
+    ClassLoader classLoader = this.getClass().getClassLoader();
+    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
+
+    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+    Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
+
     embedder.run();
 
     assertThat(handler.isPing()).isTrue();
+  }
+
+  @Test
+  public void shouldNotBeDecorated() throws MavenEmbedderException, ClassNotFoundException {
+    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
+    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+
+    embedder.run();
+
+    assertThat(handler.isPing()).isFalse();
   }
 }
