@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.plugin.BridgeMojo;
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
@@ -30,6 +31,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -47,8 +50,15 @@ public class Maven3ExecutionProcessTest {
 
   @BeforeClass
   protected void setUp() throws Exception {
-    System.setProperty(M2_HOME_KEY, "wrong");
-    System.setProperty(MAVEN_HOME_KEY, "wrong");
+    // System.setProperty(M2_HOME_KEY, "wrong");
+    // System.setProperty(MAVEN_HOME_KEY, "wrong");
+
+    List<String> keys = Lists.newArrayList(System.getenv().keySet());
+    Collections.sort(keys);
+
+    for (String key : keys) {
+      System.out.println(String.format("%-20s : %20s", key, System.getenv(key)));
+    }
 
     embedder = Maven3SonarEmbedder.configure().
         usePomFile("pom.xml").
