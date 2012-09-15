@@ -32,7 +32,7 @@ public class MavenInjectIT {
     String jdbcDriver = System.getProperty("jdbcDriver");
     String jdbcUrl = System.getProperty("jdbcUrl");
 
-    String format = "mvn sonar:sonar -Dsonar.jdbc.url=%s -Dsonar.jdbc.driver=%s -DskipTests -Dsonar.skipDesign -Dsonar.dynamicAnalysis";
+    String format = "mvn sonar:sonar -Dsonar.jdbc.url=%s -Dsonar.jdbc.driver=%s -DskipTests -Dsonar.skipDesign -Dsonar.dynamicAnalysis -X -e";
     String cmd = String.format(format,jdbcUrl, jdbcDriver);
     try {
       Process proc = Runtime.getRuntime().exec(cmd);
