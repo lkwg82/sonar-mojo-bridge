@@ -61,10 +61,16 @@
   <properties>
     <jdk.min.version>1.6</jdk.min.version>
     <mavenVersion>3.0.4</mavenVersion>
-    <sonar.version>3.1.1</sonar.version>
+    <sonar.version>3.2</sonar.version>
+
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <test.database>h2</test.database>
+    <test.jdbcDriver>org.h2.Driver</test.jdbcDriver>
+    <test.jdbcUrl>jdbc:h2:tcp://localhost:9092/sonar</test.jdbcUrl>
   </properties>
 
-   <dependencies>
+  <dependencies>
     <dependency>
       <groupId>org.jvnet.hudson</groupId>
       <artifactId>hudson-maven-embedder</artifactId>
@@ -327,6 +333,63 @@
           <pluginClass>de.lgohlke.sonar.plugin.MavenPlugin</pluginClass>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.sonar</groupId>
+        <artifactId>sonar-dev-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>start-server</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <runtimeVersion>${sonar.version}</runtimeVersion>
+              <background>true</background>
+              <database>${test.database}</database>
+              <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
+              <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-server</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <runtimeVersion>${sonar.version}</runtimeVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>jdbcDriver</name>
+              <value>${test.jdbcDriver}</value>
+            </property>
+            <property>
+              <name>jdbcUrl</name>
+              <value>${test.jdbcUrl}</value>
+            </property>
+          </systemProperties>
+          <includes>
+            <include>**/*IT.java</include>
+          </includes>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -335,6 +398,9 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.12</version>
           <configuration>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
             <useSystemClassLoader>true</useSystemClassLoader>
             <parallel>both</parallel>
             <runOrder>random</runOrder>
