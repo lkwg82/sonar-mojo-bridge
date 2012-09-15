@@ -21,6 +21,7 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 * simple prototype (done)
 * check with sonar (done)
 * integrate with MavenPluginExecutor for maven3 (done)
+* added integration for plugin (done)
 * <del>check way to do this with maven2</del>
 * <del>publish two artifacts for maven2 and maven3 injection</del>
 * check remote run, on teamcity cluster
