@@ -19,13 +19,9 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
-import de.lgohlke.sonar.maven.extension.DynamicProxy;
-
 import org.apache.maven.plugin.MavenPluginManager;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MavenPluginManagerProxy<T extends MavenPluginManager> extends DynamicProxy<T> {
 
@@ -40,9 +36,9 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (method.getName().equals("setupPluginRealm")) {
       args[2] = classloader;
-      final List<String> imports = new ArrayList<String>();
-      imports.add("de.lgohlke");
-      args[3] = imports;
+      // final List<String> imports = new ArrayList<String>();
+      // imports.add("de.lgohlke");
+      // args[3] = imports;
     }
     return method.invoke(getUnderLying(), args);
   }
