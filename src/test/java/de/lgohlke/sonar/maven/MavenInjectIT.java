@@ -28,10 +28,15 @@ import static org.fest.assertions.api.Assertions.fail;
 
 public class MavenInjectIT {
   @Test
-  public void test() throws Exception {
+  public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
     String jdbcDriver = System.getProperty("jdbcDriver");
     String jdbcUrl = System.getProperty("jdbcUrl");
 
+    executeMaven(jdbcDriver, jdbcUrl);
+
+  }
+
+  private void executeMaven(final String jdbcDriver, final String jdbcUrl) {
     String format = "mvn sonar:sonar -Dsonar.jdbc.url=%s -Dsonar.jdbc.driver=%s -DskipTests -Dsonar.skipDesign -Dsonar.dynamicAnalysis -X -e";
     String cmd = String.format(format,jdbcUrl, jdbcDriver);
     try {
@@ -51,6 +56,5 @@ public class MavenInjectIT {
     catch (Exception e) {
       e.printStackTrace();
     }
-
   }
 }
