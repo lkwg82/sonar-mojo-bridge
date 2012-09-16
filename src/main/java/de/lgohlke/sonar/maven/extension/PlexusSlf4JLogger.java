@@ -28,7 +28,7 @@ import org.codehaus.plexus.logging.Logger;
  * @author Lars Gohlke *
  */
 @RequiredArgsConstructor
-public class MyPlexusLogger implements Logger {
+public class PlexusSlf4JLogger implements Logger {
 
   private final org.slf4j.Logger log;
 

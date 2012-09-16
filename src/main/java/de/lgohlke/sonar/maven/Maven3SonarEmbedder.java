@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.base.Preconditions;
-import de.lgohlke.sonar.maven.extension.MyPlexusLogger;
+import de.lgohlke.sonar.maven.extension.PlexusSlf4JLogger;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
@@ -156,7 +156,7 @@ public class Maven3SonarEmbedder {
       mavenRequest.setShowErrors(true);
       mavenRequest.setGoals(Arrays.asList(goal));
       mavenRequest.setLoggingLevel(logLevel);
-      mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new MyPlexusLogger(log)));
+      mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new PlexusSlf4JLogger(log)));
       detectMavenHomeIfNull();
 
       try {
