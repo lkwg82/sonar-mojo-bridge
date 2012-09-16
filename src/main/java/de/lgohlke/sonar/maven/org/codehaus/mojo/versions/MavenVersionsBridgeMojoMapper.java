@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojo;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;

@@ -22,7 +22,6 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;

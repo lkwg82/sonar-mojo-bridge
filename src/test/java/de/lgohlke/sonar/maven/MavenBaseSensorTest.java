@@ -19,7 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.plugin.MavenPlugin;
+import de.lgohlke.sonar.MavenPlugin;
+
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;

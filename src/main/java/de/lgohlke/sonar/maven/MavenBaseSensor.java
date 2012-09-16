@@ -19,7 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.plugin.MavenPlugin;
+import de.lgohlke.sonar.MavenPlugin;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -17,11 +17,9 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration;
 
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.ArtifactUpdate;
 
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
