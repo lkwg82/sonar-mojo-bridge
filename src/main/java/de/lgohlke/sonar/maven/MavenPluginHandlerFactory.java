@@ -19,10 +19,13 @@
  */
 package de.lgohlke.sonar.maven;
 
-import com.google.common.base.Preconditions;
 import org.sonar.api.batch.maven.MavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * wrapps the {@link MavenPluginHandler} implementation, into a generic
@@ -32,12 +35,12 @@ import org.sonar.api.resources.Project;
 public class MavenPluginHandlerFactory {
 
   public static MavenPluginHandler createHandler(final String groupArtifactVersionGoalString) {
-    Preconditions.checkNotNull(groupArtifactVersionGoalString);
-    Preconditions.checkState(groupArtifactVersionGoalString.length() > 0, "no empty string allowed");
+    checkNotNull(groupArtifactVersionGoalString);
+    checkState(groupArtifactVersionGoalString.length() > 0, "no empty string allowed");
 
     final String[] parts = groupArtifactVersionGoalString.split(":");
 
-    Preconditions.checkArgument(parts.length == 4, "the string must be consist of four parts, seperated by : e.g.: org.codehaus.mojo:versions-maven-plugin:1.3.1:help ");
+    checkArgument(parts.length == 4, "the string must be consist of four parts, seperated by : e.g.: org.codehaus.mojo:versions-maven-plugin:1.3.1:help ");
 
     return new MavenPluginHandler() {
 
@@ -64,7 +67,6 @@ public class MavenPluginHandlerFactory {
 
       @Override
       public String getArtifactId() {
-        // TODO Auto-generated method stub
         return parts[1];
       }
 

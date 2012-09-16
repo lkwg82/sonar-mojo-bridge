@@ -24,11 +24,12 @@ import de.lgohlke.sonar.maven.extension.MyPlexusLogger;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +37,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public class Maven3SonarEmbedder {
-  private final static Logger logger = LoggerFactory.getLogger(Maven3SonarEmbedder.class);
-  private final MavenRequest mavenRequest;
-  private final MavenEmbedder embedder;
 
-  private Maven3SonarEmbedder(final MavenEmbedder embedder, final MavenRequest mavenRequest) {
-    this.embedder = embedder;
-    this.mavenRequest = mavenRequest;
-  }
+  private final MavenEmbedder embedder;
+  private final MavenRequest mavenRequest;
 
   public void run() throws MavenEmbedderException {
     try {
@@ -158,7 +156,7 @@ public class Maven3SonarEmbedder {
       mavenRequest.setShowErrors(true);
       mavenRequest.setGoals(Arrays.asList(goal));
       mavenRequest.setLoggingLevel(logLevel);
-      mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new MyPlexusLogger(logger)));
+      mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new MyPlexusLogger(log)));
       detectMavenHomeIfNull();
 
       try {

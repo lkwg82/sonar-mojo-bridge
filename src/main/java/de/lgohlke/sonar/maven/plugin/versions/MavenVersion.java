@@ -21,5 +21,4 @@ package de.lgohlke.sonar.maven.plugin.versions;
 
 public enum MavenVersion {
   MAVEN_3, MAVEN_2;
-
 }

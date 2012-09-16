@@ -19,20 +19,15 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
+import lombok.RequiredArgsConstructor;
+
 import java.lang.reflect.InvocationHandler;
 
+@RequiredArgsConstructor
 public abstract class DynamicProxy<T> implements InvocationHandler {
-  private T underlying;
-
-  public DynamicProxy(final T underlying) {
-    this.underlying = underlying;
-  }
+  private final T underlying;
 
   public T getUnderLying() {
     return underlying;
-  }
-
-  public void setUnderlying(final T underlying) {
-    this.underlying = underlying;
   }
 }

@@ -24,6 +24,7 @@ import de.lgohlke.sonar.maven.plugin.SonarAnalysisHandler;
 import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
 import de.lgohlke.sonar.maven.plugin.versions.rules.DependencyVersionMavenRule;
 import de.lgohlke.sonar.plugin.MavenPlugin;
+import lombok.Setter;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.resources.File;
@@ -35,14 +36,10 @@ import org.sonar.plugins.xml.language.Xml;
 import java.util.List;
 import java.util.Map;
 
+@Setter
 public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTransferHandler<DisplayDependencyUpdatesBridgeMojoResultHandler>, SonarAnalysisHandler {
-
   private MavenProject mavenProject;
   private Map<String, List<ArtifactUpdate>> updateMap;
-
-  public void setUpdates(final Map<String, List<ArtifactUpdate>> updateMap) {
-    this.updateMap = updateMap;
-  }
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
@@ -58,9 +55,4 @@ public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTr
       }
     }
   }
-
-  public void setMavenProject(final MavenProject mavenProject) {
-    this.mavenProject = mavenProject;
-  }
-
 }

@@ -19,12 +19,14 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
-import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.maven.Goal;
 import de.lgohlke.sonar.maven.plugin.BridgeMojo;
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class BridgeMojoMapper {
 
@@ -37,8 +39,8 @@ public abstract class BridgeMojoMapper {
    * @param bridgeMojo
    */
   public void injectResultTransferHandler(final BridgeMojo<?> bridgeMojo) {
-    Preconditions.checkNotNull(bridgeMojo);
-    Preconditions.checkArgument(bridgeMojo.getClass().isAnnotationPresent(Goal.class), "each %s needs an annotation %s", BridgeMojo.class, Goal.class);
+    checkNotNull(bridgeMojo);
+    checkArgument(bridgeMojo.getClass().isAnnotationPresent(Goal.class), "each %s needs an annotation %s", BridgeMojo.class, Goal.class);
 
     String goal = bridgeMojo.getClass().getAnnotation(Goal.class).value();
     Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = getGoalToTransferHandlerMap();

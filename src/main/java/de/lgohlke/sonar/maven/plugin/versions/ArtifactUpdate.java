@@ -19,23 +19,15 @@
  */
 package de.lgohlke.sonar.maven.plugin.versions;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
 
+@RequiredArgsConstructor
 public class ArtifactUpdate {
+  @Getter
   private final Dependency dependency;
+  @Getter
   private final ArtifactVersion artifactVersion;
-
-  public ArtifactUpdate(final Dependency dependency, final ArtifactVersion version) {
-    this.dependency = dependency;
-    this.artifactVersion = version;
-  }
-
-  public Dependency getDependency() {
-    return dependency;
-  }
-
-  public ArtifactVersion getArtifactVersion() {
-    return artifactVersion;
-  }
 }

@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
+import lombok.RequiredArgsConstructor;
 import org.codehaus.plexus.logging.Logger;
 
 /**
@@ -26,13 +27,11 @@ import org.codehaus.plexus.logging.Logger;
  * 
  * @author Lars Gohlke *
  */
+@RequiredArgsConstructor
 public class MyPlexusLogger implements Logger {
 
   private final org.slf4j.Logger log;
 
-  public MyPlexusLogger(final org.slf4j.Logger logger) {
-    this.log = logger;
-  }
 
   @Override
   public void debug(final String message) {
@@ -134,6 +133,6 @@ public class MyPlexusLogger implements Logger {
 
   @Override
   public String getName() {
-    return this.getName();
+    return getClass().getCanonicalName();
   }
 }

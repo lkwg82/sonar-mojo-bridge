@@ -95,7 +95,7 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
       throw new MojoExecutionException(e.getMessage(), e);
     }
 
-    handler.setUpdates(updateMap);
+    handler.setUpdateMap(updateMap);
   }
 
   /**
