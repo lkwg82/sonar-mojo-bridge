@@ -42,17 +42,25 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final RulesProfile rulesProfile;
   private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
   private final MavenProject mavenProject;
-  final boolean isMaven3;
+  private final boolean isMaven3;
 
   public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
     this.rulesProfile = profile;
     MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
     this.mavenProject = mavenProject;
 
-    if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
-      isMaven3 = true;
-    } else {
-      isMaven3 = false;
+    isMaven3 = checkIfIsMaven3(mavenPluginExecutor);
+  }
+
+  private boolean checkIfIsMaven3(final MavenPluginExecutor mavenPluginExecutor) {
+    try {
+      if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (NoClassDefFoundError e) {
+      return false;
     }
   }
 
