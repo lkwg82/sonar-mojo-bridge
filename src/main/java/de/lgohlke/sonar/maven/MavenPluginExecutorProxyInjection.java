@@ -34,4 +34,16 @@ public class MavenPluginExecutorProxyInjection {
 
     }
   }
+
+  public static boolean checkIfIsMaven3(final MavenPluginExecutor mavenPluginExecutor) {
+    try {
+      if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (NoClassDefFoundError e) {
+      return false;
+    }
+  }
 }

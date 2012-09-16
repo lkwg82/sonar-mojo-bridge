@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.plugin.versions;
 import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import de.lgohlke.sonar.plugin.MavenPlugin;
+import lombok.RequiredArgsConstructor;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,36 +34,16 @@ import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
-import org.sonar.maven3.Maven3PluginExecutor;
 
 @Phase(name = Phase.Name.PRE)
-
+@RequiredArgsConstructor
 public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final static Logger log = LoggerFactory.getLogger(MavenVersionSensor.class);
   private final RulesProfile rulesProfile;
-  private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
+  private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
-  private final boolean isMaven3;
-
-  public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
-    this.rulesProfile = profile;
-    MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
-    this.mavenProject = mavenProject;
-
-    isMaven3 = checkIfIsMaven3(mavenPluginExecutor);
-  }
-
-  private boolean checkIfIsMaven3(final MavenPluginExecutor mavenPluginExecutor) {
-    try {
-      if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (NoClassDefFoundError e) {
-      return false;
-    }
-  }
+  private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
+  private boolean isMaven3;
 
   @Override
   public String toString() {
@@ -76,7 +57,10 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
       prop = MavenPlugin.DEFAULT;
     }
 
-    if (!isMaven3) {
+    isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
+    if (isMaven3) {
+      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
+    } else {
       log.warn("this plugin is incompatible with maven2, run again with maven3");
     }
 
