@@ -24,6 +24,8 @@ import de.lgohlke.sonar.maven.plugin.BridgeMojo;
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import hudson.maven.MavenEmbedderException;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.BeforeTest;
@@ -38,8 +40,8 @@ import static org.fest.reflect.core.Reflection.field;
 public class Maven3ExecutionProcessTest {
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
-  final String SUB_GOAL = "help";
-  final String GOAL = "versions:" + SUB_GOAL;
+  private final String SUB_GOAL = "help";
+  private final String GOAL = "versions:" + SUB_GOAL;
   private Maven3SonarEmbedder embedder;
 
   @BeforeTest
@@ -52,16 +54,9 @@ public class Maven3ExecutionProcessTest {
   }
 
   class MyResultTransferHandler implements ResultTransferHandler<MyResultTransferHandler> {
-
+    @Getter
+    @Setter
     private boolean ping;
-
-    public boolean isPing() {
-      return ping;
-    }
-
-    public void setPing(final boolean ping) {
-      this.ping = ping;
-    }
   }
 
 

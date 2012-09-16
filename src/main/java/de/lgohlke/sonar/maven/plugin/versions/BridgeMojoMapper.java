@@ -36,9 +36,11 @@ public abstract class BridgeMojoMapper {
 
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
+   * 
    * @param bridgeMojo
+   * @throws BridgeMojoMapperException
    */
-  public void injectResultTransferHandler(final BridgeMojo<?> bridgeMojo) {
+  public void injectResultTransferHandler(final BridgeMojo<?> bridgeMojo) throws BridgeMojoMapperException {
     checkNotNull(bridgeMojo);
     checkArgument(bridgeMojo.getClass().isAnnotationPresent(Goal.class), "each %s needs an annotation %s", BridgeMojo.class, Goal.class);
 
@@ -46,6 +48,8 @@ public abstract class BridgeMojoMapper {
     Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = getGoalToTransferHandlerMap();
     if (goalToTransferHandlerMap.containsKey(goal)) {
       bridgeMojo.injectResultHandler(goalToTransferHandlerMap.get(goal));
+    } else {
+      throw new BridgeMojoMapperException("no matching " + ResultTransferHandler.class.getSimpleName() + " for goal : " + goal);
     }
   }
 
