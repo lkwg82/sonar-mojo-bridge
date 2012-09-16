@@ -23,6 +23,8 @@ import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -31,18 +33,27 @@ import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.maven3.Maven3PluginExecutor;
 
 @Phase(name = Phase.Name.PRE)
-public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
+public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
+  private final static Logger log = LoggerFactory.getLogger(MavenVersionSensor.class);
   private final RulesProfile rulesProfile;
   private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
   private final MavenProject mavenProject;
+  final boolean isMaven3;
 
   public MavenVersionSensor(final RulesProfile profile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
     this.rulesProfile = profile;
     MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
     this.mavenProject = mavenProject;
+
+    if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
+      isMaven3 = true;
+    } else {
+      isMaven3 = false;
+    }
   }
 
   @Override
@@ -57,7 +68,11 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
       prop = MavenPlugin.DEFAULT;
     }
 
-    return Boolean.parseBoolean(prop);
+    if (!isMaven3) {
+      log.warn("this plugin is incompatible with maven2, run again with maven3");
+    }
+
+    return Boolean.parseBoolean(prop) && isMaven3;
   }
 
   @Override
