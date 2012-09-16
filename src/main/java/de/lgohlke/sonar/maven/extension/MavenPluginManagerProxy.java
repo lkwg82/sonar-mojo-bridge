@@ -36,9 +36,6 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (method.getName().equals("setupPluginRealm")) {
       args[2] = classloader;
-      // final List<String> imports = new ArrayList<String>();
-      // imports.add("de.lgohlke");
-      // args[3] = imports;
     }
     return method.invoke(getUnderLying(), args);
   }
