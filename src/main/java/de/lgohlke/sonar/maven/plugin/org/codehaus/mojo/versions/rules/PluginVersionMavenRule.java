@@ -17,8 +17,26 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions;
+package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.rules;
 
-public interface Goals {
-  String DISPLAY_DEPENDENCY_UPDATES = "display-dependency-updates";
+import de.lgohlke.sonar.plugin.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
+
+@Rule(key = PluginVersionMavenRule.KEY, priority = Priority.MINOR, name = PluginVersionMavenRule.NAME, description = PluginVersionMavenRule.DESCRIPTION)
+public class PluginVersionMavenRule implements MavenRule {
+  protected static final String KEY = "Old Plugin";
+  protected static final String NAME = "[POM] found an updated version for plugin";
+  protected static final String DESCRIPTION = "TODO";
+
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public String getKey() {
+    return KEY;
+  }
+
 }

@@ -17,32 +17,29 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions;
+package de.lgohlke.sonar.maven.plugin;
 
 import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
-import de.lgohlke.sonar.maven.plugin.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import de.lgohlke.sonar.plugin.MavenPlugin;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
-import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
-import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
 
 @Phase(name = Phase.Name.PRE)
 @RequiredArgsConstructor
-public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
-  private final static Logger log = LoggerFactory.getLogger(MavenVersionSensor.class);
+@Slf4j
+@Data
+public abstract class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
   private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
-  private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
   private boolean isMaven3;
 
   @Override
@@ -59,7 +56,7 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
 
     isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
     if (isMaven3) {
-      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), bridgeMojoMapper);
+      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), getHandler());
     } else {
       log.warn("this plugin is incompatible with maven2, run again with maven3");
     }
@@ -67,18 +64,5 @@ public class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
     return Boolean.parseBoolean(prop) && isMaven3;
   }
 
-  @Override
-  public void analyse(final Project project, final SensorContext context) {
-
-    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(
-        Goals.DISPLAY_DEPENDENCY_UPDATES);
-
-    handler.setMavenProject(mavenProject);
-    handler.analyse(project, context);
-  }
-
-  @Override
-  public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenVersionsPluginHandlerFactory.create(MavenVersionsGoal.DisplayDependencyUpdates);
-  }
+  protected abstract BridgeMojoMapper getHandler();
 }

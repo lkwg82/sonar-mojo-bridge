@@ -19,8 +19,9 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
+import de.lgohlke.sonar.maven.plugin.BridgeMojoMapper;
+
 import de.lgohlke.sonar.maven.plugin.BridgeMojo;
-import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
 

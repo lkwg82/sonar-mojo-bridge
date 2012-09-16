@@ -17,17 +17,9 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions;
+package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.model.Dependency;
-
-@RequiredArgsConstructor
-public class ArtifactUpdate {
-  @Getter
-  private final Dependency dependency;
-  @Getter
-  private final ArtifactVersion artifactVersion;
+public interface Goals {
+  String DISPLAY_DEPENDENCY_UPDATES = "display-dependency-updates";
+  String HELP = "help";
 }

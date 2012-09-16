@@ -17,12 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions.bridgeMojos;
+package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.bridgeMojos;
+
+import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.ArtifactUpdate;
+
+import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 
 import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import de.lgohlke.sonar.maven.plugin.SonarAnalysisHandler;
-import de.lgohlke.sonar.maven.plugin.versions.ArtifactUpdate;
-import de.lgohlke.sonar.maven.plugin.versions.rules.DependencyVersionMavenRule;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import lombok.Setter;
 import org.apache.maven.project.MavenProject;

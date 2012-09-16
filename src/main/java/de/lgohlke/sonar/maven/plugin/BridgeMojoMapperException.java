@@ -19,14 +19,11 @@
  */
 package de.lgohlke.sonar.maven.plugin;
 
-import org.apache.maven.project.MavenProject;
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.profiles.RulesProfile;
+public class BridgeMojoMapperException extends Exception {
 
-public interface MavenGoalExecutor {
-  boolean needsToBeExecuted();
+  private static final long serialVersionUID = -107270059713086960L;
 
-  void setRulesProfile(final RulesProfile profile);
-
-  void execute(MavenProject project, SensorContext context);
+  public BridgeMojoMapperException(final String string) {
+    super(string);
+  }
 }

@@ -17,25 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.versions.rules;
+package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.plugin.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.model.Dependency;
 
-@Rule(key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME, description = DependencyVersionMavenRule.DESCRIPTION)
-public class DependencyVersionMavenRule implements MavenRule {
-  protected static final String KEY = "Old Dependency";
-  protected static final String NAME = "[POM] found an updated version for dependency";
-  protected static final String DESCRIPTION = "TODO";
-
-  @Override
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public String getKey() {
-    return KEY;
-  }
+@RequiredArgsConstructor
+public class ArtifactUpdate {
+  @Getter
+  private final Dependency dependency;
+  @Getter
+  private final ArtifactVersion artifactVersion;
 }

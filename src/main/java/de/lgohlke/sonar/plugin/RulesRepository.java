@@ -19,9 +19,9 @@
  */
 package de.lgohlke.sonar.plugin;
 
-import de.lgohlke.sonar.maven.plugin.versions.rules.PluginVersionMavenRule;
+import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
+import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.rules.PluginVersionMavenRule;
 
-import de.lgohlke.sonar.maven.plugin.versions.rules.DependencyVersionMavenRule;
 
 
 import org.sonar.api.rules.AnnotationRuleParser;

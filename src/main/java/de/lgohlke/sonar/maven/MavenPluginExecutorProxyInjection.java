@@ -19,7 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.plugin.versions.BridgeMojoMapper;
+import de.lgohlke.sonar.maven.plugin.BridgeMojoMapper;
+
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
