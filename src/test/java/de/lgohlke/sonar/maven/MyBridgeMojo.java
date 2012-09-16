@@ -20,8 +20,6 @@
 package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.maven.Maven3ExecutionProcessTest.MyResultTransferHandler;
-import de.lgohlke.sonar.maven.plugin.BridgeMojo;
-import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.mojo.versions.HelpMojo;
 

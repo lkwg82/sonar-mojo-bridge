@@ -17,17 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.extension;
+package de.lgohlke.sonar.maven;
 
-import lombok.RequiredArgsConstructor;
-
-import java.lang.reflect.InvocationHandler;
-
-@RequiredArgsConstructor
-public abstract class DynamicProxy<T> implements InvocationHandler {
-  private final T underlying;
-
-  public T getUnderLying() {
-    return underlying;
-  }
+/**
+ * injects {@link ResultTransferHandler} into the bridge mojo
+ * @author Lars Gohlke
+ *
+ * @param <T>
+ */
+public interface BridgeMojo<T extends ResultTransferHandler<?>> {
+  void injectResultHandler(ResultTransferHandler<?> handler);
 }

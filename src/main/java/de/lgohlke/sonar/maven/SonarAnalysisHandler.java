@@ -17,26 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.rules;
+package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.plugin.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import org.sonar.api.batch.SensorContext;
+import org.sonar.api.resources.Project;
 
-@Rule(key = PluginVersionMavenRule.KEY, priority = Priority.MINOR, name = PluginVersionMavenRule.NAME, description = PluginVersionMavenRule.DESCRIPTION)
-public class PluginVersionMavenRule implements MavenRule {
-  protected static final String KEY = "Old Plugin";
-  protected static final String NAME = "[POM] found an updated version for plugin";
-  protected static final String DESCRIPTION = "TODO";
-
-  @Override
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public String getKey() {
-    return KEY;
-  }
-
+public interface SonarAnalysisHandler {
+  /**
+   * The method that is going to be run when the sensor is called
+   *
+   * @param project the project the sensor runs on
+   * @param context the context
+   */
+  void analyse(Project project, SensorContext context);
 }

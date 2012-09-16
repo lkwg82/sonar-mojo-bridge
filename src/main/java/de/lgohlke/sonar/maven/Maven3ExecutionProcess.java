@@ -19,11 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.plugin.BridgeMojoMapper;
 
-import de.lgohlke.sonar.maven.extension.DynamicProxy;
-import de.lgohlke.sonar.maven.extension.MavenPluginManagerProxy;
-import de.lgohlke.sonar.maven.extension.PlexusContainerProxy;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.codehaus.plexus.PlexusContainer;

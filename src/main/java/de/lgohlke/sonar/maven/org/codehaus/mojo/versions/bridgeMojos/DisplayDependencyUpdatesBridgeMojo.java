@@ -17,16 +17,18 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.bridgeMojos;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos;
 
-import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.Goals;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.ArtifactUpdate;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Goals;
 
-import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.ArtifactUpdate;
+import de.lgohlke.sonar.maven.BridgeMojo;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+
+
 
 import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.maven.Goal;
-import de.lgohlke.sonar.maven.plugin.BridgeMojo;
-import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;

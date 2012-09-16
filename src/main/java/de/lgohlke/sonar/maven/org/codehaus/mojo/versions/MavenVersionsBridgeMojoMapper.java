@@ -17,16 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.plugin.BridgeMojoMapper;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojo;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 
-import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojo;
-import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
+import de.lgohlke.sonar.maven.BridgeMojo;
+import de.lgohlke.sonar.maven.BridgeMojoMapper;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+
 
 import com.google.common.collect.ImmutableMap;
-import de.lgohlke.sonar.maven.plugin.BridgeMojo;
-import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 
 import java.util.Map;
 

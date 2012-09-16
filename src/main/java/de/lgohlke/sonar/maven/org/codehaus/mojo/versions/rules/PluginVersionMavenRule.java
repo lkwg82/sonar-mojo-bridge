@@ -17,13 +17,26 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
-public class BridgeMojoMapperException extends Exception {
+import de.lgohlke.sonar.plugin.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-  private static final long serialVersionUID = -107270059713086960L;
+@Rule(key = PluginVersionMavenRule.KEY, priority = Priority.MINOR, name = PluginVersionMavenRule.NAME, description = PluginVersionMavenRule.DESCRIPTION)
+public class PluginVersionMavenRule implements MavenRule {
+  protected static final String KEY = "Old Plugin";
+  protected static final String NAME = "[POM] found an updated version for plugin";
+  protected static final String DESCRIPTION = "TODO";
 
-  public BridgeMojoMapperException(final String string) {
-    super(string);
+  @Override
+  public String getName() {
+    return NAME;
   }
+
+  @Override
+  public String getKey() {
+    return KEY;
+  }
+
 }

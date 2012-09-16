@@ -19,11 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.plugin.BridgeMojoMapper;
 
 import com.google.common.collect.ImmutableMap;
-import de.lgohlke.sonar.maven.plugin.BridgeMojo;
-import de.lgohlke.sonar.maven.plugin.ResultTransferHandler;
 import hudson.maven.MavenEmbedderException;
 import lombok.Getter;
 import lombok.Setter;

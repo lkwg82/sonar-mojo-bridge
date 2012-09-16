@@ -17,12 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
+
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
+
+import de.lgohlke.sonar.maven.BridgeMojoMapper;
+import de.lgohlke.sonar.maven.MavenBaseSensor;
 
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
-import de.lgohlke.sonar.maven.plugin.BridgeMojoMapper;
-import de.lgohlke.sonar.maven.plugin.MavenVersionSensor;
-import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -30,7 +32,7 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
 
-public class DisplayDependencyUpdatesSensor extends MavenVersionSensor {
+public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
 
   private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
   public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {

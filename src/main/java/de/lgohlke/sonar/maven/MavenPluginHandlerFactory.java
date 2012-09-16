@@ -28,9 +28,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * wrapps the {@link MavenPluginHandler} implementation, into a generic
+ * wraps the {@link MavenPluginHandler} implementation, into a generic
+ * 
  * @author Lars Gohlke
- *
  */
 public class MavenPluginHandlerFactory {
 

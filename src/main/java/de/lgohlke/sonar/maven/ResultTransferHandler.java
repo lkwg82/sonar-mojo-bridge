@@ -17,17 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin;
+package de.lgohlke.sonar.maven;
 
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.resources.Project;
-
-public interface SonarAnalysisHandler {
-  /**
-   * The method that is going to be run when the sensor is called
-   *
-   * @param project the project the sensor runs on
-   * @param context the context
-   */
-  void analyse(Project project, SensorContext context);
+/**
+ * marker interface for transfer object between bridge mojo and sensor
+ * @author Lars Gohlke
+ *
+ * @param <T>
+ */
+public interface ResultTransferHandler<T> {
 }

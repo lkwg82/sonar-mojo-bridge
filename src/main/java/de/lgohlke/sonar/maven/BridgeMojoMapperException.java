@@ -17,14 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin;
+package de.lgohlke.sonar.maven;
 
-/**
- * injects {@link ResultTransferHandler} into the bridge mojo
- * @author Lars Gohlke
- *
- * @param <T>
- */
-public interface BridgeMojo<T extends ResultTransferHandler<?>> {
-  void injectResultHandler(ResultTransferHandler<?> handler);
+public class BridgeMojoMapperException extends Exception {
+
+  private static final long serialVersionUID = -107270059713086960L;
+
+  public BridgeMojoMapperException(final String string) {
+    super(string);
+  }
 }

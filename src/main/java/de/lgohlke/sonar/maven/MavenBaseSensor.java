@@ -17,9 +17,8 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin;
+package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ import org.sonar.batch.MavenPluginExecutor;
 @RequiredArgsConstructor
 @Slf4j
 @Data
-public abstract class MavenVersionSensor implements Sensor, DependsUponMavenPlugin {
+public abstract class MavenBaseSensor implements Sensor, DependsUponMavenPlugin {
   private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;

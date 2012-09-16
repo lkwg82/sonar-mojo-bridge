@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.base.Preconditions;
-import de.lgohlke.sonar.maven.extension.PlexusSlf4JLogger;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;

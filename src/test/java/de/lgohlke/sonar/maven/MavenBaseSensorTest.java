@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.plugin;
+package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.plugin.MavenPlugin;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -41,16 +41,16 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MavenVersionSensorTest {
+public class MavenBaseSensorTest {
 
   private final MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);
 
   private final MavenProject mavenProject = mock(MavenProject.class);
 
   private final RulesProfile profile = mock(RulesProfile.class);
-  private MavenVersionSensor mavenVersionSensor;
+  private MavenBaseSensor mavenVersionSensor;
 
-  class MyMavenVersionSensor extends MavenVersionSensor {
+  class MyMavenVersionSensor extends MavenBaseSensor {
 
     public MyMavenVersionSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
       super(rulesProfile, mavenPluginExecutor, mavenProject);

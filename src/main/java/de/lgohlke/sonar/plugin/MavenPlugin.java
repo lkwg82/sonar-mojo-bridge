@@ -19,7 +19,8 @@
  */
 package de.lgohlke.sonar.plugin;
 
-import de.lgohlke.sonar.maven.plugin.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
+
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
