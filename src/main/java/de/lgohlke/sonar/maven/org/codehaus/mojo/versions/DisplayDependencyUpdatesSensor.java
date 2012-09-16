@@ -19,12 +19,10 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
-
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
-
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos.DisplayDependencyUpdatesBridgeMojoResultHandler;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -43,7 +41,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
   public void analyse(final Project project, final SensorContext context) {
 
     DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(
-        Goals.DISPLAY_DEPENDENCY_UPDATES);
+        Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES);
 
     handler.setMavenProject(getMavenProject());
     handler.analyse(project, context);
@@ -51,7 +49,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler("org.codehaus.mojo:versions-maven-plugin:1.3.1:" + Goals.DISPLAY_DEPENDENCY_UPDATES);
+    return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER + Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES);
   }
 
   @Override

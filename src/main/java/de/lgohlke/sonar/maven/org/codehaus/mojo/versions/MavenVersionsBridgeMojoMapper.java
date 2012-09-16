@@ -35,7 +35,7 @@ public class MavenVersionsBridgeMojoMapper extends BridgeMojoMapper {
 
   private final Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = ImmutableMap.<String, ResultTransferHandler<?>>
       builder().
-      put(Goals.DISPLAY_DEPENDENCY_UPDATES, new DisplayDependencyUpdatesBridgeMojoResultHandler()).
+      put(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES, new DisplayDependencyUpdatesBridgeMojoResultHandler()).
       build();
 
   @Override
@@ -47,7 +47,7 @@ public class MavenVersionsBridgeMojoMapper extends BridgeMojoMapper {
   public Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
     return ImmutableMap.<String, Class<? extends BridgeMojo<?>>>
     builder().
-    put(Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class).
+    put(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class).
     build();
   }
 

@@ -19,8 +19,9 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.bridgeMojos;
 
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration;
+
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.ArtifactUpdate;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Goals;
 
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
@@ -52,7 +53,7 @@ import java.util.TreeSet;
 import static org.fest.reflect.core.Reflection.staticMethod;
 
 @SuppressWarnings("deprecation")
-@Goal(Goals.DISPLAY_DEPENDENCY_UPDATES)
+@Goal(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES)
 public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayDependencyUpdatesBridgeMojoResultHandler> {
 
   public static final String DEPENDENCIES = "Dependencies";
