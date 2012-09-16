@@ -19,7 +19,10 @@
  */
 package de.lgohlke.sonar.maven.extension;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MavenPluginManager;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.sonatype.aether.graph.DependencyFilter;
 
 import java.lang.reflect.Method;
 
@@ -32,6 +35,9 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
     this.classloader = cl;
   }
 
+  /**
+   * @see {link {@link MavenPluginManager#setupPluginRealm(PluginDescriptor, MavenSession, ClassLoader, List, DependencyFilter)}
+   */
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (method.getName().equals("setupPluginRealm")) {
