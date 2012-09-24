@@ -61,6 +61,10 @@ public class Maven3ExecutionProcessTest {
 
   class MyBridgeMojoMapper extends BridgeMojoMapper
   {
+    public MyBridgeMojoMapper() {
+      super(SUB_GOAL, MyBridgeMojo.class);
+    }
+
     private final Map<String, ResultTransferHandler<?>> map = ImmutableMap.<String, ResultTransferHandler<?>>
     builder().
     put(SUB_GOAL, new MyResultTransferHandler()).
@@ -69,14 +73,6 @@ public class Maven3ExecutionProcessTest {
     @Override
     public Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap() {
       return map;
-    }
-
-    @Override
-    public Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
-      return ImmutableMap.<String, Class<? extends BridgeMojo<?>>>
-      builder().
-      put(SUB_GOAL, MyBridgeMojo.class).
-      build();
     }
   }
 

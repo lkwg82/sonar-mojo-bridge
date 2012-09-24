@@ -20,16 +20,31 @@
 package de.lgohlke.sonar.maven;
 
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@RequiredArgsConstructor
 public abstract class BridgeMojoMapper {
 
   public abstract Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap();
 
-  public abstract Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap();
+  @Getter
+  @NonNull
+  private final String goal;
+
+  @Getter
+  @NonNull
+  private final Class<? extends BridgeMojo<?>> bridgeMojoClass;
+
+  public final Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
+    return null;
+  }
 
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
@@ -51,7 +66,7 @@ public abstract class BridgeMojoMapper {
   }
 
   public Class<? extends BridgeMojo<?>> getBridgeMojoClassFor(final String goal) {
-    return getGoalToBridgeMojoMap().get(goal);
+    return goal.equals(this.goal) ? bridgeMojoClass : null;
   }
 
 }
