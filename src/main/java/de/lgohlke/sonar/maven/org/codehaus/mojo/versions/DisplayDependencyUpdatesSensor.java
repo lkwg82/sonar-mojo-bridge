@@ -39,8 +39,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
   @Override
   public void analyse(final Project project, final SensorContext context) {
 
-    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(
-        Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES);
+    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) bridgeMojoMapper.getResultTransferHandler();
 
     handler.setMavenProject(getMavenProject());
     handler.analyse(project, context);

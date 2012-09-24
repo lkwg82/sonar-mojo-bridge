@@ -19,25 +19,11 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import com.google.common.collect.ImmutableMap;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
-import de.lgohlke.sonar.maven.ResultTransferHandler;
-
-import java.util.Map;
 
 public class MavenVersionsBridgeMojoMapper extends BridgeMojoMapper {
 
   public MavenVersionsBridgeMojoMapper() {
-    super(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class);
-  }
-
-  private final Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = ImmutableMap.<String, ResultTransferHandler<?>>
-  builder().
-  put(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES, new DisplayDependencyUpdatesBridgeMojoResultHandler()).
-  build();
-
-  @Override
-  public Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap() {
-    return goalToTransferHandlerMap;
+    super(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class, new DisplayDependencyUpdatesBridgeMojoResultHandler());
   }
 }

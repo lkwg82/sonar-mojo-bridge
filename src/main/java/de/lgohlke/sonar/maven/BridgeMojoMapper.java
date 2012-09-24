@@ -24,15 +24,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Map;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @RequiredArgsConstructor
 public abstract class BridgeMojoMapper {
-
-  public abstract Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap();
 
   @Getter
   @NonNull
@@ -42,9 +38,9 @@ public abstract class BridgeMojoMapper {
   @NonNull
   private final Class<? extends BridgeMojo<?>> bridgeMojoClass;
 
-  public final Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
-    return null;
-  }
+  @Getter
+  @NonNull
+  private final ResultTransferHandler<?> resultTransferHandler;
 
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
@@ -57,16 +53,10 @@ public abstract class BridgeMojoMapper {
     checkArgument(bridgeMojo.getClass().isAnnotationPresent(Goal.class), "each %s needs an annotation %s", BridgeMojo.class, Goal.class);
 
     String goal = bridgeMojo.getClass().getAnnotation(Goal.class).value();
-    Map<String, ResultTransferHandler<?>> goalToTransferHandlerMap = getGoalToTransferHandlerMap();
-    if (goalToTransferHandlerMap.containsKey(goal)) {
-      bridgeMojo.injectResultHandler(goalToTransferHandlerMap.get(goal));
+    if (this.goal.equals(goal)) {
+      bridgeMojo.injectResultHandler(resultTransferHandler);
     } else {
       throw new BridgeMojoMapperException("no matching " + ResultTransferHandler.class.getSimpleName() + " for goal : " + goal);
     }
   }
-
-  public Class<? extends BridgeMojo<?>> getBridgeMojoClassFor(final String goal) {
-    return goal.equals(this.goal) ? bridgeMojoClass : null;
-  }
-
 }

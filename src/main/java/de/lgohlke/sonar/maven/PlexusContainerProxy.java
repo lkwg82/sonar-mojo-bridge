@@ -40,8 +40,8 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (method.getName().equals("addComponentDescriptor")) {
       MojoDescriptor descriptor = (MojoDescriptor) args[0];
-      Class<?> bridgeMojoClass = bridgeMojoMapper.getBridgeMojoClassFor(descriptor.getGoal());
-      if (bridgeMojoClass != null) {
+      if (bridgeMojoMapper.getGoal().equals(descriptor.getGoal())) {
+        Class<?> bridgeMojoClass = bridgeMojoMapper.getBridgeMojoClass();
         field("implementation").ofType(String.class).in(descriptor).set(bridgeMojoClass.getCanonicalName());
       }
     }

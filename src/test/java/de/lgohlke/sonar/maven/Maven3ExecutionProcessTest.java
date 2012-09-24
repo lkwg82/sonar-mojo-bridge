@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven;
 
 
-import com.google.common.collect.ImmutableMap;
 import hudson.maven.MavenEmbedderException;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +29,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
@@ -62,17 +60,7 @@ public class Maven3ExecutionProcessTest {
   class MyBridgeMojoMapper extends BridgeMojoMapper
   {
     public MyBridgeMojoMapper() {
-      super(SUB_GOAL, MyBridgeMojo.class);
-    }
-
-    private final Map<String, ResultTransferHandler<?>> map = ImmutableMap.<String, ResultTransferHandler<?>>
-    builder().
-    put(SUB_GOAL, new MyResultTransferHandler()).
-    build();
-
-    @Override
-    public Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap() {
-      return map;
+      super(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
     }
   }
 
@@ -83,7 +71,7 @@ public class Maven3ExecutionProcessTest {
     ClassLoader classLoader = this.getClass().getClassLoader();
     BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
 
-    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
     Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
 
     embedder.run();
@@ -94,7 +82,7 @@ public class Maven3ExecutionProcessTest {
   @Test
   public void shouldNotBeDecorated() throws MavenEmbedderException, ClassNotFoundException {
     BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
-    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
 
     embedder.run();
 
