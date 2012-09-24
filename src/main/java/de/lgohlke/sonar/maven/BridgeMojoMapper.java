@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @RequiredArgsConstructor
-public abstract class BridgeMojoMapper {
+public class BridgeMojoMapper {
 
   @Getter
   @NonNull

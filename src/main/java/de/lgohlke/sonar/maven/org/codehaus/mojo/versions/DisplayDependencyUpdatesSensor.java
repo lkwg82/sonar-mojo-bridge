@@ -30,8 +30,9 @@ import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
 
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
-
-  private final MavenVersionsBridgeMojoMapper bridgeMojoMapper = new MavenVersionsBridgeMojoMapper();
+  private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
+  private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES,
+      DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
   public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
   }

@@ -55,21 +55,12 @@ public class Maven3ExecutionProcessTest {
     private boolean ping;
   }
 
-
-
-  class MyBridgeMojoMapper extends BridgeMojoMapper
-  {
-    public MyBridgeMojoMapper() {
-      super(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
-    }
-  }
-
   @Test
   public void shouldDecorate() throws MavenEmbedderException, ClassNotFoundException {
     MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
     Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
     ClassLoader classLoader = this.getClass().getClassLoader();
-    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
+    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
 
     MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
     Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
@@ -81,7 +72,7 @@ public class Maven3ExecutionProcessTest {
 
   @Test
   public void shouldNotBeDecorated() throws MavenEmbedderException, ClassNotFoundException {
-    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
+    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
     MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
 
     embedder.run();
