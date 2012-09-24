@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven;
 
 
-import com.google.common.collect.ImmutableMap;
 import hudson.maven.MavenEmbedderException;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +29,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
@@ -57,37 +55,14 @@ public class Maven3ExecutionProcessTest {
     private boolean ping;
   }
 
-
-
-  class MyBridgeMojoMapper extends BridgeMojoMapper
-  {
-    private final Map<String, ResultTransferHandler<?>> map = ImmutableMap.<String, ResultTransferHandler<?>>
-    builder().
-    put(SUB_GOAL, new MyResultTransferHandler()).
-    build();
-
-    @Override
-    public Map<String, ResultTransferHandler<?>> getGoalToTransferHandlerMap() {
-      return map;
-    }
-
-    @Override
-    public Map<String, Class<? extends BridgeMojo<?>>> getGoalToBridgeMojoMap() {
-      return ImmutableMap.<String, Class<? extends BridgeMojo<?>>>
-      builder().
-      put(SUB_GOAL, MyBridgeMojo.class).
-      build();
-    }
-  }
-
   @Test
   public void shouldDecorate() throws MavenEmbedderException, ClassNotFoundException {
     MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
     Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
     ClassLoader classLoader = this.getClass().getClassLoader();
-    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
+    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
 
-    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
     Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
 
     embedder.run();
@@ -97,8 +72,8 @@ public class Maven3ExecutionProcessTest {
 
   @Test
   public void shouldNotBeDecorated() throws MavenEmbedderException, ClassNotFoundException {
-    BridgeMojoMapper bridgeMojoMapper = new MyBridgeMojoMapper();
-    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getGoalToTransferHandlerMap().get(SUB_GOAL);
+    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
+    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
 
     embedder.run();
 
