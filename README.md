@@ -36,3 +36,6 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 
 # ideas #
 * checks for http://maven.apache.org/developers/conventions/code.html#POM_Code_Convention
+
+# development #
+clone repositoriy and dont forget to add lombok for your ide (http://projectlombok.org/download.html)
