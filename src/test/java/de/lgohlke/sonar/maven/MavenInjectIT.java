@@ -19,42 +19,30 @@
  */
 package de.lgohlke.sonar.maven;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
-import static org.fest.assertions.api.Assertions.fail;
 
 public class MavenInjectIT {
-  @Test
-  public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
+  private SonarExecutor executor;
+
+  @BeforeClass
+  public void beforeAllTests() {
     String jdbcDriver = System.getProperty("jdbcDriver");
     String jdbcUrl = System.getProperty("jdbcUrl");
 
-    executeMaven(jdbcDriver, jdbcUrl);
-
+    executor = new SonarExecutor(jdbcDriver, jdbcUrl).//
+        skipDesign().//
+        skipDynamicAnalysis().//
+        skipTests().//
+        showMavenErrorWhileAnalysis();
   }
 
-  private void executeMaven(final String jdbcDriver, final String jdbcUrl) {
-    String format = "mvn sonar:sonar -Dsonar.jdbc.url=%s -Dsonar.jdbc.driver=%s -DskipTests -Dsonar.skipDesign -Dsonar.dynamicAnalysis -X -e";
-    String cmd = String.format(format,jdbcUrl, jdbcDriver);
-    try {
-      Process proc = Runtime.getRuntime().exec(cmd);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+  @Test
+  public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
 
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        System.out.println(line);
-      }
-      proc.waitFor();
+    executor.execute();
 
-      if (proc.exitValue() > 0) {
-        fail("sonar test run failed");
-      }
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 }
