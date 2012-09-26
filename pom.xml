@@ -354,6 +354,7 @@
               <database>${test.database}</database>
               <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
               <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
+              <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
             </configuration>
           </execution>
           <execution>
