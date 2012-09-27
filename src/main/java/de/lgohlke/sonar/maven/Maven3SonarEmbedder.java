@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -60,10 +61,14 @@ public class Maven3SonarEmbedder {
   }
 
   public static class MavenSonarEmbedderBuilder {
-    private String pom;
+    public static final String M2_HOME = "M2_HOME";
+    public static final String MAVEN_HOME_KEY = "maven.home";
+    private String pom = "pom.xml"; // default
     private String goal;
     private File mavenHome;
     private int logLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
+    private final Properties userProperties = new Properties();
+    private boolean showErrors;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
       Preconditions.checkNotNull(pomFile);
@@ -80,18 +85,18 @@ public class Maven3SonarEmbedder {
     /**
      * <pre>
      * int LEVEL_DEBUG = 0;
-     * 
+     *
      * int LEVEL_INFO = 1;
-     * 
+     *
      * int LEVEL_WARN = 2;
-     * 
+     *
      * int LEVEL_ERROR = 3;
-     * 
+     *
      * int LEVEL_FATAL = 4;
-     * 
+     *
      * int LEVEL_DISABLED = 5;
      * </pre>
-     * 
+     *
      * @param level
      * @return
      */
@@ -103,7 +108,7 @@ public class Maven3SonarEmbedder {
 
     /**
      * could be called multiple times
-     * 
+     *
      * @param mavenHome
      * @return
      */
@@ -123,8 +128,13 @@ public class Maven3SonarEmbedder {
         if (envMap.containsKey("maven.home")) {
           mavenHome = new File(envMap.get("maven.home"));
         }
-        else if (envMap.containsKey("M2_HOME")) {
-          mavenHome = new File(envMap.get("M2_HOME"));
+        else if (envMap.containsKey(M2_HOME)) {
+          final Object value = envMap.get(M2_HOME);
+          if (value instanceof File) {
+            mavenHome = (File) value;
+          } else {
+            mavenHome = new File((String) value);
+          }
         } else {
           final String currentProgramm = System.getenv("_");
           if (currentProgramm != null) {
@@ -143,6 +153,18 @@ public class Maven3SonarEmbedder {
       }
     }
 
+    public MavenSonarEmbedderBuilder setUserProperty(final String key, final String value) {
+      Preconditions.checkNotNull(key);
+      Preconditions.checkNotNull(value);
+      userProperties.put(key, value);
+      return this;
+    }
+
+    public MavenSonarEmbedderBuilder showErrors(final boolean showErrors) {
+      this.showErrors = showErrors;
+      return this;
+    }
+
     public Maven3SonarEmbedder build() throws MavenEmbedderException {
 
       Preconditions.checkNotNull(pom, "missing pom");
@@ -152,10 +174,12 @@ public class Maven3SonarEmbedder {
 
       MavenRequest mavenRequest = new MavenRequest();
       mavenRequest.setPom(pom);
-      mavenRequest.setShowErrors(true);
+      mavenRequest.setShowErrors(showErrors);
       mavenRequest.setGoals(Arrays.asList(goal));
       mavenRequest.setLoggingLevel(logLevel);
       mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new PlexusSlf4JLogger(log)));
+      mavenRequest.setUserProperties(userProperties);
+      mavenRequest.setSystemProperties(userProperties);
       detectMavenHomeIfNull();
 
       try {

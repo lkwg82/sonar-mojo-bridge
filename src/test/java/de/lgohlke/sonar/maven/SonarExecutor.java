@@ -19,19 +19,13 @@
  */
 package de.lgohlke.sonar.maven;
 
+import de.lgohlke.sonar.maven.Maven3SonarEmbedder.MavenSonarEmbedderBuilder;
+import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import static org.fest.assertions.api.Assertions.fail;
-
-@Slf4j
 @RequiredArgsConstructor
 final class SonarExecutor {
 
-  private final static String BASE_CMD_TEMPLATE = "mvn sonar:sonar -Dsonar.jdbc.url=%s -Dsonar.jdbc.driver=%s";
   private final String jdbcDriver;
   private final String jdbcUrl;
   private boolean skipTests;
@@ -39,6 +33,7 @@ final class SonarExecutor {
   private boolean skipDynamicAnalysis;
   private boolean activateMavenDebug;
   private boolean showMavenErrorWhileAnalysis;
+  private boolean showMavenOutputWhileAnalysis;
 
   public SonarExecutor skipTests() {
     return skipTests(true);
@@ -85,66 +80,91 @@ final class SonarExecutor {
     return this;
   }
 
+  public SonarExecutor showMavenOutputWhileAnalysis() {
+    return showMavenOutputWhileAnalysis(true);
+  }
+
+  private SonarExecutor showMavenOutputWhileAnalysis(final boolean showMavenOutputWhileAnalysis) {
+    this.showMavenOutputWhileAnalysis = showMavenOutputWhileAnalysis;
+    return this;
+  }
+
   @Override
   public SonarExecutor clone() {
     return new SonarExecutor(jdbcDriver, jdbcUrl).//
         activateMavenDebug(activateMavenDebug).//
         showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis).//
+        showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis).//
         skipDesign(skipDesign).//
         skipDynamicAnalysis(skipDynamicAnalysis).//
         skipTests(skipTests);
   }
 
-  public void execute() {
-    StringBuilder builder = new StringBuilder(String.format(BASE_CMD_TEMPLATE, jdbcUrl, jdbcDriver));
+  public void execute() throws MavenEmbedderException {
+    MavenSonarEmbedderBuilder maven3SonarEmbedderBuilder = Maven3SonarEmbedder.configure().goal("sonar:sonar");
+
+    if (jdbcDriver != null) {
+      maven3SonarEmbedderBuilder.setUserProperty("sonar.jdbc.driver", jdbcDriver);
+    }
+
+    if (jdbcUrl != null) {
+      maven3SonarEmbedderBuilder.setUserProperty("sonar.jdbc.url", jdbcUrl);
+    }
 
     if (skipTests) {
-      builder.append(" -DskipTests");
+      maven3SonarEmbedderBuilder.setUserProperty("skipTests", "");
+      // builder.append(" -DskipTests");
     }
 
     if (skipDesign) {
-      builder.append(" -Dsonar.skipDesign");
+      maven3SonarEmbedderBuilder.setUserProperty("sonar.skipDesign", "");
+      // builder.append(" -Dsonar.skipDesign");
     }
 
     if (skipDynamicAnalysis) {
-      builder.append(" -Dsonar.dynamicAnalysis=false");
+      maven3SonarEmbedderBuilder.setUserProperty("sonar.dynamicAnalysis", "false");
+      // builder.append(" -Dsonar.dynamicAnalysis=false");
     }
 
     if (activateMavenDebug) {
-      builder.append(" -X");
+      maven3SonarEmbedderBuilder.logLevel(0);
+      // builder.append(" -X");
     }
 
     if (showMavenErrorWhileAnalysis) {
-      builder.append(" -e");
+      maven3SonarEmbedderBuilder.showErrors(showMavenErrorWhileAnalysis);
+      // builder.append(" -e");
     }
 
-    try {
-      final String command = builder.toString();
-      log.info("calling : {}", command);
-      Process proc = Runtime.getRuntime().exec(command);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-      StringBuilder outputFromMavenCall = new StringBuilder();
-      String line = reader.readLine();
-      while (line != null) {
-        if (log.isDebugEnabled()) {
-          log.debug(line + "\n");
-        } else {
-          outputFromMavenCall.append(line);
-          outputFromMavenCall.append("\n");
-        }
-        line = reader.readLine();
-      }
-      proc.waitFor();
-
-      if (proc.exitValue() > 0) {
-        if (!log.isDebugEnabled()) {
-          log.error("call output:\n {}", outputFromMavenCall.toString());
-        }
-        fail("sonar test run failed");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    // try {
+    maven3SonarEmbedderBuilder.build().run();
+    // final String command = builder.toString();
+    // log.info("calling : {}", command);
+    // Process proc = Runtime.getRuntime().exec(command);
+    // BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+    //
+    // StringBuilder outputFromMavenCall = new StringBuilder();
+    // String line = reader.readLine();
+    // while (line != null) {
+    // if (log.isDebugEnabled()) {
+    // log.debug(line);
+    // } else if (showMavenOutputWhileAnalysis) {
+    // log.info(line);
+    // } else {
+    // outputFromMavenCall.append(line);
+    // }
+    // line = reader.readLine();
+    // }
+    // proc.waitFor();
+    //
+    // if (proc.exitValue() > 0) {
+    // if (!log.isDebugEnabled()) {
+    // log.error("call output:\n {}", outputFromMavenCall.toString());
+    // }
+    // fail("sonar test run failed");
+    // }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
   }
 }
