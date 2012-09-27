@@ -20,13 +20,12 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
 import de.lgohlke.sonar.MavenRule;
-
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME, description = DependencyVersionMavenRule.DESCRIPTION)
 public class DependencyVersionMavenRule implements MavenRule {
-  protected static final String KEY = "Old Dependency";
+  public static final String KEY = "Old Dependency";
   protected static final String NAME = "[POM] found an updated version for dependency";
   protected static final String DESCRIPTION = "TODO";
 

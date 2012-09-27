@@ -19,13 +19,23 @@
  */
 package de.lgohlke.sonar.maven;
 
+import de.lgohlke.sonar.MavenPlugin;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
+import org.fest.assertions.core.Condition;
+import org.sonar.wsclient.services.Resource;
+import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MavenInjectIT {
+  private final static String SONAR_HOST = "http://localhost:9000";
   private SonarExecutor executor;
+  private SonarAPIWrapper api;
 
   @BeforeClass
   public void beforeAllTests() {
@@ -36,13 +46,53 @@ public class MavenInjectIT {
         skipDesign().//
         skipDynamicAnalysis().//
         skipTests().//
-        showMavenErrorWhileAnalysis();
+        showMavenErrorWhileAnalysis().//
+        showMavenOutputWhileAnalysis().activateMavenDebug();
+    System.getProperties().put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
   }
 
-  @Test
+  @BeforeTest
+  public void beforeEachTest() {
+    api = new SonarAPIWrapper(SONAR_HOST);
+  }
+
+  @Test(enabled = false)
   public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
 
     executor.execute();
+  }
 
+  @Test(enabled = false)
+  public void shouldHaveSomeViolations() throws Exception {
+    final String projectKey = "org.codehaus.sonar-plugins:sonar-maven-checks";
+    final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
+
+    executor.execute();
+    List<Violation> violations = getViolationsFor(projectKey, ruleKey);
+
+    api.showQueryAndResult(violations);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations).are(onlyForFile("pom.xml"));
+  }
+
+  private List<Violation> getViolationsFor(final String projectKey, final String ruleKey) {
+    Resource projectResource = api.getProjectWithKey(projectKey);
+    return api.getViolationsFor(projectResource.getId(), ruleKey);
+  }
+
+  private String createRuleKey(final String specificRuleKey) {
+    return MavenPlugin.REPOSITORY_KEY + ":" + specificRuleKey;
+  }
+
+  private Condition<Violation> onlyForFile(final String filename) {
+    return new Condition<Violation>() {
+      @Override
+      public boolean matches(final Violation violation) {
+        final boolean isScope = violation.getResourceScope().equals(SonarAPIWrapper.SCOPES.FIL.name());
+        final boolean isQualifier = violation.getResourceQualifier().equals(SonarAPIWrapper.QUALIFIERS.FIL.name());
+        return isScope && isQualifier && violation.getResourceName().equals(filename);
+      }
+    };
   }
 }
