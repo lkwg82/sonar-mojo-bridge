@@ -41,6 +41,7 @@ final class SonarExecutor {
   private boolean activateMavenDebug;
   private boolean showMavenErrorWhileAnalysis;
   private boolean showMavenOutputWhileAnalysis;
+  private String pomXML = "pom.xml";
 
   public SonarExecutor skipTests() {
     return skipTests(true);
@@ -66,6 +67,11 @@ final class SonarExecutor {
 
   private SonarExecutor skipDynamicAnalysis(final boolean skipDynamicAnalysis) {
     this.skipDynamicAnalysis = skipDynamicAnalysis;
+    return this;
+  }
+
+  public SonarExecutor usePom(final String pom) {
+    this.pomXML = pom;
     return this;
   }
 
@@ -108,7 +114,7 @@ final class SonarExecutor {
   }
 
   public void execute() throws MavenEmbedderException {
-    StringBuilder builder = new StringBuilder("mvn sonar:sonar");
+    StringBuilder builder = new StringBuilder("mvn -f " + pomXML + " sonar:sonar");
 
     if (jdbcDriver != null) {
       builder.append(" -Dsonar.jdbc.driver=" + jdbcDriver);
@@ -180,6 +186,5 @@ final class SonarExecutor {
     } else {
       return null;
     }
-
   }
 }
