@@ -75,16 +75,17 @@ public class MavenInjectIT {
   public void shouldHaveSomeViolations() throws Exception {
     skipTestIfNotMaven3();
 
-    final String projectKey = "org.codehaus.sonar-plugins:sonar-maven-checks";
+    final String pomXml = "src/test/resources/it/pom-old-dependency.xml";
+    final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
     final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
 
-    executor.execute();
+    executor.usePom(pomXml).execute();
     List<Violation> violations = getViolationsFor(projectKey, ruleKey);
 
     api.showQueryAndResult(violations);
 
     assertThat(violations).isNotEmpty();
-    assertThat(violations).are(onlyForFile("pom.xml"));
+    assertThat(violations).are(onlyForFile(pomXml));
   }
 
   private List<Violation> getViolationsFor(final String projectKey, final String ruleKey) {
