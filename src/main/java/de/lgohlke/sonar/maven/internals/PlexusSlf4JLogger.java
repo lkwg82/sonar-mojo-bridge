@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar.maven.internals;
 
 import lombok.RequiredArgsConstructor;
 import org.codehaus.plexus.logging.Logger;

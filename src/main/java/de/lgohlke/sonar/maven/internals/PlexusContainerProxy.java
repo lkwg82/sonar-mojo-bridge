@@ -17,8 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar.maven.internals;
 
+
+import de.lgohlke.sonar.maven.BridgeMojo;
+import de.lgohlke.sonar.maven.BridgeMojoMapper;
 
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;

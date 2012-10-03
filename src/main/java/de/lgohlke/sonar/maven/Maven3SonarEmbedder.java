@@ -19,6 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
+import de.lgohlke.sonar.maven.internals.PlexusSlf4JLogger;
+
 import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;

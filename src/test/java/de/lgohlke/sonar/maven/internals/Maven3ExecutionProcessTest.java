@@ -17,9 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar.maven.internals;
 
 
+import de.lgohlke.sonar.maven.BridgeMojoMapper;
+import de.lgohlke.sonar.maven.Maven3SonarEmbedder;
+import de.lgohlke.sonar.maven.MyBridgeMojo;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
 import hudson.maven.MavenEmbedderException;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +53,7 @@ public class Maven3ExecutionProcessTest {
         build();
   }
 
-  class MyResultTransferHandler implements ResultTransferHandler<MyResultTransferHandler> {
+  public class MyResultTransferHandler implements ResultTransferHandler<MyResultTransferHandler> {
     @Getter
     @Setter
     private boolean ping;

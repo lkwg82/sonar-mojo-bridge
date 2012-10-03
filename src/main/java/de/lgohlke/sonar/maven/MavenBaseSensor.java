@@ -19,6 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
+import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
+
 import de.lgohlke.sonar.MavenPlugin;
 
 import lombok.Data;

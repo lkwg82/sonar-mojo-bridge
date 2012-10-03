@@ -17,9 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar.maven.internals;
 
 
+import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
@@ -31,7 +32,7 @@ public class MavenPluginExecutorProxyInjection {
         Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
       }
     } catch (NoClassDefFoundError e) {
-
+      // ok, this happens when maven 2 is used
     }
   }
 
