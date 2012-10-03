@@ -19,6 +19,10 @@
  */
 package de.lgohlke.sonar.maven;
 
+import de.lgohlke.sonar.SonarExecutor;
+
+import de.lgohlke.sonar.SonarAPIWrapper;
+
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 import org.fest.assertions.core.Condition;

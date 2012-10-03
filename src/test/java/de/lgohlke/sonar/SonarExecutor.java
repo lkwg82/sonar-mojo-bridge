@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar;
 
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import static org.fest.assertions.api.Assertions.fail;
 
 @Slf4j
 @RequiredArgsConstructor
-final class SonarExecutor {
+public final class SonarExecutor {
 
   private final String jdbcDriver;
   private final String jdbcUrl;
