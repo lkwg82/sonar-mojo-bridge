@@ -26,7 +26,7 @@ import org.sonar.check.Rule;
 @Rule(key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME, description = DependencyVersionMavenRule.DESCRIPTION)
 public class DependencyVersionMavenRule implements MavenRule {
   public static final String KEY = "Old Dependency";
-  protected static final String NAME = "[POM] found an updated version for dependency";
+  protected static final String NAME = "[Maven] found an newer version for a dependency in use";
   protected static final String DESCRIPTION = "TODO";
 
   @Override
