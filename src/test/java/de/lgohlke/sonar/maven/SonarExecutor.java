@@ -19,10 +19,17 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.Maven3SonarEmbedder.MavenSonarEmbedderBuilder;
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import static org.fest.assertions.api.Assertions.fail;
+
+@Slf4j
 @RequiredArgsConstructor
 final class SonarExecutor {
 
@@ -101,70 +108,78 @@ final class SonarExecutor {
   }
 
   public void execute() throws MavenEmbedderException {
-    MavenSonarEmbedderBuilder maven3SonarEmbedderBuilder = Maven3SonarEmbedder.configure().goal("sonar:sonar");
+    StringBuilder builder = new StringBuilder("mvn sonar:sonar");
 
     if (jdbcDriver != null) {
-      maven3SonarEmbedderBuilder.setUserProperty("sonar.jdbc.driver", jdbcDriver);
+      builder.append(" -Dsonar.jdbc.driver=" + jdbcDriver);
     }
 
     if (jdbcUrl != null) {
-      maven3SonarEmbedderBuilder.setUserProperty("sonar.jdbc.url", jdbcUrl);
+      builder.append(" -Dsonar.jdbc.url=" + jdbcUrl);
     }
 
     if (skipTests) {
-      maven3SonarEmbedderBuilder.setUserProperty("skipTests", "");
-      // builder.append(" -DskipTests");
+      builder.append(" -DskipTests");
     }
 
     if (skipDesign) {
-      maven3SonarEmbedderBuilder.setUserProperty("sonar.skipDesign", "");
-      // builder.append(" -Dsonar.skipDesign");
+      builder.append(" -Dsonar.skipDesign");
     }
 
     if (skipDynamicAnalysis) {
-      maven3SonarEmbedderBuilder.setUserProperty("sonar.dynamicAnalysis", "false");
-      // builder.append(" -Dsonar.dynamicAnalysis=false");
+      builder.append(" -Dsonar.dynamicAnalysis=false");
     }
 
     if (activateMavenDebug) {
-      maven3SonarEmbedderBuilder.logLevel(0);
-      // builder.append(" -X");
+      builder.append(" -X");
     }
 
     if (showMavenErrorWhileAnalysis) {
-      maven3SonarEmbedderBuilder.showErrors(showMavenErrorWhileAnalysis);
-      // builder.append(" -e");
+      builder.append(" -e");
     }
 
-    // try {
-    maven3SonarEmbedderBuilder.build().run();
-    // final String command = builder.toString();
-    // log.info("calling : {}", command);
-    // Process proc = Runtime.getRuntime().exec(command);
-    // BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-    //
-    // StringBuilder outputFromMavenCall = new StringBuilder();
-    // String line = reader.readLine();
-    // while (line != null) {
-    // if (log.isDebugEnabled()) {
-    // log.debug(line);
-    // } else if (showMavenOutputWhileAnalysis) {
-    // log.info(line);
-    // } else {
-    // outputFromMavenCall.append(line);
-    // }
-    // line = reader.readLine();
-    // }
-    // proc.waitFor();
-    //
-    // if (proc.exitValue() > 0) {
-    // if (!log.isDebugEnabled()) {
-    // log.error("call output:\n {}", outputFromMavenCall.toString());
-    // }
-    // fail("sonar test run failed");
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
+    try {
+      final String command = builder.toString();
+      log.info("calling : {}", command);
+      Process proc = Runtime.getRuntime().exec(command);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+      StringBuilder outputFromMavenCall = new StringBuilder();
+      String line = reader.readLine();
+      while (line != null) {
+        if (log.isDebugEnabled()) {
+          log.debug(line);
+        } else if (showMavenOutputWhileAnalysis) {
+          log.info(line);
+        } else {
+          outputFromMavenCall.append(line);
+        }
+        line = reader.readLine();
+      }
+      proc.waitFor();
+
+      if (proc.exitValue() > 0) {
+        if (!log.isDebugEnabled()) {
+          log.error("call output:\n {}", outputFromMavenCall.toString());
+        }
+        fail("sonar test run failed");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public String getMavenVersion() throws IOException, InterruptedException {
+    Process proc = Runtime.getRuntime().exec("mvn -version");
+    BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+    String line = reader.readLine();
+    if (line != null) {
+      String version = line.split("\\ +")[2];
+      return version;
+    } else {
+      return null;
+    }
+
   }
 }

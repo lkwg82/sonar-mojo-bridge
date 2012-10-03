@@ -24,10 +24,12 @@ import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion
 import org.fest.assertions.core.Condition;
 import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -47,7 +49,8 @@ public class MavenInjectIT {
         skipDynamicAnalysis().//
         skipTests().//
         showMavenErrorWhileAnalysis().//
-        showMavenOutputWhileAnalysis().activateMavenDebug();
+        showMavenOutputWhileAnalysis();
+    // activateMavenDebug();
     System.getProperties().put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
   }
 
@@ -56,14 +59,22 @@ public class MavenInjectIT {
     api = new SonarAPIWrapper(SONAR_HOST);
   }
 
-  @Test(enabled = false)
+  @Test
   public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
-
     executor.execute();
   }
 
-  @Test(enabled = false)
+  private void skipTestIfNotMaven3() throws IOException, InterruptedException {
+    final String mavenVersion = executor.getMavenVersion();
+    if (mavenVersion.startsWith("2")) {
+      throw new SkipException("could not proceed, because these tests only support maven3");
+    }
+  }
+
+  @Test
   public void shouldHaveSomeViolations() throws Exception {
+    skipTestIfNotMaven3();
+
     final String projectKey = "org.codehaus.sonar-plugins:sonar-maven-checks";
     final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
 
