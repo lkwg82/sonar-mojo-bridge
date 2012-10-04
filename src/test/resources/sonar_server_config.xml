@@ -2,7 +2,17 @@
 <sonar-config>
   <version><![CDATA[321]]></version>
   <date><![CDATA[2012-09-25]]></date>
-  <metrics/>
+  <metrics />
+  <properties>
+    <property>
+      <key><![CDATA[sonar.role.codeviewer.TRK.defaultGroups]]></key>
+      <value><![CDATA[sonar-users,Anyone]]></value>
+    </property>
+    <property>
+      <key><![CDATA[sonar.role.user.TRK.defaultGroups]]></key>
+      <value><![CDATA[sonar-users,Anyone]]></value>
+    </property>
+  </properties>
   <profiles>
     <profile>
       <name><![CDATA[mine]]></name>
@@ -34,8 +44,8 @@
           <level><![CDATA[MINOR]]></level>
         </active-rule>
       </active-rules>
-      <alerts/>
+      <alerts />
     </profile>
   </profiles>
-  <rules/>
+  <rules />
 </sonar-config>
