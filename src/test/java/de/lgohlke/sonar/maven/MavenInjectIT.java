@@ -44,9 +44,6 @@ public class MavenInjectIT {
 
   @BeforeClass
   public void beforeAllTests() {
-    System.getProperties().put("jdbcDriver", "org.h2.Driver");
-    System.getProperties().put("jdbcUrl", "jdbc:h2:tcp://localhost:9092/sonar");
-
     String jdbcDriver = System.getProperty("jdbcDriver");
     String jdbcUrl = System.getProperty("jdbcUrl");
 
