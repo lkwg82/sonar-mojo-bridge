@@ -19,11 +19,9 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.SonarExecutor;
-
-import de.lgohlke.sonar.SonarAPIWrapper;
-
 import de.lgohlke.sonar.MavenPlugin;
+import de.lgohlke.sonar.SonarAPIWrapper;
+import de.lgohlke.sonar.SonarExecutor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 import org.fest.assertions.core.Condition;
 import org.sonar.wsclient.services.Resource;
@@ -33,6 +31,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -45,6 +44,9 @@ public class MavenInjectIT {
 
   @BeforeClass
   public void beforeAllTests() {
+    System.getProperties().put("jdbcDriver", "org.h2.Driver");
+    System.getProperties().put("jdbcUrl", "jdbc:h2:tcp://localhost:9092/sonar");
+
     String jdbcDriver = System.getProperty("jdbcDriver");
     String jdbcUrl = System.getProperty("jdbcUrl");
 
@@ -54,7 +56,6 @@ public class MavenInjectIT {
         skipTests().//
         showMavenErrorWhileAnalysis().//
         showMavenOutputWhileAnalysis();
-    // activateMavenDebug();
     System.getProperties().put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
   }
 
@@ -79,17 +80,18 @@ public class MavenInjectIT {
   public void shouldHaveSomeViolations() throws Exception {
     skipTestIfNotMaven3();
 
-    final String pomXml = "src/test/resources/it/pom-old-dependency.xml";
+    final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
     final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
     final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
+
 
     executor.usePom(pomXml).execute();
     List<Violation> violations = getViolationsFor(projectKey, ruleKey);
 
-    api.showQueryAndResult(violations);
+    // api.showQueryAndResult(violations);
 
     assertThat(violations).isNotEmpty();
-    assertThat(violations).are(onlyForFile(pomXml));
+    assertThat(violations).are(onlyForFile(pomXml.getName()));
   }
 
   private List<Violation> getViolationsFor(final String projectKey, final String ruleKey) {

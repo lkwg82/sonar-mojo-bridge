@@ -19,11 +19,13 @@
  */
 package de.lgohlke.sonar;
 
+import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -41,7 +43,7 @@ public final class SonarExecutor {
   private boolean activateMavenDebug;
   private boolean showMavenErrorWhileAnalysis;
   private boolean showMavenOutputWhileAnalysis;
-  private String pomXML = "pom.xml";
+  private File pomXML = new File("pom.xml");
 
   public SonarExecutor skipTests() {
     return skipTests(true);
@@ -70,7 +72,8 @@ public final class SonarExecutor {
     return this;
   }
 
-  public SonarExecutor usePom(final String pom) {
+  public SonarExecutor usePom(final File pom) {
+    Preconditions.checkArgument(pom.isFile());
     this.pomXML = pom;
     return this;
   }
@@ -114,7 +117,7 @@ public final class SonarExecutor {
   }
 
   public void execute() throws MavenEmbedderException {
-    StringBuilder builder = new StringBuilder("mvn -f " + pomXML + " sonar:sonar");
+    StringBuilder builder = new StringBuilder("mvn -f " + pomXML.getAbsolutePath() + " sonar:sonar");
 
     if (jdbcDriver != null) {
       builder.append(" -Dsonar.jdbc.driver=" + jdbcDriver);
