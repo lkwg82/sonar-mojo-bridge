@@ -63,8 +63,8 @@ public class Maven3SonarEmbedder {
     public static final String M2_HOME = "M2_HOME";
     public static final String MAVEN_HOME_KEY = "maven.home";
     private String pom = "pom.xml"; // default
-    private String goal;
-    private File mavenHome;
+    private String goal = null;
+    private File mavenHome = null;
     private int logLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
 
     //    private final Properties userProperties = new Properties();

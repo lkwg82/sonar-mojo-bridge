@@ -20,9 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
-
 import de.lgohlke.sonar.MavenPlugin;
-
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +32,15 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.MavenPluginExecutor;
 
+
+@Data
 @Phase(name = Phase.Name.PRE)
 @RequiredArgsConstructor
 @Slf4j
-@Data
 public abstract class MavenBaseSensor implements Sensor, DependsUponMavenPlugin {
   private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
-  private boolean isMaven3;
 
   @Override
   public String toString() {
@@ -56,7 +54,7 @@ public abstract class MavenBaseSensor implements Sensor, DependsUponMavenPlugin 
       prop = MavenPlugin.DEFAULT;
     }
 
-    isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
+    boolean isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
     if (isMaven3) {
       MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), getHandler());
     } else {

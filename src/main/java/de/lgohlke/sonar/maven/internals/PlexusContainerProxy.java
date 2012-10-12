@@ -19,19 +19,15 @@
  */
 package de.lgohlke.sonar.maven.internals;
 
-
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
-
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
-
 import java.lang.reflect.Method;
-
 import static org.fest.reflect.core.Reflection.field;
 
-public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
 
+public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
   private final BridgeMojoMapper bridgeMojoMapper;
 
   public PlexusContainerProxy(final T underlying, final BridgeMojoMapper bridgeMojoMapper) {
@@ -48,12 +44,11 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
         field("implementation").ofType(String.class).in(descriptor).set(bridgeMojoClass.getCanonicalName());
       }
     }
+
     Object result = method.invoke(getUnderLying(), args);
 
-    if (method.getName().equals("lookup")) {
-      if (result instanceof BridgeMojo) {
-        bridgeMojoMapper.injectResultTransferHandler((BridgeMojo<?>) result);
-      }
+    if (method.getName().equals("lookup") && (result instanceof BridgeMojo)) {
+      bridgeMojoMapper.injectResultTransferHandler((BridgeMojo<?>) result);
     }
     return result;
   }
