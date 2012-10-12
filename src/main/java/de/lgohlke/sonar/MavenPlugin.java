@@ -51,10 +51,10 @@ public class MavenPlugin extends SonarPlugin {
       RulesRepository.class,
 
       // xml language from xml-plugin
-      Xml.class
+      Xml.class,
 
       // source importer
-      //      PomSourceImporter.class
+      PomSourceImporter.class
 
       // code colorizer
       // XmlCodeColorizerFormat.class
