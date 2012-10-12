@@ -23,7 +23,7 @@ import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersionMavenRule;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -40,13 +40,13 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES;
 
 
-public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> {
+public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> {
   private final DisplayUpdatesBridgeMojoResultHandler resultHandler = new DisplayUpdatesBridgeMojoResultHandler();
   private final BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> bridgeMojoMapper =
-    new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+    new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
 
-  public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
-                                        final MavenProject mavenProject) {
+  public DisplayPluginUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
+                                    final MavenProject mavenProject) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
   }
 
@@ -64,7 +64,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayUpdat
   public void analyse(final Project project, final SensorContext context) {
     DisplayUpdatesBridgeMojoResultHandler handler = bridgeMojoMapper.getResultTransferHandler();
 
-    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
+    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new PluginVersionMavenRule().getKey());
     final File file = new File("", getMavenProject().getFile().getName());
     file.setLanguage(Xml.INSTANCE);
 

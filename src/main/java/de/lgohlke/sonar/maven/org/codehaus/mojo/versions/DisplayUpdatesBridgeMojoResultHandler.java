@@ -27,7 +27,7 @@ import java.util.Map;
 
 
 @Setter
-public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTransferHandler {
+public class DisplayUpdatesBridgeMojoResultHandler implements ResultTransferHandler {
   @Getter
   private Map<String, List<ArtifactUpdate>> updateMap;
 }

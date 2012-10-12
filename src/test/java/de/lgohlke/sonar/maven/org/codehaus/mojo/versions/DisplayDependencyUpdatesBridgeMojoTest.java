@@ -36,7 +36,7 @@ public class DisplayDependencyUpdatesBridgeMojoTest {
     MavenProject mavenProject = mock(MavenProject.class);
     field("project").ofType(MavenProject.class).in(mojo).set(mavenProject);
 
-    DisplayDependencyUpdatesBridgeMojoResultHandler handler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
+    DisplayUpdatesBridgeMojoResultHandler handler = new DisplayUpdatesBridgeMojoResultHandler();
     mojo.injectResultHandler(handler);
     mojo.execute();
 

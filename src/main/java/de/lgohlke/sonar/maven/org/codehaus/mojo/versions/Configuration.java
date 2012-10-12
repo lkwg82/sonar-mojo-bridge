@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 public interface Configuration {
   interface Goals {
     String DISPLAY_DEPENDENCY_UPDATES = "display-dependency-updates";
+    String DISPLAY_PLUGIN_UPDATES = "display-plugin-updates";
     String HELP = "help";
   }
 

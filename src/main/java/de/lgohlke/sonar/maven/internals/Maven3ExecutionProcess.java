@@ -39,7 +39,12 @@ public final class Maven3ExecutionProcess {
       BuildPluginManager pluginManager = container.lookup(BuildPluginManager.class);
       field("container").ofType(PlexusContainer.class).in(mavenPluginManager).set(getPlexusContainerProxy(PlexusContainer.class, container, handler));
       mavenPluginManager = getMavenPluginManagerProxy(MavenPluginManager.class, mavenPluginManager, classLoader);
-      field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
+
+      try {
+        field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
+      } catch (NullPointerException npe) {
+        // try to set on proxy class --> fails --> ok!
+      }
 
     } catch (Exception e) {
       throw new IllegalStateException(e);

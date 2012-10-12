@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.maven.MavenITAbstract;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
+import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -36,6 +37,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Time: 12:35
  */
 public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
+  private final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
+
   @BeforeTest(alwaysRun = true)
   public void beforeEachTest() {
     initAPI();
@@ -46,7 +49,6 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
     skipTestIfNotMaven3();
 
     final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
-    final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
     final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
 
 
@@ -58,5 +60,15 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations).are(onlyForFile(pomXml.getName()));
+  }
+
+
+  @Test(dependsOnMethods = "shouldHaveSomeViolations", enabled = false)
+  public void shouldHaveImportedPom() throws Exception {
+    skipTestIfNotMaven3();
+
+    // test this http://localhost:9000/api/resources?depth=-1&scope=FIL&resource=1981&qualifier=FIL
+    // not yet running
+    Resource project = api.getProjectWithKey(projectKey);
   }
 }

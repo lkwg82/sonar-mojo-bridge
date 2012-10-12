@@ -48,6 +48,9 @@ public class MavenPlugin extends SonarPlugin {
   public List getExtensions() {
     return Arrays.asList(
       DisplayDependencyUpdatesSensor.class,
+      //      DisplayPluginUpdatesSensor.class,
+
+
       RulesRepository.class,
 
       // xml language from xml-plugin
