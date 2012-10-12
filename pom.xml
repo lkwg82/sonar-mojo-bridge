@@ -190,7 +190,8 @@
       <dependency>
         <groupId>org.codehaus.sonar</groupId>
         <artifactId>sonar-plugin-api</artifactId>
-        <version>${sonar.version}</version>
+        <!-- minimum version supported -->
+        <version>3.2</version>
       </dependency>
 
       <dependency>
