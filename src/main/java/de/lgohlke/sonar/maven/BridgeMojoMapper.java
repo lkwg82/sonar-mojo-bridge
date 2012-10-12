@@ -23,40 +23,39 @@ package de.lgohlke.sonar.maven;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+
 @RequiredArgsConstructor
-public class BridgeMojoMapper {
+public class BridgeMojoMapper<T extends ResultTransferHandler> {
+  @Getter
+  @NonNull
+  private final Class<? extends BridgeMojo<T>> bridgeMojoClass;
 
   @Getter
   @NonNull
-  private final String goal;
-
-  @Getter
-  @NonNull
-  private final Class<? extends BridgeMojo<?>> bridgeMojoClass;
-
-  @Getter
-  @NonNull
-  private final ResultTransferHandler<?> resultTransferHandler;
+  private final T resultTransferHandler;
 
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
-   * 
+   *
    * @param bridgeMojo
    * @throws BridgeMojoMapperException
    */
-  public void injectResultTransferHandler(final BridgeMojo<?> bridgeMojo) throws BridgeMojoMapperException {
+  public void injectResultTransferHandler(final BridgeMojo<T> bridgeMojo) throws BridgeMojoMapperException {
     checkNotNull(bridgeMojo);
     checkArgument(bridgeMojo.getClass().isAnnotationPresent(Goal.class), "each %s needs an annotation %s", BridgeMojo.class, Goal.class);
 
     String goal = bridgeMojo.getClass().getAnnotation(Goal.class).value();
-    if (this.goal.equals(goal)) {
+    if (getGoal().equals(goal)) {
       bridgeMojo.injectResultHandler(resultTransferHandler);
     } else {
       throw new BridgeMojoMapperException("no matching " + ResultTransferHandler.class.getSimpleName() + " for goal : " + goal);
     }
+  }
+
+  public String getGoal() {
+    return bridgeMojoClass.getAnnotation(Goal.class).value();
   }
 }

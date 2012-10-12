@@ -31,11 +31,10 @@ import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
 import java.io.File;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
+
 
 public class Maven3ExecutionProcessTest {
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
@@ -46,14 +45,10 @@ public class Maven3ExecutionProcessTest {
 
   @BeforeTest
   protected void beforeTest() throws Exception {
-    embedder = Maven3SonarEmbedder.configure().
-        usePomFile("pom.xml").
-        goal(GOAL).
-        setAlternativeMavenHome(MAVEN_HOME).
-        build();
+    embedder = Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal(GOAL).setAlternativeMavenHome(MAVEN_HOME).build();
   }
 
-  public class MyResultTransferHandler implements ResultTransferHandler<MyResultTransferHandler> {
+  public class MyResultTransferHandler implements ResultTransferHandler {
     @Getter
     @Setter
     private boolean ping;
@@ -64,7 +59,7 @@ public class Maven3ExecutionProcessTest {
     MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
     Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
     ClassLoader classLoader = this.getClass().getClassLoader();
-    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
+    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper<MyResultTransferHandler>(MyBridgeMojo.class, new MyResultTransferHandler());
 
     MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
     Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper);
@@ -76,7 +71,7 @@ public class Maven3ExecutionProcessTest {
 
   @Test
   public void shouldNotBeDecorated() throws MavenEmbedderException, ClassNotFoundException {
-    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(SUB_GOAL, MyBridgeMojo.class, new MyResultTransferHandler());
+    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper<MyResultTransferHandler>(MyBridgeMojo.class, new MyResultTransferHandler());
     MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
 
     embedder.run();

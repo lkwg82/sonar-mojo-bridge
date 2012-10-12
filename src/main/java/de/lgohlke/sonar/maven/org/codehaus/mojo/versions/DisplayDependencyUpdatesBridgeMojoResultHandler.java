@@ -22,15 +22,12 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.project.MavenProject;
 import java.util.List;
 import java.util.Map;
 
 
 @Setter
-public class DisplayDependencyUpdatesBridgeMojoResultHandler
-  implements ResultTransferHandler<DisplayDependencyUpdatesBridgeMojoResultHandler> {
-  private MavenProject mavenProject;
+public class DisplayDependencyUpdatesBridgeMojoResultHandler implements ResultTransferHandler {
   @Getter
   private Map<String, List<ArtifactUpdate>> updateMap;
 }

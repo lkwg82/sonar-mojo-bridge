@@ -34,47 +34,47 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
-
 import java.util.List;
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.*;
 
 
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
-    private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
-    private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES, DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+  private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
+  private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
 
-    public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
-                                          final MavenProject mavenProject) {
-        super(rulesProfile, mavenPluginExecutor, mavenProject);
+  public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
+                                        final MavenProject mavenProject) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject);
+  }
+
+  @Override
+  public MavenPluginHandler getMavenPluginHandler(final Project project) {
+    return MavenPluginHandlerFactory.createHandler(BASE_IDENTIFIER + DISPLAY_DEPENDENCY_UPDATES);
+  }
+
+  @Override
+  protected BridgeMojoMapper getHandler() {
+    return bridgeMojoMapper;
+  }
+
+  @Override
+  public void analyse(final Project project, final SensorContext context) {
+    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler)
+      bridgeMojoMapper.getResultTransferHandler();
+
+    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
+    final File file = new File("", getMavenProject().getFile().getName());
+    file.setLanguage(Xml.INSTANCE);
+
+    for (List<ArtifactUpdate> updates : handler.getUpdateMap().values()) {
+      for (ArtifactUpdate update : updates) {
+        Violation violation = Violation.create(rule, file);
+        violation.setLineId(1);
+        violation.setMessage(update.toString());
+        context.saveViolation(violation);
+      }
     }
+  }
 
-    @Override
-    public void analyse(final Project project, final SensorContext context) {
-        DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler)
-        bridgeMojoMapper.getResultTransferHandler();
-
-
-        Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
-        final File file = new File("", getMavenProject().getFile().getName());
-        file.setLanguage(Xml.INSTANCE);
-
-        for (List<ArtifactUpdate> updates : handler.getUpdateMap().values()) {
-            for (ArtifactUpdate update : updates) {
-                Violation violation = Violation.create(rule, file);
-                violation.setLineId(1);
-                violation.setMessage(update.toString());
-                context.saveViolation(violation);
-            }
-        }
-    }
-
-    @Override
-    public MavenPluginHandler getMavenPluginHandler(final Project project) {
-        return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER +
-                Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES);
-    }
-
-    @Override
-    protected BridgeMojoMapper getHandler() {
-        return bridgeMojoMapper;
-    }
 }

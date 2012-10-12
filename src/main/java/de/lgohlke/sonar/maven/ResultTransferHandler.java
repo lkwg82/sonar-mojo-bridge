@@ -23,7 +23,6 @@ package de.lgohlke.sonar.maven;
  * marker interface for transfer object between bridge mojo and sensor
  * @author Lars Gohlke
  *
- * @param <T>
  */
-public interface ResultTransferHandler<T> {
+public interface ResultTransferHandler {
 }

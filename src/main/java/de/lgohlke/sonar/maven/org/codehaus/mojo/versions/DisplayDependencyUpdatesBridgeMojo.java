@@ -20,14 +20,10 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 
-
+import com.google.common.collect.Maps;
 import de.lgohlke.sonar.maven.BridgeMojo;
-import de.lgohlke.sonar.maven.ResultTransferHandler;
-
-
-
-import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.maven.Goal;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -39,25 +35,17 @@ import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.codehaus.mojo.versions.api.UpdateScope;
 import org.codehaus.mojo.versions.utils.DependencyComparator;
 import org.fest.reflect.reference.TypeRef;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.fest.reflect.core.Reflection.staticMethod;
 
-@SuppressWarnings("deprecation")
+
 @Goal(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES)
-public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayDependencyUpdatesBridgeMojoResultHandler> {
-
-  public static final String DEPENDENCIES = "Dependencies";
-  public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
-
-  private final Map<String, List<ArtifactUpdate>> updateMap = new HashMap<String, List<ArtifactUpdate>>();
+@SuppressWarnings("deprecation")
+public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo
+  implements BridgeMojo<DisplayDependencyUpdatesBridgeMojoResultHandler> {
+  private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
 
   protected Boolean processDependencyManagement;
   protected Boolean processDependencies;
@@ -67,10 +55,9 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
     super();
   }
 
-  @SuppressWarnings("unchecked")
   @Override
+  @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException, MojoFailureException {
-
     Set<Dependency> dependencyManagement = new TreeSet<Dependency>(new DependencyComparator());
     if (getProject().getDependencyManagement() != null) {
       dependencyManagement.addAll(getProject().getDependencyManagement().getDependencies());
@@ -82,19 +69,16 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
       dependencies = removeDependencyManagment(dependencies, dependencyManagement);
     }
 
-    try
-    {
+    try {
       if (!Boolean.FALSE.equals(processDependencyManagement)) {
         logUpdates(getHelper().lookupDependenciesUpdates(dependencyManagement, false), "Dependency Management");
       }
       if (!Boolean.FALSE.equals(processDependencies)) {
         logUpdates(getHelper().lookupDependenciesUpdates(dependencies, false), "Dependencies");
       }
-    } catch (InvalidVersionSpecificationException e)
-    {
+    } catch (InvalidVersionSpecificationException e) {
       throw new MojoExecutionException(e.getMessage(), e);
-    } catch (ArtifactMetadataRetrievalException e)
-    {
+    } catch (ArtifactMetadataRetrievalException e) {
       throw new MojoExecutionException(e.getMessage(), e);
     }
 
@@ -108,31 +92,21 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
    * @return
    */
   private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
-
-    final Object[] args = new Object[] {dependencies, dependencyManagement};
-    final Class<?>[] parameterTypes = new Class<?>[] {Set.class, Set.class};
-    return staticMethod("removeDependencyManagment").
-        withReturnType(new TypeRef<Set<Dependency>>() {
-        }).
-        withParameterTypes(parameterTypes).
-        in(DisplayDependencyUpdatesMojo.class).
-        invoke(args);
+    final Object[] args = new Object[] { dependencies, dependencyManagement };
+    final Class<?>[] parameterTypes = new Class<?>[] { Set.class, Set.class };
+    return staticMethod("removeDependencyManagment").withReturnType(new TypeRef<Set<Dependency>>() {
+      }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
   }
 
-  private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section)
-  {
+  private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section) {
     List<ArtifactUpdate> artiFactUpdates = new ArrayList<ArtifactUpdate>(updates.size());
 
     for (Entry<Dependency, ArtifactVersions> entry : updates.entrySet()) {
-
       ArtifactVersions versions = entry.getValue();
       ArtifactVersion latest = null;
-      if (versions.isCurrentVersionDefined())
-      {
+      if (versions.isCurrentVersionDefined()) {
         latest = versions.getNewestUpdate(UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
-      }
-      else
-      {
+      } else {
         ArtifactVersion newestVersion = versions.getNewestVersion(versions.getArtifact().getVersionRange(), Boolean.TRUE.equals(allowSnapshots));
         if (newestVersion != null) {
           latest = versions.getNewestUpdate(newestVersion, UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
@@ -151,9 +125,9 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   }
 
   @Override
-  public void injectResultHandler(final ResultTransferHandler<?> handler) {
-    Preconditions.checkArgument(handler instanceof DisplayDependencyUpdatesBridgeMojoResultHandler, "handler needs to be instance of %s",
-        DisplayDependencyUpdatesBridgeMojoResultHandler.class);
+  public void injectResultHandler(final DisplayDependencyUpdatesBridgeMojoResultHandler handler) {
+    //    checkArgument(handler instanceof DisplayDependencyUpdatesBridgeMojoResultHandler, "handler needs to be instance of %s",
+    //      DisplayDependencyUpdatesBridgeMojoResultHandler.class);
     this.handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) handler;
   }
 }
