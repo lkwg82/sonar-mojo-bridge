@@ -66,8 +66,6 @@ public class Maven3SonarEmbedder {
     private String goal = null;
     private File mavenHome = null;
     private int logLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
-
-    //    private final Properties userProperties = new Properties();
     private boolean showErrors;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
@@ -128,7 +126,7 @@ public class Maven3SonarEmbedder {
           if (value instanceof File) {
             mavenHome = (File) value;
           } else {
-            mavenHome = new File((String) value);
+            mavenHome = new File(value + "");
           }
         } else {
           final String currentProgramm = System.getenv("_");
@@ -144,13 +142,6 @@ public class Maven3SonarEmbedder {
         Preconditions.checkArgument(mavenHome.isDirectory(), "maveHome is " + mavenHome + ", but a directory is needed");
       }
     }
-
-    //    public MavenSonarEmbedderBuilder setUserProperty(final String key, final String value) {
-    //      Preconditions.checkNotNull(key);
-    //      Preconditions.checkNotNull(value);
-    //      userProperties.put(key, value);
-    //      return this;
-    //    }
 
     public MavenSonarEmbedderBuilder showErrors(final boolean showErrors) {
       this.showErrors = showErrors;
@@ -169,9 +160,6 @@ public class Maven3SonarEmbedder {
       mavenRequest.setGoals(Arrays.asList(goal));
       mavenRequest.setLoggingLevel(logLevel);
       mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new PlexusSlf4JLogger(log)));
-
-      //      mavenRequest.setUserProperties(userProperties);
-      //      mavenRequest.setSystemProperties(userProperties);
       detectMavenHomeIfNull();
 
       try {

@@ -48,8 +48,8 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   implements BridgeMojo<DisplayDependencyUpdatesBridgeMojoResultHandler> {
   private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
 
-  protected Boolean processDependencyManagement;
-  protected Boolean processDependencies;
+  private Boolean processDependencyManagement;
+  private Boolean processDependencies;
   private DisplayDependencyUpdatesBridgeMojoResultHandler handler;
 
   public DisplayDependencyUpdatesBridgeMojo() {

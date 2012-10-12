@@ -34,7 +34,10 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * @author Lars Gohlke
  */
-public class MavenPluginHandlerFactory {
+public final class MavenPluginHandlerFactory {
+  private MavenPluginHandlerFactory() {
+  }
+
   public static MavenPluginHandler createHandler(final String groupArtifactVersionGoalString) {
     checkNotNull(groupArtifactVersionGoalString);
     checkState(groupArtifactVersionGoalString.length() > 0, "no empty string allowed");

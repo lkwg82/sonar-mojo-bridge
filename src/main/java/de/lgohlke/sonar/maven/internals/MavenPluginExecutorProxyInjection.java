@@ -19,13 +19,15 @@
  */
 package de.lgohlke.sonar.maven.internals;
 
-
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
 
-public class MavenPluginExecutorProxyInjection {
+public final class MavenPluginExecutorProxyInjection {
+  private MavenPluginExecutorProxyInjection() {
+  }
+
   public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
       if (mavenPluginExecutor instanceof Maven3PluginExecutor) {

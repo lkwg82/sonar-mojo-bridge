@@ -19,21 +19,18 @@
  */
 package de.lgohlke.sonar.maven.internals;
 
-
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
-
-
-
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.codehaus.plexus.PlexusContainer;
 import org.sonar.batch.MavenPluginExecutor;
-
 import java.lang.reflect.Proxy;
-
 import static org.fest.reflect.core.Reflection.field;
 
-public class Maven3ExecutionProcess {
+
+public final class Maven3ExecutionProcess {
+  private Maven3ExecutionProcess() {
+  }
 
   public static void decorate(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
@@ -59,7 +56,7 @@ public class Maven3ExecutionProcess {
 
   @SuppressWarnings("unchecked")
   private static <T> T newInstance(final Object obj, final Class<T> interfaze, final DynamicProxy<?> proxy) {
-    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[] {interfaze}, proxy);
+    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[] { interfaze }, proxy);
   }
 
 }
