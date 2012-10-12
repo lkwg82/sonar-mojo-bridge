@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.SonarAPIWrapper;
 import de.lgohlke.sonar.SonarExecutor;
@@ -27,7 +28,6 @@ import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import java.io.IOException;
 import java.util.List;
 
@@ -54,8 +54,7 @@ public abstract class MavenITAbstract {
     .put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
   }
 
-  @BeforeTest
-  public void beforeEachTest() {
+  public void initAPI() {
     api = new SonarAPIWrapper(SONAR_HOST);
   }
 
@@ -67,6 +66,8 @@ public abstract class MavenITAbstract {
   }
 
   protected List<Violation> getViolationsFor(final String projectKey, final String ruleKey) {
+    Preconditions.checkNotNull(api, "please call initAPI() before each test");
+
     Resource projectResource = api.getProjectWithKey(projectKey);
     return api.getViolationsFor(projectResource.getId(), ruleKey);
   }

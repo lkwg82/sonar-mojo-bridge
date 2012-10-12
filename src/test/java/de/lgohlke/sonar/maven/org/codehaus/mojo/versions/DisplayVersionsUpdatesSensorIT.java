@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.maven.MavenITAbstract;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 import org.sonar.wsclient.services.Violation;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import java.io.File;
 import java.util.List;
@@ -35,6 +36,11 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Time: 12:35
  */
 public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
+  @BeforeTest(alwaysRun = true)
+  public void beforeEachTest() {
+    initAPI();
+  }
+
   @Test
   public void shouldHaveSomeViolations() throws Exception {
     skipTestIfNotMaven3();
