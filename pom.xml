@@ -103,6 +103,10 @@
         <exclusion>
           <artifactId>commons-logging-api</artifactId>
           <groupId>commons-logging</groupId>
+        </exclusion> 
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -121,7 +125,13 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>6.7</version>
-      <scope>test</scope>
+      <scope>test</scope>  
+      <exclusions>
+        <exclusion>      
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
+    </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -384,6 +394,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.12.4</version>
         <executions>
           <execution>
             <goals>
@@ -393,6 +404,8 @@
           </execution>
         </executions>
         <configuration>
+          <parallel>classes</parallel>
+          <threadCount>10</threadCount>
           <systemProperties>
             <property>
               <name>jdbcDriver</name>
