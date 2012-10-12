@@ -19,41 +19,18 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.MavenPlugin;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
-import de.lgohlke.sonar.maven.SonarAnalysisHandler;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.project.MavenProject;
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.resources.File;
-import org.sonar.api.resources.Project;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
-import org.sonar.plugins.xml.language.Xml;
 import java.util.List;
 import java.util.Map;
 
 
 @Setter
 public class DisplayDependencyUpdatesBridgeMojoResultHandler
-  implements ResultTransferHandler<DisplayDependencyUpdatesBridgeMojoResultHandler>, SonarAnalysisHandler {
+  implements ResultTransferHandler<DisplayDependencyUpdatesBridgeMojoResultHandler> {
   private MavenProject mavenProject;
+  @Getter
   private Map<String, List<ArtifactUpdate>> updateMap;
-
-  @Override
-  public void analyse(final Project project, final SensorContext context) {
-    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
-    final File file = new File("", mavenProject.getFile().getName());
-    file.setLanguage(Xml.INSTANCE);
-
-    for (List<ArtifactUpdate> updates : updateMap.values()) {
-      for (ArtifactUpdate update : updates) {
-        Violation violation = Violation.create(rule, file);
-        violation.setLineId(1);
-        violation.setMessage(update.toString());
-        context.saveViolation(violation);
-      }
-    }
-  }
 }

@@ -19,37 +19,59 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
-
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.plugins.xml.language.Xml;
+import java.util.List;
+
 
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
-  private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
+  private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler =
+    new DisplayDependencyUpdatesBridgeMojoResultHandler();
   private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES,
-      DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
-  public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
+    DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+
+  public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
+                                        final MavenProject mavenProject) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
   }
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
+    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler)
+      bridgeMojoMapper.getResultTransferHandler();
 
-    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) bridgeMojoMapper.getResultTransferHandler();
 
-    handler.setMavenProject(getMavenProject());
-    handler.analyse(project, context);
+    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
+    final File file = new File("", getMavenProject().getFile().getName());
+    file.setLanguage(Xml.INSTANCE);
+
+    for (List<ArtifactUpdate> updates : handler.getUpdateMap().values()) {
+      for (ArtifactUpdate update : updates) {
+        Violation violation = Violation.create(rule, file);
+        violation.setLineId(1);
+        violation.setMessage(update.toString());
+        context.saveViolation(violation);
+      }
+    }
   }
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER + Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES);
+    return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER +
+      Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES);
   }
 
   @Override
