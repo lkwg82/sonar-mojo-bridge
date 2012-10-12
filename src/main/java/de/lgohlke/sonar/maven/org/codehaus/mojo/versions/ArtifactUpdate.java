@@ -24,10 +24,27 @@ import lombok.RequiredArgsConstructor;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
 
+
 @RequiredArgsConstructor
 public class ArtifactUpdate {
   @Getter
   private final Dependency dependency;
   @Getter
   private final ArtifactVersion artifactVersion;
+
+  @Override
+  public String toString() {
+    StringBuilder result = new StringBuilder();
+
+    result.append(dependency.getGroupId());
+    result.append(":");
+    result.append(dependency.getArtifactId());
+    result.append(":");
+    result.append(dependency.getVersion());
+
+    result.append(" has newer version available: ");
+    result.append(artifactVersion.toString());
+
+    return result.toString();
+  }
 }
