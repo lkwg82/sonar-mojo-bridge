@@ -19,36 +19,12 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
-import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.Test;
-import java.io.File;
-import java.util.List;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 
 public class MavenInjectIT extends MavenITAbstract {
   @Test
   public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
     executor.execute();
-  }
-
-  @Test
-  public void shouldHaveSomeViolations() throws Exception {
-    skipTestIfNotMaven3();
-
-    final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
-    final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
-    final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
-
-
-    executor.usePom(pomXml).execute();
-
-    List<Violation> violations = getViolationsFor(projectKey, ruleKey);
-
-    // api.showQueryAndResult(violations);
-
-    assertThat(violations).isNotEmpty();
-    assertThat(violations).are(onlyForFile(pomXml.getName()));
   }
 }
