@@ -35,11 +35,12 @@ import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
 import java.util.List;
+import java.util.Map;
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
-import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.*;
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES;
 
 
-public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
+public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesBridgeMojoResultHandler> {
   private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
   private final BridgeMojoMapper<DisplayDependencyUpdatesBridgeMojoResultHandler> bridgeMojoMapper =
     new BridgeMojoMapper<DisplayDependencyUpdatesBridgeMojoResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
@@ -55,7 +56,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
   }
 
   @Override
-  protected BridgeMojoMapper getHandler() {
+  protected BridgeMojoMapper<DisplayDependencyUpdatesBridgeMojoResultHandler> getHandler() {
     return bridgeMojoMapper;
   }
 
@@ -67,11 +68,15 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
     final File file = new File("", getMavenProject().getFile().getName());
     file.setLanguage(Xml.INSTANCE);
 
-    for (List<ArtifactUpdate> updates : handler.getUpdateMap().values()) {
+    for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
+      String section = entry.getKey();
+      List<ArtifactUpdate> updates = entry.getValue();
       for (ArtifactUpdate update : updates) {
         Violation violation = Violation.create(rule, file);
         violation.setLineId(1);
-        violation.setMessage(update.toString());
+
+        String hint = "(found in " + section + ")";
+        violation.setMessage(update.toString() + " " + hint);
         context.saveViolation(violation);
       }
     }

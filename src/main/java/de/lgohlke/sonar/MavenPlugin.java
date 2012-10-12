@@ -32,8 +32,8 @@ import java.util.List;
 @Properties(
   {
     @Property(
-      key = MavenPlugin.ANALYSIS_ENABLED, name = "enable maven analysis", description = "Enable maven analysis.",
-      defaultValue = MavenPlugin.DEFAULT, global = true, project = true, type = PropertyType.BOOLEAN
+      key = MavenPlugin.ANALYSIS_ENABLED, name = "enable maven analysis", description = "Enable maven analysis.", defaultValue = MavenPlugin.DEFAULT,
+      global = true, project = true, type = PropertyType.BOOLEAN
     )
   }
 )
@@ -51,10 +51,10 @@ public class MavenPlugin extends SonarPlugin {
       RulesRepository.class,
 
       // xml language from xml-plugin
-      Xml.class,
+      Xml.class
 
       // source importer
-      PomSourceImporter.class
+      //      PomSourceImporter.class
 
       // code colorizer
       // XmlCodeColorizerFormat.class

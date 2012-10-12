@@ -17,29 +17,25 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
+package de.lgohlke.sonar.maven.internals;
 
-import de.lgohlke.sonar.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.testng.annotations.Test;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 
-@Rule(
-  key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME,
-  description = DependencyVersionMavenRule.DESCRIPTION
-)
-public class DependencyVersionMavenRule implements MavenRule {
-  public static final String KEY = "Old Dependency";
-  protected static final String NAME = "[Maven] found an newer version for a dependency in use";
-  protected static final String DESCRIPTION = "TODO";
+/**
+ * Created with IntelliJ IDEA.
+ * User: lgohlke
+ */
+public class MavenPluginHandlerFactoryTest {
+  @Test
+  public void testCreateHandler() throws Exception {
+    MavenPluginHandler handler = MavenPluginHandlerFactory.createHandler("group:artifact:version:goal");
 
-  @Override
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public String getKey() {
-    return KEY;
+    assertThat(handler.getGroupId()).isEqualTo("group");
+    assertThat(handler.getArtifactId()).isEqualTo("artifact");
+    assertThat(handler.getVersion()).isEqualTo("version");
+    assertThat(handler.getGoals()).hasSize(1);
   }
 }

@@ -46,6 +46,8 @@ import static org.fest.reflect.core.Reflection.staticMethod;
 @SuppressWarnings("deprecation")
 public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo
   implements BridgeMojo<DisplayDependencyUpdatesBridgeMojoResultHandler> {
+  public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
+  public static final String DEPENDENCIES = "Dependencies";
   private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
 
   private Boolean processDependencyManagement;
@@ -72,10 +74,10 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
 
     try {
       if (!Boolean.FALSE.equals(processDependencyManagement)) {
-        logUpdates(getHelper().lookupDependenciesUpdates(dependencyManagement, false), "Dependency Management");
+        logUpdates(getHelper().lookupDependenciesUpdates(dependencyManagement, false), DEPENDENCY_MANAGEMENT);
       }
       if (!Boolean.FALSE.equals(processDependencies)) {
-        logUpdates(getHelper().lookupDependenciesUpdates(dependencies, false), "Dependencies");
+        logUpdates(getHelper().lookupDependenciesUpdates(dependencies, false), DEPENDENCIES);
       }
     } catch (InvalidVersionSpecificationException e) {
       throw new MojoExecutionException(e.getMessage(), e);

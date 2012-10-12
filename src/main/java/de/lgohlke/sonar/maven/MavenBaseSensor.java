@@ -37,7 +37,7 @@ import org.sonar.batch.MavenPluginExecutor;
 @Phase(name = Phase.Name.PRE)
 @RequiredArgsConstructor
 @Slf4j
-public abstract class MavenBaseSensor implements Sensor, DependsUponMavenPlugin {
+public abstract class MavenBaseSensor<T extends ResultTransferHandler> implements Sensor, DependsUponMavenPlugin {
   private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
@@ -64,5 +64,5 @@ public abstract class MavenBaseSensor implements Sensor, DependsUponMavenPlugin 
     return Boolean.parseBoolean(prop) && isMaven3;
   }
 
-  protected abstract BridgeMojoMapper getHandler();
+  protected abstract BridgeMojoMapper<T> getHandler();
 }
