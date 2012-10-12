@@ -19,60 +19,18 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.MavenPlugin;
-import de.lgohlke.sonar.SonarAPIWrapper;
-import de.lgohlke.sonar.SonarExecutor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
-import org.fest.assertions.core.Condition;
-import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-public class MavenInjectIT {
-  private static final String SONAR_HOST = "http://localhost:9000";
-  private SonarExecutor executor;
-  private SonarAPIWrapper api;
-
-  @BeforeClass
-  public void beforeAllTests() {
-    String jdbcDriver = System.getProperty("jdbcDriver");
-    String jdbcUrl = System.getProperty("jdbcUrl");
-
-    executor =
-      new SonarExecutor(jdbcDriver, jdbcUrl) //
-      .skipDesign() //
-      .skipDynamicAnalysis() //
-      .skipTests() //
-      .showMavenErrorWhileAnalysis() //
-      .showMavenOutputWhileAnalysis();
-
-    System.getProperties()
-    .put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
-  }
-
-  @BeforeTest
-  public void beforeEachTest() {
-    api = new SonarAPIWrapper(SONAR_HOST);
-  }
-
+public class MavenInjectIT extends MavenITAbstract {
   @Test
   public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
     executor.execute();
-  }
-
-  private void skipTestIfNotMaven3() throws IOException, InterruptedException {
-    final String mavenVersion = executor.getMavenVersion();
-    if (mavenVersion.startsWith("2")) {
-      throw new SkipException("could not proceed, because these tests only support maven3");
-    }
   }
 
   @Test
@@ -92,25 +50,5 @@ public class MavenInjectIT {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations).are(onlyForFile(pomXml.getName()));
-  }
-
-  private List<Violation> getViolationsFor(final String projectKey, final String ruleKey) {
-    Resource projectResource = api.getProjectWithKey(projectKey);
-    return api.getViolationsFor(projectResource.getId(), ruleKey);
-  }
-
-  private String createRuleKey(final String specificRuleKey) {
-    return MavenPlugin.REPOSITORY_KEY + ":" + specificRuleKey;
-  }
-
-  private Condition<Violation> onlyForFile(final String filename) {
-    return new Condition<Violation>() {
-      @Override
-      public boolean matches(final Violation violation) {
-        final boolean isScope = violation.getResourceScope().equals(SonarAPIWrapper.SCOPES.FIL.name());
-        final boolean isQualifier = violation.getResourceQualifier().equals(SonarAPIWrapper.QUALIFIERS.FIL.name());
-        return isScope && isQualifier && violation.getResourceName().equals(filename);
-      }
-    };
   }
 }
