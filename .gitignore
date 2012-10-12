@@ -28,3 +28,4 @@ Desktop.ini
 test-output/
 /C:\nppdf32Log\debuglog.txt
 /*.log
+/atlassian-ide-plugin.xml

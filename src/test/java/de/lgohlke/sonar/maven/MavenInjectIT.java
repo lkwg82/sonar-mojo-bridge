@@ -30,15 +30,14 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
+
 public class MavenInjectIT {
-  private final static String SONAR_HOST = "http://localhost:9000";
+  private static final String SONAR_HOST = "http://localhost:9000";
   private SonarExecutor executor;
   private SonarAPIWrapper api;
 
@@ -47,13 +46,16 @@ public class MavenInjectIT {
     String jdbcDriver = System.getProperty("jdbcDriver");
     String jdbcUrl = System.getProperty("jdbcUrl");
 
-    executor = new SonarExecutor(jdbcDriver, jdbcUrl).//
-        skipDesign().//
-        skipDynamicAnalysis().//
-        skipTests().//
-        showMavenErrorWhileAnalysis().//
-        showMavenOutputWhileAnalysis();
-    System.getProperties().put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
+    executor =
+      new SonarExecutor(jdbcDriver, jdbcUrl) //
+      .skipDesign() //
+      .skipDynamicAnalysis() //
+      .skipTests() //
+      .showMavenErrorWhileAnalysis() //
+      .showMavenOutputWhileAnalysis();
+
+    System.getProperties()
+    .put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTest.MAVEN_HOME);
   }
 
   @BeforeTest
@@ -83,6 +85,7 @@ public class MavenInjectIT {
 
 
     executor.usePom(pomXml).execute();
+
     List<Violation> violations = getViolationsFor(projectKey, ruleKey);
 
     // api.showQueryAndResult(violations);
