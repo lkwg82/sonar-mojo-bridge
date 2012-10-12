@@ -40,7 +40,6 @@ public class BridgeMojoMapper<T extends ResultTransferHandler> {
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
    *
-   * @param bridgeMojo
    * @throws BridgeMojoMapperException
    */
   public void injectResultTransferHandler(final BridgeMojo<T> bridgeMojo) throws BridgeMojoMapperException {

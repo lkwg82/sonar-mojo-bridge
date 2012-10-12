@@ -41,7 +41,8 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Go
 
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
   private final DisplayDependencyUpdatesBridgeMojoResultHandler resultHandler = new DisplayDependencyUpdatesBridgeMojoResultHandler();
-  private final BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+  private final BridgeMojoMapper<DisplayDependencyUpdatesBridgeMojoResultHandler> bridgeMojoMapper =
+    new BridgeMojoMapper<DisplayDependencyUpdatesBridgeMojoResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
 
   public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
                                         final MavenProject mavenProject) {
@@ -60,8 +61,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor {
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    DisplayDependencyUpdatesBridgeMojoResultHandler handler = (DisplayDependencyUpdatesBridgeMojoResultHandler)
-      bridgeMojoMapper.getResultTransferHandler();
+    DisplayDependencyUpdatesBridgeMojoResultHandler handler = bridgeMojoMapper.getResultTransferHandler();
 
     Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
     final File file = new File("", getMavenProject().getFile().getName());

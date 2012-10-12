@@ -24,8 +24,8 @@ import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
-public class MavenPluginExecutorProxyInjection {
 
+public class MavenPluginExecutorProxyInjection {
   public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
       if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
@@ -38,11 +38,7 @@ public class MavenPluginExecutorProxyInjection {
 
   public static boolean checkIfIsMaven3(final MavenPluginExecutor mavenPluginExecutor) {
     try {
-      if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
-        return true;
-      } else {
-        return false;
-      }
+      return mavenPluginExecutor instanceof Maven3PluginExecutor;
     } catch (NoClassDefFoundError e) {
       return false;
     }

@@ -19,9 +19,8 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.maven.internals.PlexusSlf4JLogger;
-
 import com.google.common.base.Preconditions;
+import de.lgohlke.sonar.maven.internals.PlexusSlf4JLogger;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
@@ -31,18 +30,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class Maven3SonarEmbedder {
-
   private final MavenEmbedder embedder;
   private final MavenRequest mavenRequest;
 
@@ -69,7 +66,8 @@ public class Maven3SonarEmbedder {
     private String goal;
     private File mavenHome;
     private int logLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
-    private final Properties userProperties = new Properties();
+
+    //    private final Properties userProperties = new Properties();
     private boolean showErrors;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
@@ -99,11 +97,9 @@ public class Maven3SonarEmbedder {
      * int LEVEL_DISABLED = 5;
      * </pre>
      *
-     * @param level
-     * @return
      */
     public MavenSonarEmbedderBuilder logLevel(final int level) {
-      Preconditions.checkArgument(level > -1 && level < 6);
+      Preconditions.checkArgument((level > -1) && (level < 6));
       this.logLevel = level;
       return this;
     }
@@ -111,26 +107,23 @@ public class Maven3SonarEmbedder {
     /**
      * could be called multiple times
      *
-     * @param mavenHome
-     * @return
      */
     public MavenSonarEmbedderBuilder setAlternativeMavenHome(final File mavenHome) {
       Preconditions.checkNotNull(mavenHome);
-      if (this.mavenHome == null && mavenHome.isDirectory()) {
+      if ((this.mavenHome == null) && mavenHome.isDirectory()) {
         this.mavenHome = mavenHome;
       }
       return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());
         envMap.putAll((Map) System.getProperties());
         if (envMap.containsKey("maven.home")) {
           mavenHome = new File(envMap.get("maven.home"));
-        }
-        else if (envMap.containsKey(M2_HOME)) {
+        } else if (envMap.containsKey(M2_HOME)) {
           final Object value = envMap.get(M2_HOME);
           if (value instanceof File) {
             mavenHome = (File) value;
@@ -141,11 +134,8 @@ public class Maven3SonarEmbedder {
           final String currentProgramm = System.getenv("_");
           if (currentProgramm != null) {
             File mvnBinary = new File(currentProgramm);
-            if (mvnBinary != null) {
-              if (mvnBinary.exists())
-              {
-                mavenHome = mvnBinary.getParentFile().getParentFile();
-              }
+            if (mvnBinary.exists()) {
+              mavenHome = mvnBinary.getParentFile().getParentFile();
             }
           }
         }
@@ -155,12 +145,12 @@ public class Maven3SonarEmbedder {
       }
     }
 
-    public MavenSonarEmbedderBuilder setUserProperty(final String key, final String value) {
-      Preconditions.checkNotNull(key);
-      Preconditions.checkNotNull(value);
-      userProperties.put(key, value);
-      return this;
-    }
+    //    public MavenSonarEmbedderBuilder setUserProperty(final String key, final String value) {
+    //      Preconditions.checkNotNull(key);
+    //      Preconditions.checkNotNull(value);
+    //      userProperties.put(key, value);
+    //      return this;
+    //    }
 
     public MavenSonarEmbedderBuilder showErrors(final boolean showErrors) {
       this.showErrors = showErrors;
@@ -168,7 +158,6 @@ public class Maven3SonarEmbedder {
     }
 
     public Maven3SonarEmbedder build() throws MavenEmbedderException {
-
       Preconditions.checkNotNull(pom, "missing pom");
 
       Preconditions.checkNotNull(goal, "missing goal");
@@ -180,8 +169,9 @@ public class Maven3SonarEmbedder {
       mavenRequest.setGoals(Arrays.asList(goal));
       mavenRequest.setLoggingLevel(logLevel);
       mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new PlexusSlf4JLogger(log)));
-      mavenRequest.setUserProperties(userProperties);
-      mavenRequest.setSystemProperties(userProperties);
+
+      //      mavenRequest.setUserProperties(userProperties);
+      //      mavenRequest.setSystemProperties(userProperties);
       detectMavenHomeIfNull();
 
       try {

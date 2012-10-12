@@ -19,11 +19,9 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.Goal;
-import de.lgohlke.sonar.maven.ResultTransferHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -35,9 +33,12 @@ import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.codehaus.mojo.versions.api.UpdateScope;
 import org.codehaus.mojo.versions.utils.DependencyComparator;
 import org.fest.reflect.reference.TypeRef;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Map.Entry;
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.fest.reflect.core.Reflection.staticMethod;
 
 
@@ -87,9 +88,7 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
 
   /**
    * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment( Set, Set )}
-   * @param dependencies
-   * @param dependencyManagement
-   * @return
+   *
    */
   private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
     final Object[] args = new Object[] { dependencies, dependencyManagement };
@@ -126,8 +125,6 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
 
   @Override
   public void injectResultHandler(final DisplayDependencyUpdatesBridgeMojoResultHandler handler) {
-    //    checkArgument(handler instanceof DisplayDependencyUpdatesBridgeMojoResultHandler, "handler needs to be instance of %s",
-    //      DisplayDependencyUpdatesBridgeMojoResultHandler.class);
-    this.handler = (DisplayDependencyUpdatesBridgeMojoResultHandler) handler;
+    this.handler = handler;
   }
 }

@@ -39,13 +39,11 @@ import static org.fest.reflect.core.Reflection.field;
 public class Maven3ExecutionProcessTest {
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
-  private final String SUB_GOAL = "help";
-  private final String GOAL = "versions:" + SUB_GOAL;
   private Maven3SonarEmbedder embedder;
 
   @BeforeTest
   protected void beforeTest() throws Exception {
-    embedder = Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal(GOAL).setAlternativeMavenHome(MAVEN_HOME).build();
+    embedder = Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal("versions:help").setAlternativeMavenHome(MAVEN_HOME).build();
   }
 
   public class MyResultTransferHandler implements ResultTransferHandler {

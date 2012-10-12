@@ -23,18 +23,16 @@ import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import static org.fest.assertions.api.Assertions.fail;
 
-@Slf4j
-@RequiredArgsConstructor
-public final class SonarExecutor {
 
+@RequiredArgsConstructor
+@Slf4j
+public final class SonarExecutor {
   private final String jdbcDriver;
   private final String jdbcUrl;
   private boolean skipTests;
@@ -107,49 +105,20 @@ public final class SonarExecutor {
 
   @Override
   public SonarExecutor clone() {
-    return new SonarExecutor(jdbcDriver, jdbcUrl).//
-        activateMavenDebug(activateMavenDebug).//
-        showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis).//
-        showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis).//
-        skipDesign(skipDesign).//
-        skipDynamicAnalysis(skipDynamicAnalysis).//
-        skipTests(skipTests);
+    return new SonarExecutor(jdbcDriver, jdbcUrl).activateMavenDebug(activateMavenDebug)
+      .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
+      .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
+      .skipDesign(skipDesign)
+      .skipDynamicAnalysis(skipDynamicAnalysis)
+      .skipTests(skipTests);
   }
 
   public void execute() throws MavenEmbedderException {
-    StringBuilder builder = new StringBuilder("mvn -f " + pomXML.getAbsolutePath() + " sonar:sonar");
-
-    if (jdbcDriver != null) {
-      builder.append(" -Dsonar.jdbc.driver=" + jdbcDriver);
-    }
-
-    if (jdbcUrl != null) {
-      builder.append(" -Dsonar.jdbc.url=" + jdbcUrl);
-    }
-
-    if (skipTests) {
-      builder.append(" -DskipTests");
-    }
-
-    if (skipDesign) {
-      builder.append(" -Dsonar.skipDesign");
-    }
-
-    if (skipDynamicAnalysis) {
-      builder.append(" -Dsonar.dynamicAnalysis=false");
-    }
-
-    if (activateMavenDebug) {
-      builder.append(" -X");
-    }
-
-    if (showMavenErrorWhileAnalysis) {
-      builder.append(" -e");
-    }
+    final String command = configureExecutionCommand();
 
     try {
-      final String command = builder.toString();
       log.info("calling : {}", command);
+
       Process proc = Runtime.getRuntime().exec(command);
       BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
@@ -178,14 +147,46 @@ public final class SonarExecutor {
     }
   }
 
+  private String configureExecutionCommand() {
+    StringBuilder builder = new StringBuilder("mvn -f " + pomXML.getAbsolutePath() + " sonar:sonar");
+
+    if (jdbcDriver != null) {
+      builder.append(" -Dsonar.jdbc.driver=").append(jdbcDriver);
+    }
+
+    if (jdbcUrl != null) {
+      builder.append(" -Dsonar.jdbc.url=").append(jdbcUrl);
+    }
+
+    if (skipTests) {
+      builder.append(" -DskipTests");
+    }
+
+    if (skipDesign) {
+      builder.append(" -Dsonar.skipDesign");
+    }
+
+    if (skipDynamicAnalysis) {
+      builder.append(" -Dsonar.dynamicAnalysis=false");
+    }
+
+    if (activateMavenDebug) {
+      builder.append(" -X");
+    }
+
+    if (showMavenErrorWhileAnalysis) {
+      builder.append(" -e");
+    }
+    return builder.toString();
+  }
+
   public String getMavenVersion() throws IOException, InterruptedException {
     Process proc = Runtime.getRuntime().exec("mvn -version");
     BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
     String line = reader.readLine();
     if (line != null) {
-      String version = line.split("\\ +")[2];
-      return version;
+      return line.split("\\ +")[2];
     } else {
       return null;
     }
