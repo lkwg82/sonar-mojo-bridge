@@ -19,11 +19,7 @@
  */
 package de.lgohlke.sonar;
 
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersionMavenRule;
-
-
-
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleRepository;
@@ -48,7 +44,8 @@ public class RulesRepository extends RuleRepository {
 
   @SuppressWarnings("rawtypes")
   private static List<Class> getCheckedClasses() {
-    return Arrays.asList((Class) DependencyVersionMavenRule.class, PluginVersionMavenRule.class);
+    return Arrays.asList((Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
+        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class);
   }
 
 }

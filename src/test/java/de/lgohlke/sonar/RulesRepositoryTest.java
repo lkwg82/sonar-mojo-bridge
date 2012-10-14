@@ -20,21 +20,24 @@
 package de.lgohlke.sonar;
 
 import com.google.common.collect.Lists;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersionMavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.testng.annotations.Test;
+
 import java.util.List;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
 /**
- * Created with IntelliJ IDEA.
+ * User: lgohlke
  * User: lgohlke
  */
 public class RulesRepositoryTest {
-  private List<Class<? extends MavenRule>> expectedRules = Lists.newArrayList(DependencyVersionMavenRule.class, PluginVersionMavenRule.class);
+  private List<Class<? extends MavenRule>> expectedRules = Lists.newArrayList(
+      DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class, IncompatibleMavenVersion.class,
+      NoMinimumMavenVersion.class);
 
   @Test
   public void shouldHaveCompleteRuleSet() throws Exception {
