@@ -20,22 +20,26 @@
 package de.lgohlke.sonar;
 
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayPluginUpdatesSensor;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Sensor1;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Sensor2;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
 import org.sonar.api.SonarPlugin;
 import org.sonar.plugins.xml.language.Xml;
+
 import java.util.Arrays;
 import java.util.List;
 
 
 @Properties(
-  {
-    @Property(
-      key = MavenPlugin.ANALYSIS_ENABLED, name = "enable maven analysis", description = "Enable maven analysis.", defaultValue = MavenPlugin.DEFAULT,
-      global = true, project = true, type = PropertyType.BOOLEAN
-    )
-  }
+    {
+        @Property(
+            key = MavenPlugin.ANALYSIS_ENABLED, name = "enable maven analysis", description = "Enable maven analysis.", defaultValue = MavenPlugin.DEFAULT,
+            global = true, project = true, type = PropertyType.BOOLEAN
+        )
+    }
 )
 public class MavenPlugin extends SonarPlugin {
   public static final String ANALYSIS_ENABLED = "sonar.maven.analysis";
@@ -44,23 +48,24 @@ public class MavenPlugin extends SonarPlugin {
   public static final String DEFAULT = "true";
 
   @Override
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public List getExtensions() {
     return Arrays.asList(
-      DisplayDependencyUpdatesSensor.class,
-      //      DisplayPluginUpdatesSensor.class,
+        DisplayPluginUpdatesSensor.class,
+        DisplayDependencyUpdatesSensor.class,
+        Sensor1.class,
+        Sensor2.class,
 
+        RulesRepository.class,
 
-      RulesRepository.class,
+        // xml language from xml-plugin
+        Xml.class,
 
-      // xml language from xml-plugin
-      Xml.class,
+        // source importer
+        PomSourceImporter.class
 
-      // source importer
-      PomSourceImporter.class
-
-      // code colorizer
-      // XmlCodeColorizerFormat.class
-      );
+        // code colorizer
+        // XmlCodeColorizerFormat.class
+    );
   }
 }

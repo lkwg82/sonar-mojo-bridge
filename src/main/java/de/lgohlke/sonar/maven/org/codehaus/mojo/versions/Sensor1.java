@@ -1,0 +1,52 @@
+/*
+ * Sonar maven checks plugin
+ * Copyright (C) 2012 Lars Gohlke
+ * dev@sonar.codehaus.org
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
+ */
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
+
+import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
+import org.apache.maven.project.MavenProject;
+import org.sonar.api.batch.Sensor;
+import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.maven.DependsUponMavenPlugin;
+import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.resources.Project;
+import org.sonar.batch.MavenPluginExecutor;
+
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_PLUGIN_UPDATES;
+
+
+public class Sensor1 extends SensorBase implements Sensor, DependsUponMavenPlugin {
+
+
+  @Override
+  public MavenPluginHandler getMavenPluginHandler(final Project project) {
+    return MavenPluginHandlerFactory.createHandler(BASE_IDENTIFIER + DISPLAY_PLUGIN_UPDATES);
+  }
+
+  @Override
+  public void analyse(Project project, SensorContext context) {
+    super.iAnalyse(project,context);
+  }
+
+  @Override
+  public boolean shouldExecuteOnProject(Project project) {
+    return true;
+  }
+}
