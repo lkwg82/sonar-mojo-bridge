@@ -24,7 +24,9 @@ import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.codehaus.plexus.PlexusContainer;
 import org.sonar.batch.MavenPluginExecutor;
+
 import java.lang.reflect.Proxy;
+
 import static org.fest.reflect.core.Reflection.field;
 
 
@@ -39,12 +41,7 @@ public final class Maven3ExecutionProcess {
       BuildPluginManager pluginManager = container.lookup(BuildPluginManager.class);
       field("container").ofType(PlexusContainer.class).in(mavenPluginManager).set(getPlexusContainerProxy(PlexusContainer.class, container, handler));
       mavenPluginManager = getMavenPluginManagerProxy(MavenPluginManager.class, mavenPluginManager, classLoader);
-
-      try {
-        field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
-      } catch (NullPointerException npe) {
-        // try to set on proxy class --> fails --> ok!
-      }
+      field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
 
     } catch (Exception e) {
       throw new IllegalStateException(e);
@@ -61,7 +58,7 @@ public final class Maven3ExecutionProcess {
 
   @SuppressWarnings("unchecked")
   private static <T> T newInstance(final Object obj, final Class<T> interfaze, final DynamicProxy<?> proxy) {
-    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[] { interfaze }, proxy);
+    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[]{interfaze}, proxy);
   }
 
 }

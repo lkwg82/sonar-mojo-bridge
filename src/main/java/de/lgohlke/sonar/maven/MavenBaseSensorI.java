@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
+import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
@@ -34,42 +35,6 @@ import org.sonar.batch.MavenPluginExecutor;
 /**
  * User: lars
  */
-@RequiredArgsConstructor
-@Data
-@Slf4j
-public class MavenBaseSensor<T extends ResultTransferHandler> implements DependsUponMavenPlugin {
-
-  private final MavenPluginExecutor mavenPluginExecutor;
-  private final MavenProject mavenProject;
-  private final String baseIdentifier;
-  private final MavenBaseSensorI<T> mavenBaseSensorI;
-
-  public boolean shouldExecuteOnProject(final Project project) {
-    String prop = (String) project.getProperty(MavenPlugin.ANALYSIS_ENABLED);
-    if (prop == null) {
-      prop = MavenPlugin.DEFAULT;
-    }
-
-    boolean isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
-    if (isMaven3) {
-      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), getHandler());
-    } else {
-      MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
-    }
-
-    return Boolean.parseBoolean(prop) && isMaven3;
-  }
-
-  @Override
-  public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler(baseIdentifier + getHandler().getGoal());
-  }
-
-  public BridgeMojoMapper<T> getHandler() {
-    return mavenBaseSensorI.getHandler();
-  }
-
-  public String toString() {
-    return mavenBaseSensorI.getClass().getSimpleName();
-  }
+public interface MavenBaseSensorI<T extends ResultTransferHandler> extends DependsUponMavenPlugin,Sensor {
+  public BridgeMojoMapper<T> getHandler() ;
 }

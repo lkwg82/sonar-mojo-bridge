@@ -22,42 +22,50 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
+import de.lgohlke.sonar.maven.MavenBaseSensorI;
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
 import org.apache.maven.project.MavenProject;
+import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
-import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
+
 import java.util.List;
 import java.util.Map;
+
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES;
 
 
-public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> {
+public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayUpdatesBridgeMojoResultHandler> {
   private final DisplayUpdatesBridgeMojoResultHandler resultHandler = new DisplayUpdatesBridgeMojoResultHandler();
   private final BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> bridgeMojoMapper =
-    new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+      new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+  private final MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> baseSensor;
+  private MavenProject mavenProject;
 
-  public DisplayDependencyUpdatesSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor,
-                                        final MavenProject mavenProject) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject);
+
+  public DisplayDependencyUpdatesSensor(MavenPluginExecutor mavenPluginExecutor,
+                                        MavenProject mavenProject) {
+    this.mavenProject = mavenProject;
+    baseSensor = new MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER,this);
+  }
+
+  @Override
+  public String toString() {
+    return baseSensor.toString();
   }
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler(BASE_IDENTIFIER + DISPLAY_DEPENDENCY_UPDATES);
-  }
-
-  @Override
-  protected BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> getHandler() {
-    return bridgeMojoMapper;
+    return baseSensor.getMavenPluginHandler(project);
   }
 
   @Override
@@ -65,21 +73,32 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayUpdat
     DisplayUpdatesBridgeMojoResultHandler handler = bridgeMojoMapper.getResultTransferHandler();
 
     Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
-    final File file = new File("", getMavenProject().getFile().getName());
+    final File file = new File("", mavenProject.getFile().getName());
     file.setLanguage(Xml.INSTANCE);
 
-    for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
-      String section = entry.getKey();
-      List<ArtifactUpdate> updates = entry.getValue();
-      for (ArtifactUpdate update : updates) {
-        Violation violation = Violation.create(rule, file);
-        violation.setLineId(1);
+    if (handler.getUpdateMap() != null) {
+      for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
+        String section = entry.getKey();
+        List<ArtifactUpdate> updates = entry.getValue();
+        for (ArtifactUpdate update : updates) {
+          Violation violation = Violation.create(rule, file);
+          violation.setLineId(1);
 
-        String hint = "(found in " + section + ")";
-        violation.setMessage(update.toString() + " " + hint);
-        context.saveViolation(violation);
+          String hint = "(found in " + section + ")";
+          violation.setMessage(update.toString() + " " + hint);
+          context.saveViolation(violation);
+        }
       }
     }
   }
 
+  @Override
+  public boolean shouldExecuteOnProject(Project project) {
+    return baseSensor.shouldExecuteOnProject(project);
+  }
+
+  @Override
+  public BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> getHandler() {
+    return bridgeMojoMapper;
+  }
 }

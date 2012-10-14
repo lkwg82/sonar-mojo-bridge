@@ -53,8 +53,8 @@ public class MavenPlugin extends SonarPlugin {
     return Arrays.asList(
         DisplayPluginUpdatesSensor.class,
         DisplayDependencyUpdatesSensor.class,
-        Sensor1.class,
-        Sensor2.class,
+//        Sensor1.class,
+//        Sensor2.class,
 
         RulesRepository.class,
 
