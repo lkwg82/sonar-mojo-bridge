@@ -17,10 +17,24 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
+
+import de.lgohlke.sonar.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
 /**
- * marker interface
+ * User: lars
  */
-public interface MavenRule {
+@Rule(
+    key = NoMinimumMavenVersion.KEY, priority = Priority.MAJOR,
+    name = NoMinimumMavenVersion.NAME, description = NoMinimumMavenVersion.DESCRIPTION
+)
+public class NoMinimumMavenVersion implements MavenRule {
+  public static final String KEY = "NO MINIMUM MAVEN VERSION";
+  public static final String NAME = "[POM] found no minimum maven version";
+  public static final String DESCRIPTION = "Update the pom.xml to contain\n" +
+      "    <prerequisites>\n" +
+      "      <maven><!-- minimum version of Maven that the plugin works with --></maven>\n" +
+      "    </prerequisites>";
 }

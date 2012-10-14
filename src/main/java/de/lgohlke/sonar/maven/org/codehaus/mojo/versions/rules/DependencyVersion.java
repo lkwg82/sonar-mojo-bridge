@@ -17,10 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
-/**
- * marker interface
- */
-public interface MavenRule {
+import de.lgohlke.sonar.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
+
+
+@Rule(
+    key = DependencyVersion.KEY, priority = Priority.MINOR, name = DependencyVersion.NAME,
+    description = DependencyVersion.DESCRIPTION
+)
+public class DependencyVersion implements MavenRule {
+  public static final String KEY = "Old Dependency";
+  protected static final String NAME = "[Maven] found an newer version for a dependency in use";
+  protected static final String DESCRIPTION = "this dependency has a newer version available";
 }

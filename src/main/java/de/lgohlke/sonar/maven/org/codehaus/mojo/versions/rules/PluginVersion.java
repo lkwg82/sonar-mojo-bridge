@@ -23,23 +23,9 @@ import de.lgohlke.sonar.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-
-@Rule(
-  key = DependencyVersionMavenRule.KEY, priority = Priority.MINOR, name = DependencyVersionMavenRule.NAME,
-  description = DependencyVersionMavenRule.DESCRIPTION
-)
-public class DependencyVersionMavenRule implements MavenRule {
-  public static final String KEY = "Old Dependency";
-  protected static final String NAME = "[Maven] found an newer version for a dependency in use";
-  protected static final String DESCRIPTION = "TODO";
-
-  @Override
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public String getKey() {
-    return KEY;
-  }
+@Rule(key = PluginVersion.KEY, priority = Priority.MINOR, name = PluginVersion.NAME, description = PluginVersion.DESCRIPTION)
+public class PluginVersion implements MavenRule {
+  protected static final String KEY = "Old Plugin";
+  protected static final String DESCRIPTION = "found an updated version for plugin";
+  protected static final String NAME = "[POM] " + DESCRIPTION;
 }

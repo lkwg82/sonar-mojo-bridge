@@ -20,24 +20,20 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
 import de.lgohlke.sonar.MavenRule;
-
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-@Rule(key = PluginVersionMavenRule.KEY, priority = Priority.MINOR, name = PluginVersionMavenRule.NAME, description = PluginVersionMavenRule.DESCRIPTION)
-public class PluginVersionMavenRule implements MavenRule {
-  protected static final String KEY = "Old Plugin";
-  protected static final String NAME = "[POM] found an updated version for plugin";
-  protected static final String DESCRIPTION = "TODO";
+/**
+ * User: lars
+ */
 
-  @Override
-  public String getName() {
-    return NAME;
-  }
 
-  @Override
-  public String getKey() {
-    return KEY;
-  }
-
+@Rule(key = MissingPluginVersion.KEY,
+    priority = Priority.MINOR,
+    name = MissingPluginVersion.NAME,
+    description = MissingPluginVersion.DESCRIPTION)
+public class MissingPluginVersion implements MavenRule {
+  protected static final String KEY = "Missing Plugin Version";
+  protected static final String NAME = "[POM] found an plugin with no version";
+  protected static final String DESCRIPTION = "Set an explicit version for this plugin";
 }
