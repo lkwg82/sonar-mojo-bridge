@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.Goal;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.versions.DisplayPluginUpdatesMojo;
@@ -33,21 +34,13 @@ import java.util.Map;
 @SuppressWarnings("deprecation")
 public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo implements BridgeMojo<DisplayUpdatesBridgeMojoResultHandler> {
   private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
-  private DisplayUpdatesBridgeMojoResultHandler handler;
-
-  public DisplayPluginUpdatesBridgeMojo() {
-    super();
-  }
-
-  @Override
-  public void injectResultHandler(final DisplayUpdatesBridgeMojoResultHandler handler) {
-    this.handler = handler;
-  }
+  @Setter
+  private DisplayUpdatesBridgeMojoResultHandler resultHandler;
 
   @Override
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException, MojoFailureException {
     super.execute();
-    handler.setUpdateMap(updateMap);
+    resultHandler.setUpdateMap(updateMap);
   }
 }

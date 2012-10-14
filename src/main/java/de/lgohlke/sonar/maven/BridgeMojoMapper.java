@@ -48,7 +48,7 @@ public class BridgeMojoMapper<T extends ResultTransferHandler> {
 
     String goal = bridgeMojo.getClass().getAnnotation(Goal.class).value();
     if (getGoal().equals(goal)) {
-      bridgeMojo.injectResultHandler(resultTransferHandler);
+      bridgeMojo.setResultHandler(resultTransferHandler);
     } else {
       throw new BridgeMojoMapperException("no matching " + ResultTransferHandler.class.getSimpleName() + " for goal : " + goal);
     }

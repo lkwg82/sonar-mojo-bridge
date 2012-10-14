@@ -20,21 +20,18 @@
 package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.maven.internals.Maven3ExecutionProcessTest.MyResultTransferHandler;
+import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.mojo.versions.HelpMojo;
 
 
 @Goal("help")
 public class MyBridgeMojo extends HelpMojo implements BridgeMojo<MyResultTransferHandler> {
-  private MyResultTransferHandler handler;
+  @Setter
+  private MyResultTransferHandler resultHandler;
 
   @Override
   public void execute() throws MojoExecutionException {
-    handler.setPing(true);
-  }
-
-  @Override
-  public void injectResultHandler(final MyResultTransferHandler handler) {
-    this.handler = handler;
+    resultHandler.setPing(true);
   }
 }

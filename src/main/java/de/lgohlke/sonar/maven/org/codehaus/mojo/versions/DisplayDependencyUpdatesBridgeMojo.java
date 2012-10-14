@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.Goal;
+import lombok.Setter;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -51,7 +52,8 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
 
   private Boolean processDependencyManagement;
   private Boolean processDependencies;
-  private DisplayUpdatesBridgeMojoResultHandler handler;
+  @Setter
+  private DisplayUpdatesBridgeMojoResultHandler resultHandler;
 
   public DisplayDependencyUpdatesBridgeMojo() {
     super();
@@ -84,7 +86,7 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
       throw new MojoExecutionException(e.getMessage(), e);
     }
 
-    handler.setUpdateMap(updateMap);
+    resultHandler.setUpdateMap(updateMap);
   }
 
   /**
@@ -122,10 +124,5 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
       }
     }
     updateMap.put(section, artiFactUpdates);
-  }
-
-  @Override
-  public void injectResultHandler(final DisplayUpdatesBridgeMojoResultHandler handler) {
-    this.handler = handler;
   }
 }

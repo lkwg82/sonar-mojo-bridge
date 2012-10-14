@@ -37,7 +37,7 @@ public class DisplayDependencyUpdatesBridgeMojoTest {
     field("project").ofType(MavenProject.class).in(mojo).set(mavenProject);
 
     DisplayUpdatesBridgeMojoResultHandler handler = new DisplayUpdatesBridgeMojoResultHandler();
-    mojo.injectResultHandler(handler);
+    mojo.setResultHandler(handler);
     mojo.execute();
 
     assertThat(handler.getUpdateMap()).isNotNull();
