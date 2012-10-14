@@ -19,27 +19,20 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import org.apache.maven.project.MavenProject;
-import org.testng.annotations.Test;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.reflect.core.Reflection.field;
-import static org.mockito.Mockito.mock;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.maven.model.Dependency;
+
+import java.util.List;
+import java.util.Map;
 
 
-/**
- * User: lgohlke
- */
-public class DisplayDependencyUpdatesBridgeMojoTest {
-  @Test
-  public void testExecute() throws Exception {
-    DisplayDependencyUpdatesBridgeMojo mojo = new DisplayDependencyUpdatesBridgeMojo();
-    MavenProject mavenProject = mock(MavenProject.class);
-    field("project").ofType(MavenProject.class).in(mojo).set(mavenProject);
-
-    DisplayDependencyUpdatesResultHandler handler = new DisplayDependencyUpdatesResultHandler();
-    mojo.setResultHandler(handler);
-    mojo.execute();
-
-    assertThat(handler.getUpdateMap()).isNotNull();
-  }
+@Setter
+@Getter
+public class DisplayPluginUpdatesResultHandler implements ResultTransferHandler {
+  private List<ArtifactUpdate> pluginUpdates;
+  private List<Dependency> missingVersionPlugins;
+  private boolean warninNoMinimumVersion;
+  private DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion;
 }

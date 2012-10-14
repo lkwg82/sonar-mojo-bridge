@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.maven.MavenITAbstract;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeTest;
@@ -49,7 +49,7 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
     skipTestIfNotMaven3();
 
     final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
-    final String ruleKey = createRuleKey(DependencyVersionMavenRule.KEY);
+    final String ruleKey = createRuleKey(DependencyVersion.KEY);
 
 
     executor.usePom(pomXml).execute();

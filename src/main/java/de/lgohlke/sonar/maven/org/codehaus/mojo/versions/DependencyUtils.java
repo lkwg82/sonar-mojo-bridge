@@ -19,15 +19,16 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.ResultTransferHandler;
-import lombok.Getter;
-import lombok.Setter;
-import java.util.List;
-import java.util.Map;
+import org.apache.maven.model.Dependency;
 
-
-@Setter
-public class DisplayUpdatesBridgeMojoResultHandler implements ResultTransferHandler {
-  @Getter
-  private Map<String, List<ArtifactUpdate>> updateMap;
+/**
+ * User: lars
+ */
+public class DependencyUtils {
+  private DependencyUtils(){}
+  public static Dependency createDependency(final String groupId, final String artifactId, final String version) {
+    Dependency dependency = new Dependency();
+    dependency.setGroupId(groupId);dependency.setArtifactId(artifactId);dependency.setVersion(version);
+    return dependency;
+  }
 }

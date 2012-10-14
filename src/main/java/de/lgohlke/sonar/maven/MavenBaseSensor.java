@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.MavenPlugin;
+import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
 import lombok.Data;
@@ -29,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.Rule;
 import org.sonar.batch.MavenPluginExecutor;
 
 /**
@@ -71,5 +73,10 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
 
   public String toString() {
     return mavenBaseSensorI.getClass().getSimpleName();
+  }
+
+  public Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
+    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
+    return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
   }
 }

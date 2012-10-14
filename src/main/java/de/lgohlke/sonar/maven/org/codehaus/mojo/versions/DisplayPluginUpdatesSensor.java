@@ -19,12 +19,16 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.MavenBaseSensorI;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersionMavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
 import lombok.Getter;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -33,25 +37,21 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
-import org.sonar.plugins.xml.language.Xml;
-
-import java.util.List;
-import java.util.Map;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
 
-public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayUpdatesBridgeMojoResultHandler> {
-  private final DisplayUpdatesBridgeMojoResultHandler resultHandler = new DisplayUpdatesBridgeMojoResultHandler();
+public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPluginUpdatesResultHandler> {
+  private final DisplayPluginUpdatesResultHandler resultHandler = new DisplayPluginUpdatesResultHandler();
   @Getter
-  private final BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> handler = new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
+  private final BridgeMojoMapper<DisplayPluginUpdatesResultHandler> handler = new BridgeMojoMapper<DisplayPluginUpdatesResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
   private final MavenProject mavenProject;
-  private final MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> baseSensor;
+  private final MavenBaseSensor<DisplayPluginUpdatesResultHandler> baseSensor;
 
   public DisplayPluginUpdatesSensor(MavenPluginExecutor mavenPluginExecutor,
                                     MavenProject mavenProject) {
     this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
+    baseSensor = new MavenBaseSensor<DisplayPluginUpdatesResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
   }
 
   @Override
@@ -61,27 +61,53 @@ public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayUpdat
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    DisplayUpdatesBridgeMojoResultHandler handler = this.handler.getResultTransferHandler();
+    DisplayPluginUpdatesResultHandler handler = this.handler.getResultTransferHandler();
 
-    if (handler.getUpdateMap() != null) {
-      Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new PluginVersionMavenRule().getKey());
-      final File file = new File("", mavenProject.getFile().getName());
-      file.setLanguage(Xml.INSTANCE);
+    final File file = new File("", mavenProject.getFile().getName());
 
-      for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
-        String section = entry.getKey();
-        List<ArtifactUpdate> updates = entry.getValue();
-        for (ArtifactUpdate update : updates) {
-          Violation violation = Violation.create(rule, file);
-          violation.setLineId(1);
+    // minimum version warning
+    if (handler.isWarninNoMinimumVersion()) {
+      Rule rule = baseSensor.createRuleFrom(NoMinimumMavenVersion.class);
+      Violation violation = Violation.create(rule, file);
+      violation.setLineId(1);
+      violation.setMessage("Project does not define minimum Maven version, default is: 2.0");
+      context.saveViolation(violation);
+    }
 
-          String hint = "(found in " + section + ")";
-          violation.setMessage(update.toString() + " " + hint);
-          context.saveViolation(violation);
-        }
+    // incompatible minimum versions
+    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion = handler.getIncompatibleParentAndProjectMavenVersion();
+    if (incompatibleParentAndProjectMavenVersion != null) {
+      Rule rule = baseSensor.createRuleFrom(IncompatibleMavenVersion.class);
+      Violation violation = Violation.create(rule, file);
+      violation.setLineId(1);
+      ArtifactVersion parentVersion = incompatibleParentAndProjectMavenVersion.getParentVersion();
+      ArtifactVersion projectVersion = incompatibleParentAndProjectMavenVersion.getProjectVersion();
+      violation.setMessage("Project does define incompatible minimum versions:  in parent pom " + parentVersion + " and in project pom " + projectVersion);
+      context.saveViolation(violation);
+    }
+
+    // missing versions
+    if (!handler.getMissingVersionPlugins().isEmpty()) {
+      Rule rule = baseSensor.createRuleFrom(MissingPluginVersion.class);
+      for (Dependency dependency : handler.getMissingVersionPlugins()) {
+        Violation violation = Violation.create(rule, file);
+        violation.setLineId(1);
+        String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
+        violation.setMessage(artifact + " has no version");
+        context.saveViolation(violation);
       }
     }
+
+    // updates
+    Rule rule = baseSensor.createRuleFrom(PluginVersion.class);
+    for (ArtifactUpdate update : handler.getPluginUpdates()) {
+      Violation violation = Violation.create(rule, file);
+      violation.setLineId(1);
+      violation.setMessage(update.toString());
+      context.saveViolation(violation);
+    }
   }
+
 
   @Override
   public boolean shouldExecuteOnProject(Project project) {

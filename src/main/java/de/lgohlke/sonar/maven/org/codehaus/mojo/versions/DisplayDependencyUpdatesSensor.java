@@ -19,11 +19,10 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.MavenBaseSensorI;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersionMavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import lombok.Getter;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
@@ -33,7 +32,6 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
-import org.sonar.plugins.xml.language.Xml;
 
 import java.util.List;
 import java.util.Map;
@@ -41,18 +39,18 @@ import java.util.Map;
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
 
-public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayUpdatesBridgeMojoResultHandler> {
-  private final DisplayUpdatesBridgeMojoResultHandler resultHandler = new DisplayUpdatesBridgeMojoResultHandler();
+public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayDependencyUpdatesResultHandler> {
+  private final DisplayDependencyUpdatesResultHandler resultHandler = new DisplayDependencyUpdatesResultHandler();
   @Getter
-  private final BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> handler = new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
-  private final MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> baseSensor;
+  private final BridgeMojoMapper<DisplayDependencyUpdatesResultHandler> handler = new BridgeMojoMapper<DisplayDependencyUpdatesResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+  private final MavenBaseSensor<DisplayDependencyUpdatesResultHandler> baseSensor;
   private MavenProject mavenProject;
 
 
   public DisplayDependencyUpdatesSensor(MavenPluginExecutor mavenPluginExecutor,
                                         MavenProject mavenProject) {
     this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
+    baseSensor = new MavenBaseSensor<DisplayDependencyUpdatesResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
   }
 
   @Override
@@ -67,11 +65,11 @@ public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayU
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    DisplayUpdatesBridgeMojoResultHandler handler = this.handler.getResultTransferHandler();
+    DisplayDependencyUpdatesResultHandler handler = this.handler.getResultTransferHandler();
 
-    Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new DependencyVersionMavenRule().getKey());
+    Rule rule = baseSensor.createRuleFrom(DependencyVersion.class);
     final File file = new File("", mavenProject.getFile().getName());
-    file.setLanguage(Xml.INSTANCE);
+//    file.setLanguage(Xml.INSTANCE);
 
     if (handler.getUpdateMap() != null) {
       for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {

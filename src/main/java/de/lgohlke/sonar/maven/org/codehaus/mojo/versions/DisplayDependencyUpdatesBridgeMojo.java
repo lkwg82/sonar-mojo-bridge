@@ -45,7 +45,7 @@ import static org.fest.reflect.core.Reflection.staticMethod;
 
 @Goal(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES)
 @SuppressWarnings("deprecation")
-public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayUpdatesBridgeMojoResultHandler> {
+public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayDependencyUpdatesResultHandler> {
   public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
   public static final String DEPENDENCIES = "Dependencies";
   private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
@@ -53,7 +53,7 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   private Boolean processDependencyManagement;
   private Boolean processDependencies;
   @Setter
-  private DisplayUpdatesBridgeMojoResultHandler resultHandler;
+  private DisplayDependencyUpdatesResultHandler resultHandler;
 
   @Override
   @SuppressWarnings("unchecked")

@@ -19,9 +19,12 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.Goal;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -33,6 +36,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.RuntimeInformation;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -56,10 +60,21 @@ import static org.fest.reflect.core.Reflection.method;
 
 @Goal(Configuration.Goals.DISPLAY_PLUGIN_UPDATES)
 @SuppressWarnings("deprecation")
-public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo implements BridgeMojo<DisplayUpdatesBridgeMojoResultHandler> {
-  private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
+public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo implements BridgeMojo<DisplayPluginUpdatesResultHandler> {
+  @Data
+  @RequiredArgsConstructor
+  public static class IncompatibleParentAndProjectMavenVersion {
+    private final ArtifactVersion parentVersion;
+    private final ArtifactVersion projectVersion;
+  }
+
+  private final List<ArtifactUpdate> pluginUpdates = Lists.newArrayList();
+  private final List<Dependency> missingVersionPlugins = Lists.newArrayList();
+  private boolean warninNoMinimumVersion = false;
+  private IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion;
+
   @Setter
-  private DisplayUpdatesBridgeMojoResultHandler resultHandler;
+  private DisplayPluginUpdatesResultHandler resultHandler;
 
   @Override
   @SuppressWarnings("unchecked")
@@ -67,7 +82,10 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
 
     subExecute();
 
-    resultHandler.setUpdateMap(updateMap);
+    resultHandler.setPluginUpdates(pluginUpdates);
+    resultHandler.setMissingVersionPlugins(missingVersionPlugins);
+    resultHandler.setWarninNoMinimumVersion(warninNoMinimumVersion);
+    resultHandler.setIncompatibleParentAndProjectMavenVersion(incompatibleParentAndProjectMavenVersion);
   }
 
   private void subExecute() throws MojoExecutionException {
@@ -81,7 +99,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
     }
 
     Map superPomPluginManagement = oGetSuperPomPluginManagement();
-    getLog().debug("superPom plugins = " + superPomPluginManagement);
+//    System.out.println("superPom plugins = " + superPomPluginManagement);
 
     Map parentPluginManagement = new HashMap();
     Map parentBuildPlugins = new HashMap();
@@ -92,9 +110,8 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
     Iterator i = parents.iterator();
     while (i.hasNext()) {
       MavenProject parentProject = (MavenProject) i.next();
-      getLog().debug(
-          "Processing parent: " + parentProject.getGroupId() + ":" + parentProject.getArtifactId() + ":"
-              + parentProject.getVersion() + " -> " + parentProject.getFile());
+      System.out.println("Processing parent: " + parentProject.getGroupId() + ":" + parentProject.getArtifactId() + ":"
+          + parentProject.getVersion() + " -> " + parentProject.getFile());
 
       StringWriter writer = new StringWriter();
       boolean havePom = false;
@@ -120,8 +137,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
       }
       if (havePom) {
         try {
-          Set withVersionSpecified =
-              oFindPluginsWithVersionsSpecified(new StringBuffer(writer.toString()));
+          Set withVersionSpecified = oFindPluginsWithVersionsSpecified(new StringBuffer(writer.toString()));
           Map map = oGetPluginManagement(interpolatedModel);
           map.keySet().retainAll(withVersionSpecified);
           parentPluginManagement.putAll(map);
@@ -146,13 +162,13 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
     }
 
     Set plugins = oGetProjectPlugins(superPomPluginManagement, parentPluginManagement, parentBuildPlugins, parentReportPlugins, pluginsWithVersionsSpecified);
-    List updates = new ArrayList();
-    List lockdown = new ArrayList();
+//    List updates = new ArrayList();
+//    List lockdown = new ArrayList();
     Map/*<ArtifactVersion,Map<String,String>>*/ upgrades = new TreeMap(new MavenVersionComparator());
     ArtifactVersion curMavenVersion = runtimeInformation().getApplicationVersion();
     ArtifactVersion specMavenVersion = new DefaultArtifactVersion(oGetRequiredMavenVersion(getProject(), "2.0"));
     ArtifactVersion minMavenVersion = null;
-    boolean superPomDrivingMinVersion = false;
+//    boolean superPomDrivingMinVersion = false;
     i = plugins.iterator();
     while (i.hasNext()) {
       Object plugin = i.next();
@@ -164,9 +180,9 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
       if (version == null) {
         version = (String) parentPluginManagement.get(coords);
       }
-      getLog().debug(
-          new StringBuffer().append("Checking ").append(coords).append(" for updates newer than ").append(
-              version).toString());
+//      System.out.println(
+//          new StringBuffer().append("Checking ").append(coords).append(" for updates newer than ").append(
+//              version).toString());
       String effectiveVersion = version;
 
       VersionRange versionRange;
@@ -190,15 +206,11 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
         ArtifactVersion minRequires = null;
         for (int j = newerVersions.length - 1; j >= 0; j--) {
           Artifact probe = artifactFactory.createDependencyArtifact(groupId, artifactId,
-              VersionRange.createFromVersion(
-                  newerVersions[j].toString()), "pom",
-              null, "runtime");
+              VersionRange.createFromVersion(newerVersions[j].toString()), "pom", null, "runtime");
           try {
             getHelper().resolveArtifact(probe, true);
-            MavenProject mavenProject =
-                projectBuilder.buildFromRepository(probe, remotePluginRepositories, localRepository);
-            ArtifactVersion requires =
-                new DefaultArtifactVersion(oGetRequiredMavenVersion(mavenProject, "2.0"));
+            MavenProject mavenProject = projectBuilder.buildFromRepository(probe, remotePluginRepositories, localRepository);
+            ArtifactVersion requires = new DefaultArtifactVersion(oGetRequiredMavenVersion(mavenProject, "2.0"));
             if (specMavenVersion.compareTo(requires) >= 0 && artifactVersion == null) {
               artifactVersion = newerVersions[j];
             }
@@ -268,175 +280,139 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
         version = artifactVersion != null ? artifactVersion.toString() : null;
       }
 
-      getLog().debug("[" + coords + "].version=" + version);
-      getLog().debug("[" + coords + "].artifactVersion=" + artifactVersion);
-      getLog().debug("[" + coords + "].effectiveVersion=" + effectiveVersion);
-      getLog().debug("[" + coords + "].specified=" + pluginsWithVersionsSpecified.contains(coords));
+//      System.out.println("[" + coords + "].version=" + version);
+//      System.out.println("[" + coords + "].artifactVersion=" + artifactVersion);
+//      System.out.println("[" + coords + "].effectiveVersion=" + effectiveVersion);
+//      System.out.println("[" + coords + "].specified=" + pluginsWithVersionsSpecified.contains(coords));
       if (version == null || !pluginsWithVersionsSpecified.contains(coords)) {
         version = (String) superPomPluginManagement.get(ArtifactUtils.versionlessKey(artifact));
-        getLog().debug("[" + coords + "].superPom.version=" + version);
+        System.out.println("[" + coords + "].superPom.version=" + version);
 
         newVersion = artifactVersion != null
             ? artifactVersion.toString()
             : (version != null ? version : (effectiveVersion != null ? effectiveVersion : "(unknown)"));
-        StringBuffer buf = new StringBuffer(oCompactKey(groupId, artifactId));
-        buf.append(' ');
-        int padding =
-            WARN_PAD_SIZE() - effectiveVersion.length() - (version != null ? FROM_SUPER_POM().length() : 0);
-        while (buf.length() < padding) {
-          buf.append('.');
-        }
-        buf.append(' ');
-        if (version != null) {
-          buf.append(FROM_SUPER_POM());
-          superPomDrivingMinVersion = true;
-        }
-        buf.append(effectiveVersion);
-        lockdown.add(buf.toString());
+//        StringBuffer buf = new StringBuffer(oCompactKey(groupId, artifactId));
+//        buf.append(' ');
+//        int padding =
+//            WARN_PAD_SIZE() - effectiveVersion.length() - (version != null ? FROM_SUPER_POM().length() : 0);
+//        while (buf.length() < padding) {
+//          buf.append('.');
+//        }
+//        buf.append(' ');
+//        if (version != null) {
+//          buf.append(FROM_SUPER_POM());
+//          superPomDrivingMinVersion = true;
+//        }
+//        buf.append(effectiveVersion);
+//        lockdown.add(buf.toString());
+        addMissingVersionPlugin(groupId, artifactId, version);
       } else if (artifactVersion != null) {
         newVersion = artifactVersion.toString();
       } else {
         newVersion = null;
       }
       if (version != null && artifactVersion != null && newVersion != null &&
-          new DefaultArtifactVersion(effectiveVersion).compareTo(new DefaultArtifactVersion(newVersion))
-              < 0) {
-        StringBuffer buf = new StringBuffer(oCompactKey(groupId, artifactId));
-        buf.append(' ');
-        int padding = INFO_PAD_SIZE() - version.length() - newVersion.length() - 4;
-        while (buf.length() < padding) {
-          buf.append('.');
-        }
-        buf.append(' ');
-        buf.append(effectiveVersion);
-        buf.append(" -> ");
-        buf.append(newVersion);
-        updates.add(buf.toString());
+          new DefaultArtifactVersion(effectiveVersion).compareTo(new DefaultArtifactVersion(newVersion)) < 0) {
+        addUpdate(groupId, artifactId, version, artifactVersion);
       }
     }
-    getLog().info("");
-    if (updates.isEmpty()) {
-      getLog().info("All plugins with a version specified are using the latest versions.");
-    } else {
-      getLog().info("The following plugin updates are available:");
-      i = updates.iterator();
-      while (i.hasNext()) {
-        getLog().info("  " + i.next());
-      }
-    }
-    getLog().info("");
-    if (lockdown.isEmpty()) {
-      getLog().info("All plugins have a version specified.");
-    } else {
-      getLog().warn("The following plugins do not have their version specified:");
-      i = lockdown.iterator();
-      while (i.hasNext()) {
-        getLog().warn("  " + i.next());
-      }
-    }
-    getLog().info("");
+
     boolean noMavenMinVersion = oGetRequiredMavenVersion(getProject(), null) == null;
-    boolean noExplicitMavenMinVersion =
-        getProject().getPrerequisites() == null || getProject().getPrerequisites().getMaven() == null;
+    boolean noExplicitMavenMinVersion = getProject().getPrerequisites() == null || getProject().getPrerequisites().getMaven() == null;
     if (noMavenMinVersion) {
-      getLog().warn("Project does not define minimum Maven version, default is: 2.0");
+      warninNoMinimumVersion = true;
     } else if (noExplicitMavenMinVersion) {
-      getLog().info("Project inherits minimum Maven version as: " + specMavenVersion);
+//      getLog().info( "Project inherits minimum Maven version as: " + specMavenVersion );
     } else {
       ArtifactVersion explicitMavenVersion =
           new DefaultArtifactVersion(getProject().getPrerequisites().getMaven());
       if (explicitMavenVersion.compareTo(specMavenVersion) < 0) {
-        getLog().error("Project's effective minimum Maven (from parent) is: " + specMavenVersion);
-        getLog().error("Project defines minimum Maven version as: " + explicitMavenVersion);
-      } else {
-        getLog().info("Project defines minimum Maven version as: " + specMavenVersion);
+        incompatibleParentAndProjectMavenVersion = new IncompatibleParentAndProjectMavenVersion(specMavenVersion, explicitMavenVersion);
       }
     }
-    getLog().info("Plugins require minimum Maven version of: " + minMavenVersion);
-    if (superPomDrivingMinVersion) {
-      getLog().info("Note: the super-pom from Maven " + curMavenVersion + " defines some of the plugin");
-      getLog().info("      versions and may be influencing the plugins required minimum Maven");
-      getLog().info("      version.");
-    }
-    getLog().info("");
+//    getLog().info("Plugins require minimum Maven version of: " + minMavenVersion);
+//    if (superPomDrivingMinVersion) {
+//      getLog().info("Note: the super-pom from Maven " + curMavenVersion + " defines some of the plugin");
+//      getLog().info("      versions and may be influencing the plugins required minimum Maven");
+//      getLog().info("      version.");
+//    }
     if ("maven-plugin".equals(getProject().getPackaging())) {
-      if (noMavenMinVersion) {
-        getLog().warn("Project (which is a Maven Plugin) does not define required minimum version of Maven.");
-        getLog().warn("Update the pom.xml to contain");
-        getLog().warn("    <prerequisites>");
-        getLog().warn("      <maven><!-- minimum version of Maven that the plugin works with --></maven>");
-        getLog().warn("    </prerequisites>");
-        getLog().warn("To build this plugin you need at least Maven " + minMavenVersion);
-        getLog().warn("A Maven Enforcer rule can be used to enforce this if you have not already set one up");
-      } else if (minMavenVersion != null && specMavenVersion.compareTo(minMavenVersion) < 0) {
-        getLog().warn("Project (which is a Maven Plugin) targets Maven " + specMavenVersion + " or newer");
-        getLog().warn("but requires Maven " + minMavenVersion + " or newer to build.");
-        getLog().warn("This may or may not be a problem. A Maven Enforcer rule can help ");
-        getLog().warn("enforce that the correct version of Maven is used to build this plugin.");
-      } else {
-        getLog().info("No plugins require a newer version of Maven than specified by the pom.");
-      }
+//      if (noMavenMinVersion) {
+//        getLog().warn("Project (which is a Maven Plugin) does not define required minimum version of Maven.");
+//        getLog().warn("Update the pom.xml to contain");
+//        getLog().warn("    <prerequisites>");
+//        getLog().warn("      <maven><!-- minimum version of Maven that the plugin works with --></maven>");
+//        getLog().warn("    </prerequisites>");
+//        getLog().warn("To build this plugin you need at least Maven " + minMavenVersion);
+//        getLog().warn("A Maven Enforcer rule can be used to enforce this if you have not already set one up");
+//      } else if (minMavenVersion != null && specMavenVersion.compareTo(minMavenVersion) < 0) {
+//        getLog().warn("Project (which is a Maven Plugin) targets Maven " + specMavenVersion + " or newer");
+//        getLog().warn("but requires Maven " + minMavenVersion + " or newer to build.");
+//        getLog().warn("This may or may not be a problem. A Maven Enforcer rule can help ");
+//        getLog().warn("enforce that the correct version of Maven is used to build this plugin.");
+//      } else {
+//        getLog().info("No plugins require a newer version of Maven than specified by the pom.");
+//      }
     } else {
       if (noMavenMinVersion) {
-        getLog().error("Project does not define required minimum version of Maven.");
-        getLog().error("Update the pom.xml to contain");
-        getLog().error("    <prerequisites>");
-        getLog().error("      <maven>" + minMavenVersion + "</maven>");
-        getLog().error("    </prerequisites>");
+        noMavenMinVersion = true;
+//        getLog/*().error("Project does not define required minimum version of Maven.");
+//        getLog().error("Update the pom.xml to contain");
+//        getLog().error("    <prerequisites>");
+//        getLog().error("      <maven>" + minMavenVersion + "</maven>");
+//        getLog(*/).error("    </prerequisites>");
       } else if (minMavenVersion != null && specMavenVersion.compareTo(minMavenVersion) < 0) {
-        getLog().error("Project requires an incorrect minimum version of Maven.");
-        getLog().error("Either change plugin versions to those compatible with " + specMavenVersion);
-        getLog().error("or update the pom.xml to contain");
-        getLog().error("    <prerequisites>");
-        getLog().error("      <maven>" + minMavenVersion + "</maven>");
-        getLog().error("    </prerequisites>");
-      } else {
-        getLog().info("No plugins require a newer version of Maven than specified by the pom.");
+        incompatibleParentAndProjectMavenVersion = new IncompatibleParentAndProjectMavenVersion(specMavenVersion, minMavenVersion);
+//        getLog().error("Project requires an incorrect minimum version of Maven.");
+//        getLog().error("Either change plugin versions to those compatible with " + specMavenVersion);
+//        getLog().error("or update the pom.xml to contain");
+//        getLog().error("    <prerequisites>");
+//        getLog().error("      <maven>" + minMavenVersion + "</maven>");
+//        getLog().error("    </prerequisites>");
       }
+//    i = upgrades.entrySet().iterator();
+//    while (i.hasNext()) {
+//      Map.Entry mavenUpgrade = (Map.Entry) i.next();
+//      ArtifactVersion mavenUpgradeVersion = (ArtifactVersion) mavenUpgrade.getKey();
+//      Map upgradePlugins = (Map) mavenUpgrade.getValue();
+//      if (upgradePlugins.isEmpty() || specMavenVersion.compareTo(mavenUpgradeVersion) >= 0) {
+//        continue;
+//      }
+//      getLog().info("");
+//      getLog().info("Require Maven " + mavenUpgradeVersion + " to use the following plugin updates:");
+//      for (Iterator j = upgradePlugins.entrySet().iterator(); j.hasNext(); ) {
+//        Map.Entry entry = (Map.Entry) j.next();
+//        StringBuffer buf = new StringBuffer("  ");
+//        buf.append(entry.getKey().toString());
+//        buf.append(' ');
+//        String s = entry.getValue().toString();
+//        int padding = INFO_PAD_SIZE() - s.length() + 2;
+//        while (buf.length() < padding) {
+//          buf.append('.');
+//        }
+//        buf.append(' ');
+//        buf.append(s);
+//        getLog().info(buf.toString());
+//      }
+//    }
+//    getLog().info("");
     }
-    i = upgrades.entrySet().iterator();
-    while (i.hasNext()) {
-      Map.Entry mavenUpgrade = (Map.Entry) i.next();
-      ArtifactVersion mavenUpgradeVersion = (ArtifactVersion) mavenUpgrade.getKey();
-      Map upgradePlugins = (Map) mavenUpgrade.getValue();
-      if (upgradePlugins.isEmpty() || specMavenVersion.compareTo(mavenUpgradeVersion) >= 0) {
-        continue;
-      }
-      getLog().info("");
-      getLog().info("Require Maven " + mavenUpgradeVersion + " to use the following plugin updates:");
-      for (Iterator j = upgradePlugins.entrySet().iterator(); j.hasNext(); ) {
-        Map.Entry entry = (Map.Entry) j.next();
-        StringBuffer buf = new StringBuffer("  ");
-        buf.append(entry.getKey().toString());
-        buf.append(' ');
-        String s = entry.getValue().toString();
-        int padding = INFO_PAD_SIZE() - s.length() + 2;
-        while (buf.length() < padding) {
-          buf.append('.');
-        }
-        buf.append(' ');
-        buf.append(s);
-        getLog().info(buf.toString());
-      }
-    }
-    getLog().info("");
   }
 
-  private Map<String,?> convertPropertiesToMap() {
+  private void addMissingVersionPlugin(final String groupId, final String artifactId, final String version) {
+    Dependency dependency = DependencyUtils.createDependency(groupId, artifactId, version);
+    missingVersionPlugins.add(dependency);
+  }
+
+  private void addUpdate(final String groupId, final String artifactId, final String version, final ArtifactVersion artifactVersion) {
+    Dependency dependency = DependencyUtils.createDependency(groupId, artifactId, version);
+    ArtifactUpdate update = new ArtifactUpdate(dependency, artifactVersion);
+    pluginUpdates.add(update);
+  }
+
+  private Map<String, ?> convertPropertiesToMap() {
     Properties properties = getProject().getProperties();
     return Maps.fromProperties(properties);
-  }
-
-  private int INFO_PAD_SIZE() {
-    return field("INFO_PAD_SIZE").ofType(int.class).in(DisplayPluginUpdatesMojo.class).get();
-  }
-
-  private String FROM_SUPER_POM() {
-    return field("FROM_SUPER_POM").ofType(String.class).in(DisplayPluginUpdatesMojo.class).get();
-  }
-
-  private int WARN_PAD_SIZE() {
-    return field("WARN_PAD_SIZE").ofType(int.class).in(DisplayPluginUpdatesMojo.class).get();
   }
 
   private RuntimeInformation runtimeInformation() {
@@ -485,8 +461,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo imp
   }
 
   private Set oGetProjectPlugins(Map superPomPluginManagement, Map parentPluginManagement, Map parentBuildPlugins,
-                                 Map parentReportPlugins, Set pluginsWithVersionsSpecified)
-      throws MojoExecutionException {
+                                 Map parentReportPlugins, Set pluginsWithVersionsSpecified) throws MojoExecutionException {
     return method("getProjectPlugins").
         withReturnType(Set.class).
         withParameterTypes(Map.class, Map.class, Map.class, Map.class, Set.class).
