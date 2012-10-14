@@ -24,6 +24,7 @@ import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.MavenBaseSensorI;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersionMavenRule;
+import lombok.Getter;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -42,14 +43,15 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
 
 public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayUpdatesBridgeMojoResultHandler> {
   private final DisplayUpdatesBridgeMojoResultHandler resultHandler = new DisplayUpdatesBridgeMojoResultHandler();
-  private final BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> bridgeMojoMapper =
-      new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
+  @Getter
+  private final BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> handler = new BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
   private final MavenProject mavenProject;
   private final MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler> baseSensor;
 
   public DisplayPluginUpdatesSensor(MavenPluginExecutor mavenPluginExecutor,
-                                    MavenProject mavenProject) {  this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER,this);
+                                    MavenProject mavenProject) {
+    this.mavenProject = mavenProject;
+    baseSensor = new MavenBaseSensor<DisplayUpdatesBridgeMojoResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
   }
 
   @Override
@@ -58,14 +60,8 @@ public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayUpdat
   }
 
   @Override
-  public BridgeMojoMapper<DisplayUpdatesBridgeMojoResultHandler> getHandler() {
-    return bridgeMojoMapper;
-  }
-
-
-  @Override
   public void analyse(final Project project, final SensorContext context) {
-    DisplayUpdatesBridgeMojoResultHandler handler = bridgeMojoMapper.getResultTransferHandler();
+    DisplayUpdatesBridgeMojoResultHandler handler = this.handler.getResultTransferHandler();
 
     if (handler.getUpdateMap() != null) {
       Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, new PluginVersionMavenRule().getKey());
