@@ -55,10 +55,6 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   @Setter
   private DisplayUpdatesBridgeMojoResultHandler resultHandler;
 
-  public DisplayDependencyUpdatesBridgeMojo() {
-    super();
-  }
-
   @Override
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException, MojoFailureException {
