@@ -1,18 +1,24 @@
 sonar-maven-integration
 =======================
 
+
 # about #
 
 like to have some checks on a maven project, represented by its pom.xml (only maven3 support)
 
+![screenshot](https://github.com/SonarCommunity/sonar-maven-checks/blob/master/src/main/docs/screenshot.png?raw=true "screenshot")
+
 # links #
 * CI : https://sonarplugins.ci.cloudbees.com/job/maven-checks/
 
+## mojos integrated ##
 
-## first realized checks  ##
-* have a more recent versions of a dependency available
-* have a more recent versions of a plugin available
+* [versions:display-dependency-updates](http://mojo.codehaus.org/versions-maven-plugin/display-dependency-updates-mojo.html)
+* [versions:display-plugin-updates](http://mojo.codehaus.org/versions-maven-plugin/display-plugin-updates-mojo.html)
 
+## mojos planned ##
+* [versions:update-parent](http://mojo.codehaus.org/versions-maven-plugin/update-parent-mojo.html) (just show updates available)
+* [enforcer:enforce](http://maven.apache.org/plugins/maven-enforcer-plugin/enforce-mojo.html) ()
 
 
 # roadmap #
@@ -29,9 +35,6 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 * publish, according to http://docs.codehaus.org/display/SONAR/Plugin+Hosting
 * try using the Mojos directly (done)
 
-## features ##
-
-* adding enforcer maven-plugin
 
 
 # ideas #
