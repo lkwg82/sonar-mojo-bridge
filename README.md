@@ -17,7 +17,8 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 * [versions:display-plugin-updates](http://mojo.codehaus.org/versions-maven-plugin/display-plugin-updates-mojo.html)
 
 ## mojos planned ##
-* [enforcer:enforce](http://maven.apache.org/plugins/maven-enforcer-plugin/enforce-mojo.html)
+* [versions:update-parent](http://mojo.codehaus.org/versions-maven-plugin/update-parent-mojo.html) (just show updates available)
+* [enforcer:enforce](http://maven.apache.org/plugins/maven-enforcer-plugin/enforce-mojo.html) ()
 
 
 # roadmap #
