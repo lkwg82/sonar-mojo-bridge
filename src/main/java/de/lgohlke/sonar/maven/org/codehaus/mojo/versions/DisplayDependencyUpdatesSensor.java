@@ -74,18 +74,16 @@ public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayD
     final File file = new File("", mavenProject.getFile().getName());
 //    file.setLanguage(Xml.INSTANCE);
 
-    if (handler.getUpdateMap() != null) {
-      for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
-        String section = entry.getKey();
-        List<ArtifactUpdate> updates = entry.getValue();
-        for (ArtifactUpdate update : updates) {
-          Violation violation = Violation.create(rule, file);
-          violation.setLineId(1);
+    for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
+      String section = entry.getKey();
+      List<ArtifactUpdate> updates = entry.getValue();
+      for (ArtifactUpdate update : updates) {
+        Violation violation = Violation.create(rule, file);
+        violation.setLineId(1);
 
-          String hint = "(found in " + section + ")";
-          violation.setMessage(update.toString() + " " + hint);
-          context.saveViolation(violation);
-        }
+        String hint = "(found in " + section + ")";
+        violation.setMessage(update.toString() + " " + hint);
+        context.saveViolation(violation);
       }
     }
   }
