@@ -21,7 +21,6 @@ package de.lgohlke.sonar.maven.internals;
 
 import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.BridgeMojo;
-import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.BridgeMojoMapperException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
@@ -33,47 +32,47 @@ import static org.fest.reflect.core.Reflection.field;
 
 
 public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
-    private List<MojoInjection> injections = Lists.newLinkedList();
+  private List<MojoInjection> injections = Lists.newLinkedList();
 
-    public PlexusContainerProxy(final T underlying) {
-        super(underlying);
+  public PlexusContainerProxy(final T underlying) {
+    super(underlying);
+  }
+
+  public void addInjection(MojoInjection injection) {
+    injections.add(injection);
+  }
+
+  @Override
+  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    if (method.getName().equals("addComponentDescriptor")) {
+      MojoDescriptor descriptor = (MojoDescriptor) args[0];
+      checkGoal(descriptor);
     }
 
-    public void addInjection(MojoInjection injection) {
-        injections.add(injection);
+    Object result = method.invoke(getUnderLying(), args);
+
+    if (method.getName().equals("lookup")) {
+      checkMojoInstance(result);
     }
+    return result;
+  }
 
-    @Override
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        if (method.getName().equals("addComponentDescriptor")) {
-            MojoDescriptor descriptor = (MojoDescriptor) args[0];
-            checkGoal(descriptor);
-        }
-
-        Object result = method.invoke(getUnderLying(), args);
-
-        if (method.getName().equals("lookup")) {
-            checkMojoInstance(result);
-        }
-        return result;
+  private void checkMojoInstance(Object result) throws BridgeMojoMapperException {
+    for (MojoInjection injection : injections) {
+      if (injection.getBridgeMojoClass().isAssignableFrom(result.getClass())) {
+        injection.setTransferHandler((BridgeMojo<?>) result);
+        return; // dont iterate further after already matched goal
+      }
     }
+  }
 
-    private void checkMojoInstance(Object result) throws BridgeMojoMapperException {
-        for (MojoInjection injection : injections) {
-            if (injection.getBridgeMojoClass().isAssignableFrom(result.getClass())) {
-                injection.setTransferHandler((BridgeMojo<?>) result);
-                return; // dont iterate further after already matched goal
-            }
-        }
+  private void checkGoal(MojoDescriptor descriptor) {
+    for (MojoInjection injection : injections) {
+      if (injection.getGoal().equals(descriptor.getGoal())) {
+        Class<?> bridgeMojoClass = injection.getBridgeMojoClass();
+        field("implementation").ofType(String.class).in(descriptor).set(bridgeMojoClass.getCanonicalName());
+        return; // dont iterate further after already matched goal
+      }
     }
-
-    private void checkGoal(MojoDescriptor descriptor) {
-        for (MojoInjection injection : injections) {
-            if (injection.getGoal().equals(descriptor.getGoal())) {
-                Class<?> bridgeMojoClass = injection.getBridgeMojoClass();
-                field("implementation").ofType(String.class).in(descriptor).set(bridgeMojoClass.getCanonicalName());
-                return; // dont iterate further after already matched goal
-            }
-        }
-    }
+  }
 }

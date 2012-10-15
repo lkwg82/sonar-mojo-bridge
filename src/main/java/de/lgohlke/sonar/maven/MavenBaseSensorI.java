@@ -19,22 +19,12 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.MavenPlugin;
-import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
-import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
-import org.sonar.api.batch.maven.MavenPluginHandler;
-import org.sonar.api.resources.Project;
-import org.sonar.batch.MavenPluginExecutor;
 
 /**
  * User: lars
  */
-public interface MavenBaseSensorI<T extends ResultTransferHandler> extends DependsUponMavenPlugin,Sensor {
-  public BridgeMojoMapper<T> getHandler() ;
+public interface MavenBaseSensorI<T extends ResultTransferHandler> extends DependsUponMavenPlugin, Sensor {
+  public BridgeMojoMapper<T> getHandler();
 }

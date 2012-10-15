@@ -19,28 +19,17 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Phase;
-import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.maven.DependsUponMavenPlugin;
-import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
-import org.sonar.batch.MavenPluginExecutor;
-
-import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
-import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_PLUGIN_UPDATES;
 
 
 @Phase(name = Phase.Name.PRE)
 @Data
 @Slf4j
-public abstract class SensorBase  {
+public abstract class SensorBase {
 
   public void iAnalyse(Project project, SensorContext context) {
     System.out.println("analysing:" + this.toString());
@@ -50,7 +39,7 @@ public abstract class SensorBase  {
     return true;
   }
 
-  public String toString(){
+  public String toString() {
     return getClass().getCanonicalName();
   }
 }

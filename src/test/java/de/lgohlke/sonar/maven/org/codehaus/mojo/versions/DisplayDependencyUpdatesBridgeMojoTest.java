@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import org.apache.maven.project.MavenProject;
 import org.testng.annotations.Test;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
 import static org.mockito.Mockito.mock;

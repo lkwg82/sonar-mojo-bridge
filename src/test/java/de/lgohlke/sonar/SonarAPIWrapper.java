@@ -25,18 +25,13 @@ import lombok.RequiredArgsConstructor;
 import org.sonar.wsclient.Host;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.connectors.HttpClient4Connector;
-import org.sonar.wsclient.services.Model;
-import org.sonar.wsclient.services.Query;
-import org.sonar.wsclient.services.Resource;
-import org.sonar.wsclient.services.ResourceQuery;
-import org.sonar.wsclient.services.Violation;
-import org.sonar.wsclient.services.ViolationQuery;
+import org.sonar.wsclient.services.*;
 
 import java.util.List;
 
 /**
  * lightweight sonar api wrapper
- * 
+ *
  * @author lars
  */
 @RequiredArgsConstructor

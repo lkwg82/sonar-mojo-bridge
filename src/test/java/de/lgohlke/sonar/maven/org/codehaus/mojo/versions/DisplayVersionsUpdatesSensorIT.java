@@ -25,8 +25,10 @@ import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import java.io.File;
 import java.util.List;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 

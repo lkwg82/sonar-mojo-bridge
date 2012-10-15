@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sonar-config>
-  <version><![CDATA[321]]></version>
-  <date><![CDATA[2012-09-25]]></date>
-  <metrics />
-  <properties>
-    <property>
-      <key><![CDATA[sonar.role.codeviewer.TRK.defaultGroups]]></key>
-      <value><![CDATA[sonar-users,Anyone]]></value>
-    </property>
-    <property>
-      <key><![CDATA[sonar.role.user.TRK.defaultGroups]]></key>
-      <value><![CDATA[sonar-users,Anyone]]></value>
-    </property>
-  </properties>
-  <profiles>
-    <profile>
-      <name><![CDATA[mine]]></name>
-      <version><![CDATA[1]]></version>
-      <default-profile><![CDATA[true]]></default-profile>
-      <provided><![CDATA[false]]></provided>
-      <enabled><![CDATA[true]]></enabled>
-      <used><![CDATA[false]]></used>
-      <language><![CDATA[java]]></language>
-      <active-rules>
-        <active-rule>
-          <key><![CDATA[Old Dependency]]></key>
-          <plugin><![CDATA[maven]]></plugin>
-          <level><![CDATA[BLOCKER]]></level>
-        </active-rule>
-        <active-rule>
-          <key><![CDATA[Old Plugin]]></key>
-          <plugin><![CDATA[maven]]></plugin>
-          <level><![CDATA[BLOCKER]]></level>
-        </active-rule>
-        <active-rule>
-          <key><![CDATA[[POM] Old Dependency]]></key>
-          <plugin><![CDATA[maven]]></plugin>
-          <level><![CDATA[MINOR]]></level>
-        </active-rule>
-        <active-rule>
-          <key><![CDATA[[POM] Old Plugin]]></key>
-          <plugin><![CDATA[maven]]></plugin>
-          <level><![CDATA[MINOR]]></level>
-        </active-rule>
-      </active-rules>
-      <alerts />
-    </profile>
-  </profiles>
-  <rules />
+    <version><![CDATA[321]]></version>
+    <date><![CDATA[2012-09-25]]></date>
+    <metrics/>
+    <properties>
+        <property>
+            <key><![CDATA[sonar.role.codeviewer.TRK.defaultGroups]]></key>
+            <value><![CDATA[sonar-users,Anyone]]></value>
+        </property>
+        <property>
+            <key><![CDATA[sonar.role.user.TRK.defaultGroups]]></key>
+            <value><![CDATA[sonar-users,Anyone]]></value>
+        </property>
+    </properties>
+    <profiles>
+        <profile>
+            <name><![CDATA[mine]]></name>
+            <version><![CDATA[1]]></version>
+            <default-profile><![CDATA[true]]></default-profile>
+            <provided><![CDATA[false]]></provided>
+            <enabled><![CDATA[true]]></enabled>
+            <used><![CDATA[false]]></used>
+            <language><![CDATA[java]]></language>
+            <active-rules>
+                <active-rule>
+                    <key><![CDATA[Old Dependency]]></key>
+                    <plugin><![CDATA[maven]]></plugin>
+                    <level><![CDATA[BLOCKER]]></level>
+                </active-rule>
+                <active-rule>
+                    <key><![CDATA[Old Plugin]]></key>
+                    <plugin><![CDATA[maven]]></plugin>
+                    <level><![CDATA[BLOCKER]]></level>
+                </active-rule>
+                <active-rule>
+                    <key><![CDATA[[POM] Old Dependency]]></key>
+                    <plugin><![CDATA[maven]]></plugin>
+                    <level><![CDATA[MINOR]]></level>
+                </active-rule>
+                <active-rule>
+                    <key><![CDATA[[POM] Old Plugin]]></key>
+                    <plugin><![CDATA[maven]]></plugin>
+                    <level><![CDATA[MINOR]]></level>
+                </active-rule>
+            </active-rules>
+            <alerts/>
+        </profile>
+    </profiles>
+    <rules/>
 </sonar-config>

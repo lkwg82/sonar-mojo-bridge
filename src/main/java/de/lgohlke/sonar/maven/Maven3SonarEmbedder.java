@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -94,7 +95,6 @@ public class Maven3SonarEmbedder {
      *
      * int LEVEL_DISABLED = 5;
      * </pre>
-     *
      */
     public MavenSonarEmbedderBuilder logLevel(final int level) {
       Preconditions.checkArgument((level > -1) && (level < 6));
@@ -104,7 +104,6 @@ public class Maven3SonarEmbedder {
 
     /**
      * could be called multiple times
-     *
      */
     public MavenSonarEmbedderBuilder setAlternativeMavenHome(final File mavenHome) {
       Preconditions.checkNotNull(mavenHome);
@@ -114,7 +113,7 @@ public class Maven3SonarEmbedder {
       return this;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());

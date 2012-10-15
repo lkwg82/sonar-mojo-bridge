@@ -32,7 +32,6 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
 
@@ -42,7 +41,7 @@ import java.util.Map;
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
 @Rules(values = {DependencyVersion.class})
-    public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayDependencyUpdatesResultHandler> {
+public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayDependencyUpdatesResultHandler> {
   private final DisplayDependencyUpdatesResultHandler resultHandler = new DisplayDependencyUpdatesResultHandler();
   @Getter
   private final BridgeMojoMapper<DisplayDependencyUpdatesResultHandler> handler = new BridgeMojoMapper<DisplayDependencyUpdatesResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
@@ -54,7 +53,7 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
                                         MavenPluginExecutor mavenPluginExecutor,
                                         MavenProject mavenProject) {
     this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayDependencyUpdatesResultHandler>(rulesProfile,mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
+    baseSensor = new MavenBaseSensor<DisplayDependencyUpdatesResultHandler>(rulesProfile, mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
   }
 
   @Override

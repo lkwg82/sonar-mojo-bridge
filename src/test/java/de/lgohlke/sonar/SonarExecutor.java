@@ -23,10 +23,12 @@ import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import static org.fest.assertions.api.Assertions.fail;
 
 
@@ -106,11 +108,11 @@ public final class SonarExecutor {
   @Override
   public SonarExecutor clone() {
     return new SonarExecutor(jdbcDriver, jdbcUrl).activateMavenDebug(activateMavenDebug)
-      .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
-      .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
-      .skipDesign(skipDesign)
-      .skipDynamicAnalysis(skipDynamicAnalysis)
-      .skipTests(skipTests);
+        .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
+        .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
+        .skipDesign(skipDesign)
+        .skipDynamicAnalysis(skipDynamicAnalysis)
+        .skipTests(skipTests);
   }
 
   public void execute() throws MavenEmbedderException {

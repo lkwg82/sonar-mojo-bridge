@@ -21,9 +21,9 @@ package de.lgohlke.sonar.maven;
 
 /**
  * injects {@link ResultTransferHandler} into the bridge mojo
- * @author Lars Gohlke
  *
  * @param <T>
+ * @author Lars Gohlke
  */
 public interface BridgeMojo<T extends ResultTransferHandler> {
   void setResultHandler(T handler);

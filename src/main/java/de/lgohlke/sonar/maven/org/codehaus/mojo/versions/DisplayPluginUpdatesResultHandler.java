@@ -25,7 +25,6 @@ import lombok.Setter;
 import org.apache.maven.model.Dependency;
 
 import java.util.List;
-import java.util.Map;
 
 
 @Setter

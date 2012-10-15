@@ -30,7 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Inherited
 @Retention(RUNTIME)
-@Target({ TYPE, FIELD })
+@Target({TYPE, FIELD})
 public @interface Goal {
   String value();
 }

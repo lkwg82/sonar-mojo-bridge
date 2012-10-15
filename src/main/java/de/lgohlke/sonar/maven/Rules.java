@@ -32,5 +32,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Rules {
-  Class<? extends MavenRule>[] values() default  {};
+  Class<? extends MavenRule>[] values() default {};
 }

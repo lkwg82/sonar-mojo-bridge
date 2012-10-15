@@ -21,8 +21,6 @@ package de.lgohlke.sonar;
 
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayPluginUpdatesSensor;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Sensor1;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Sensor2;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;

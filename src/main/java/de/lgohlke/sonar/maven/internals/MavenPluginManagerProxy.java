@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.internals;
 
 import org.apache.maven.plugin.MavenPluginManager;
+
 import java.lang.reflect.Method;
 
 

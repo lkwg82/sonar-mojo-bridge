@@ -34,7 +34,6 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleRepository;
 import org.sonar.batch.MavenPluginExecutor;
 
 import java.util.Arrays;
@@ -82,9 +81,9 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
 
   public List<String> getAssociatedRules() {
     List<Class<? extends MavenRule>> rules = Arrays.asList(mavenBaseSensorI.getClass().getAnnotation(Rules.class).values());
-    List<String > ruleKeys = Lists.newArrayList();
-    for(Class<? extends MavenRule> rule : rules){
-                        ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
+    List<String> ruleKeys = Lists.newArrayList();
+    for (Class<? extends MavenRule> rule : rules) {
+      ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
     }
     return ruleKeys;
   }

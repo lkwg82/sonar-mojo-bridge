@@ -25,10 +25,14 @@ import org.apache.maven.model.Dependency;
  * User: lars
  */
 public class DependencyUtils {
-  private DependencyUtils(){}
+  private DependencyUtils() {
+  }
+
   public static Dependency createDependency(final String groupId, final String artifactId, final String version) {
     Dependency dependency = new Dependency();
-    dependency.setGroupId(groupId);dependency.setArtifactId(artifactId);dependency.setVersion(version);
+    dependency.setGroupId(groupId);
+    dependency.setArtifactId(artifactId);
+    dependency.setVersion(version);
     return dependency;
   }
 }

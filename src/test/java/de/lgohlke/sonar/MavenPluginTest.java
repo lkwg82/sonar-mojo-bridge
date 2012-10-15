@@ -22,7 +22,9 @@ package de.lgohlke.sonar;
 import org.fest.assertions.core.Condition;
 import org.sonar.api.batch.Sensor;
 import org.testng.annotations.Test;
+
 import java.util.List;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 

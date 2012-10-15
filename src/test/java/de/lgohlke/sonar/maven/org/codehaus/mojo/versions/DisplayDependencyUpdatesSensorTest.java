@@ -29,9 +29,11 @@ import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.MavenPluginExecutor;
 import org.testng.annotations.Test;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,7 +48,7 @@ public class DisplayDependencyUpdatesSensorTest {
     MavenProject mavenProject = mock(MavenProject.class);
     when(mavenProject.getFile()).thenReturn(new File("."));
 
-    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(mock(RulesProfile.class),mock(MavenPluginExecutor.class), mavenProject);
+    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject);
 
     Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
     List<ArtifactUpdate> updateList = Lists.newArrayList(mock(ArtifactUpdate.class));

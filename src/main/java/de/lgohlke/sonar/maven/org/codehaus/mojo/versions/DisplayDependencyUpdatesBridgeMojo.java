@@ -34,12 +34,10 @@ import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.codehaus.mojo.versions.api.UpdateScope;
 import org.codehaus.mojo.versions.utils.DependencyComparator;
 import org.fest.reflect.reference.TypeRef;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+
+import java.util.*;
 import java.util.Map.Entry;
+
 import static org.fest.reflect.core.Reflection.staticMethod;
 
 
@@ -86,14 +84,13 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
   }
 
   /**
-   * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment( Set, Set )}
-   *
+   * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment(Set, Set)}
    */
   private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
-    final Object[] args = new Object[] { dependencies, dependencyManagement };
-    final Class<?>[] parameterTypes = new Class<?>[] { Set.class, Set.class };
+    final Object[] args = new Object[]{dependencies, dependencyManagement};
+    final Class<?>[] parameterTypes = new Class<?>[]{Set.class, Set.class};
     return staticMethod("removeDependencyManagment").withReturnType(new TypeRef<Set<Dependency>>() {
-      }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
+    }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
   }
 
   private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section) {

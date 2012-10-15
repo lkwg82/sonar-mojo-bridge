@@ -20,13 +20,11 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
-import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
-import org.sonar.batch.MavenPluginExecutor;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_PLUGIN_UPDATES;
@@ -42,7 +40,7 @@ public class Sensor1 extends SensorBase implements Sensor, DependsUponMavenPlugi
 
   @Override
   public void analyse(Project project, SensorContext context) {
-    super.iAnalyse(project,context);
+    super.iAnalyse(project, context);
   }
 
   @Override

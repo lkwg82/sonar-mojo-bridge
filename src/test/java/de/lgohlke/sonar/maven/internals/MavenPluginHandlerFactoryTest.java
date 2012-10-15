@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.internals;
 
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.testng.annotations.Test;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 

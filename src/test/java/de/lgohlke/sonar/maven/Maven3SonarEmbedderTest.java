@@ -47,17 +47,17 @@ public class Maven3SonarEmbedderTest {
   @Test
   public void shouldNotFailOnMissingPom() throws MavenEmbedderException {
     Maven3SonarEmbedder.configure().
-    goal(goal).
-    setAlternativeMavenHome(MAVEN_HOME).
-    build();
+        goal(goal).
+        setAlternativeMavenHome(MAVEN_HOME).
+        build();
   }
 
   @Test(expectedExceptions = NullPointerException.class)
   public void shouldFailOnMissingGoal() throws MavenEmbedderException {
     Maven3SonarEmbedder.configure().
-    usePomFile("pom.xml").
-    setAlternativeMavenHome(MAVEN_HOME).
-    build();
+        usePomFile("pom.xml").
+        setAlternativeMavenHome(MAVEN_HOME).
+        build();
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -65,9 +65,9 @@ public class Maven3SonarEmbedderTest {
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, "wrong");
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.MAVEN_HOME_KEY, "wrong");
     Maven3SonarEmbedder.configure().
-    usePomFile("pom.xml").
-    goal(goal).
-    build();
+        usePomFile("pom.xml").
+        goal(goal).
+        build();
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -75,10 +75,10 @@ public class Maven3SonarEmbedderTest {
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, "wrong");
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.MAVEN_HOME_KEY, "wrong");
     Maven3SonarEmbedder.configure().
-    usePomFile("pom.xml").
-    goal(goal).
-    setAlternativeMavenHome(new File("x")).
-    build();
+        usePomFile("pom.xml").
+        goal(goal).
+        setAlternativeMavenHome(new File("x")).
+        build();
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -86,31 +86,31 @@ public class Maven3SonarEmbedderTest {
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, "wrong");
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.MAVEN_HOME_KEY, "wrong");
     Maven3SonarEmbedder.configure().
-    usePomFile("pom.xml").
-    goal(goal).
-    setAlternativeMavenHome(new File("pom.xml")).
-    build();
+        usePomFile("pom.xml").
+        goal(goal).
+        setAlternativeMavenHome(new File("pom.xml")).
+        build();
   }
 
   @Test
   public void shouldRun() throws MavenEmbedderException {
     Maven3SonarEmbedder.configure().
-    usePomFile("pom.xml").
-    goal(goal).
-    setAlternativeMavenHome(MAVEN_HOME).
-    build().
-    run();
+        usePomFile("pom.xml").
+        goal(goal).
+        setAlternativeMavenHome(MAVEN_HOME).
+        build().
+        run();
   }
 
   @Test
   public void shouldFailOnWrongGoalNoPluginFound() throws MavenEmbedderException {
     try {
       Maven3SonarEmbedder.configure().
-      usePomFile("pom.xml").
-      goal("not-present").
-      setAlternativeMavenHome(MAVEN_HOME).
-      build().
-      run();
+          usePomFile("pom.xml").
+          goal("not-present").
+          setAlternativeMavenHome(MAVEN_HOME).
+          build().
+          run();
     } catch (MavenEmbedderException e) {
       assertThat(e.getCause()).isExactlyInstanceOf(LifecyclePhaseNotFoundException.class);
     }
@@ -120,12 +120,12 @@ public class Maven3SonarEmbedderTest {
   public void shouldFailOnWrongGoalNoPluginFound2() throws MavenEmbedderException {
     try {
       Maven3SonarEmbedder.configure().
-      logLevel(Logger.LEVEL_WARN).
-      usePomFile("pom.xml").
-      goal("versions:helps").
-      setAlternativeMavenHome(MAVEN_HOME).
-      build().
-      run();
+          logLevel(Logger.LEVEL_WARN).
+          usePomFile("pom.xml").
+          goal("versions:helps").
+          setAlternativeMavenHome(MAVEN_HOME).
+          build().
+          run();
     } catch (MavenEmbedderException e) {
       assertThat(e.getCause()).isExactlyInstanceOf(MojoNotFoundException.class);
     }

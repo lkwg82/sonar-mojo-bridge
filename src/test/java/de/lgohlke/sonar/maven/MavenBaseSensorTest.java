@@ -19,29 +19,6 @@
  */
 package de.lgohlke.sonar.maven;
 
-import de.lgohlke.sonar.MavenPlugin;
-
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionResult;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.maven.MavenPluginHandler;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.Project;
-import org.sonar.batch.MavenPluginExecutor;
-import org.sonar.maven3.Maven3PluginExecutor;
-import org.sonatype.aether.RepositorySystemSession;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class MavenBaseSensorTest {
 
 //  private final MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);

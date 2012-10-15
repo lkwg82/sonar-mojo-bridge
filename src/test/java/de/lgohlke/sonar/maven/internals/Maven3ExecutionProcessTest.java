@@ -31,7 +31,9 @@ import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import java.io.File;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
 

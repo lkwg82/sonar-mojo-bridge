@@ -24,7 +24,7 @@ import org.codehaus.plexus.logging.Logger;
 
 /**
  * need for setting log level of maven-subsystem
- * 
+ *
  * @author Lars Gohlke *
  */
 @RequiredArgsConstructor
