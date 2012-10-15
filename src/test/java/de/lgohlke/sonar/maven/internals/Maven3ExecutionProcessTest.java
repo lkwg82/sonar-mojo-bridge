@@ -24,7 +24,6 @@ import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.Maven3SonarEmbedder;
 import de.lgohlke.sonar.maven.MyBridgeMojo;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
-import hudson.maven.MavenEmbedderException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.execution.MavenSession;
@@ -39,12 +38,11 @@ import static org.fest.reflect.core.Reflection.field;
 
 
 public class Maven3ExecutionProcessTest {
-  // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
   private Maven3SonarEmbedder embedder;
 
-  @BeforeTest
-  protected void beforeTest() throws Exception {
+//  @BeforeTest
+  protected void init() throws Exception {
     embedder = Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal("versions:help").setAlternativeMavenHome(MAVEN_HOME).build();
   }
 
@@ -55,7 +53,9 @@ public class Maven3ExecutionProcessTest {
   }
 
   @Test
-  public void shouldDecorate() throws MavenEmbedderException, ClassNotFoundException {
+  public void shouldDecorate() throws Exception, ClassNotFoundException {
+    init();
+
     MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
     Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
     ClassLoader classLoader = this.getClass().getClassLoader();
@@ -70,12 +70,23 @@ public class Maven3ExecutionProcessTest {
   }
 
   @Test
-  public void shouldNotBeDecorated() throws MavenEmbedderException, ClassNotFoundException {
-    BridgeMojoMapper bridgeMojoMapper = new BridgeMojoMapper<MyResultTransferHandler>(MyBridgeMojo.class, new MyResultTransferHandler());
-    MyResultTransferHandler handler = (MyResultTransferHandler) bridgeMojoMapper.getResultTransferHandler();
+  public void shouldNotBeDecoratedTwice() throws Exception, ClassNotFoundException {
+    init();
+
+    MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
+    Maven3PluginExecutor mavenPluginExecutor = new Maven3PluginExecutor(null, mavenSession);
+    ClassLoader classLoader = this.getClass().getClassLoader();
+    BridgeMojoMapper bridgeMojoMapper1 = new BridgeMojoMapper<MyResultTransferHandler>(MyBridgeMojo.class, new MyResultTransferHandler());
+    BridgeMojoMapper bridgeMojoMapper2 = new BridgeMojoMapper<MyResultTransferHandler>(MyBridgeMojo.class, new MyResultTransferHandler());
+
+    Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper1);
+    Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, bridgeMojoMapper2);
 
     embedder.run();
 
-    assertThat(handler.isPing()).isFalse();
+    MyResultTransferHandler resultTransferHandler1 = (MyResultTransferHandler) bridgeMojoMapper1.getResultTransferHandler();
+    MyResultTransferHandler resultTransferHandler2 = (MyResultTransferHandler) bridgeMojoMapper2.getResultTransferHandler();
+    assertThat(resultTransferHandler1.isPing()).isTrue();
+    assertThat(resultTransferHandler2.isPing()).isFalse();
   }
 }

@@ -39,4 +39,14 @@ public class MavenPluginHandlerFactoryTest {
     assertThat(handler.getVersion()).isEqualTo("version");
     assertThat(handler.getGoals()).hasSize(1);
   }
+
+  @Test(expectedExceptions = IllegalStateException.class)
+  public void shouldFailOnEmptyGroupArtifactGoal() throws Exception {
+    MavenPluginHandlerFactory.createHandler("");
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void shouldFailOnToShortGroupArtifactGoal() throws Exception {
+    MavenPluginHandlerFactory.createHandler("a:b:c");
+  }
 }
