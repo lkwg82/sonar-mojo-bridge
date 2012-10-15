@@ -19,27 +19,37 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.sonar.api.batch.Phase;
+import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.maven.DependsUponMavenPlugin;
+import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
+
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
+import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_PLUGIN_UPDATES;
 
 
 @Phase(name = Phase.Name.PRE)
 @Data
 @Slf4j
-public abstract class SensorBase {
+public abstract class SensorBase implements Sensor,DependsUponMavenPlugin{
 
-  public void iAnalyse(Project project, SensorContext context) {
-    System.out.println("analysing:" + this.toString());
+  @Override
+  public MavenPluginHandler getMavenPluginHandler(final Project project) {
+    return MavenPluginHandlerFactory.createHandler(BASE_IDENTIFIER + DISPLAY_PLUGIN_UPDATES);
   }
 
-  public boolean iShouldExecuteOnProject(Project project) {
+  @Override
+  public void analyse(Project project, SensorContext context) {
+    System.out.println("analysing " + this);
+  }
+
+  @Override
+  public boolean shouldExecuteOnProject(Project project) {
     return true;
-  }
-
-  public String toString() {
-    return getClass().getCanonicalName();
   }
 }

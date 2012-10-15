@@ -30,21 +30,8 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.Goals.DISPLAY_PLUGIN_UPDATES;
 
 
-public class Sensor1 extends SensorBase implements Sensor, DependsUponMavenPlugin {
+public class Sensor1 extends SensorBase  {
 
 
-  @Override
-  public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler(BASE_IDENTIFIER + DISPLAY_PLUGIN_UPDATES);
-  }
 
-  @Override
-  public void analyse(Project project, SensorContext context) {
-    super.iAnalyse(project, context);
-  }
-
-  @Override
-  public boolean shouldExecuteOnProject(Project project) {
-    return true;
-  }
 }
