@@ -46,7 +46,7 @@ public class DisplayPluginUpdatesSensorTest {
     MavenProject mavenProject = mock(MavenProject.class);
     when(mavenProject.getFile()).thenReturn(new File("."));
 
-    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor( mock(MavenPluginExecutor.class), mavenProject);
+    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor( mock(RulesProfile.class),mock(MavenPluginExecutor.class), mavenProject);
 
     Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
     List<ArtifactUpdate> updateList = Lists.newArrayList(mock(ArtifactUpdate.class));

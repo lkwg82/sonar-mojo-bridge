@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.google.common.collect.Lists;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
@@ -29,9 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleRepository;
 import org.sonar.batch.MavenPluginExecutor;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: lars
@@ -40,7 +47,7 @@ import org.sonar.batch.MavenPluginExecutor;
 @Data
 @Slf4j
 public class MavenBaseSensor<T extends ResultTransferHandler> implements DependsUponMavenPlugin {
-
+  private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
   private final String baseIdentifier;
@@ -59,7 +66,27 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
       MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
     }
 
-    return Boolean.parseBoolean(prop) && isMaven3;
+    return Boolean.parseBoolean(prop) && isMaven3 && checkIfAtLeastOneRuleIsEnabled();
+  }
+
+  private boolean checkIfAtLeastOneRuleIsEnabled() {
+    List<String> associatedRules = getAssociatedRules();
+    for (ActiveRule rule : rulesProfile.getActiveRules()) {
+      Rule innerRule = rule.getRule();
+      if (MavenPlugin.REPOSITORY_KEY.equals(innerRule.getRepositoryKey()) && associatedRules.contains(innerRule.getKey())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public List<String> getAssociatedRules() {
+    List<Class<? extends MavenRule>> rules = Arrays.asList(mavenBaseSensorI.getClass().getAnnotation(Rules.class).values());
+    List<String > ruleKeys = Lists.newArrayList();
+    for(Class<? extends MavenRule> rule : rules){
+                        ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
+    }
+    return ruleKeys;
   }
 
   @Override

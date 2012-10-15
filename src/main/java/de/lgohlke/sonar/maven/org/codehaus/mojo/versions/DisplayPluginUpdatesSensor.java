@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.MavenBaseSensorI;
+import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
@@ -32,6 +33,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
@@ -40,7 +42,7 @@ import org.sonar.batch.MavenPluginExecutor;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-
+@Rules(values = {IncompatibleMavenVersion.class, MissingPluginVersion.class, PluginVersion.class, NoMinimumMavenVersion.class})
 public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPluginUpdatesResultHandler> {
   private final DisplayPluginUpdatesResultHandler resultHandler = new DisplayPluginUpdatesResultHandler();
   @Getter
@@ -48,10 +50,10 @@ public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPlugi
   private final MavenProject mavenProject;
   private final MavenBaseSensor<DisplayPluginUpdatesResultHandler> baseSensor;
 
-  public DisplayPluginUpdatesSensor(MavenPluginExecutor mavenPluginExecutor,
+  public DisplayPluginUpdatesSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor,
                                     MavenProject mavenProject) {
     this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayPluginUpdatesResultHandler>(mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
+    baseSensor = new MavenBaseSensor<DisplayPluginUpdatesResultHandler>(rulesProfile, mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
   }
 
   @Override
