@@ -24,9 +24,14 @@
             <language><![CDATA[java]]></language>
             <active-rules>
                 <active-rule>
+                    <key><![CDATA[Missing Plugin Version]]></key>
+                    <plugin><![CDATA[maven]]></plugin>
+                    <level><![CDATA[MINOR]]></level>
+                </active-rule>
+                <active-rule>
                     <key><![CDATA[Old Dependency]]></key>
                     <plugin><![CDATA[maven]]></plugin>
-                    <level><![CDATA[BLOCKER]]></level>
+                    <level><![CDATA[MINOR]]></level>
                 </active-rule>
                 <active-rule>
                     <key><![CDATA[Old Plugin]]></key>
@@ -34,14 +39,14 @@
                     <level><![CDATA[BLOCKER]]></level>
                 </active-rule>
                 <active-rule>
-                    <key><![CDATA[[POM] Old Dependency]]></key>
+                    <key><![CDATA[INCOMPATIBLE MAVEN VERSION]]></key>
                     <plugin><![CDATA[maven]]></plugin>
-                    <level><![CDATA[MINOR]]></level>
+                    <level><![CDATA[MAJOR]]></level>
                 </active-rule>
                 <active-rule>
-                    <key><![CDATA[[POM] Old Plugin]]></key>
+                    <key><![CDATA[NO MINIMUM MAVEN VERSION]]></key>
                     <plugin><![CDATA[maven]]></plugin>
-                    <level><![CDATA[MINOR]]></level>
+                    <level><![CDATA[MAJOR]]></level>
                 </active-rule>
             </active-rules>
             <alerts/>

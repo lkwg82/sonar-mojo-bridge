@@ -21,6 +21,9 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.maven.MavenITAbstract;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
 import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeTest;
@@ -39,7 +42,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Time: 12:35
  */
 public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
-  private final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
 
   @BeforeTest(alwaysRun = true)
   public void beforeEachTest() {
@@ -56,9 +58,26 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
 
     executor.usePom(pomXml).execute();
 
-    List<Violation> violations = getViolationsFor(projectKey, ruleKey);
+    List<Violation> violations = getViolationsFor("org.codehaus.sonar-plugins:it-old-dependency", ruleKey);
 
     // api.showQueryAndResult(violations);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations).are(onlyForFile(pomXml.getName()));
+  }
+
+  @Test
+  public void shouldHaveViolationsOfPluginUpdate() throws Exception {
+    skipTestIfNotMaven3();
+
+    final File pomXml = new File("src/test/resources/pom_missing_maven_version.xml");
+    final String ruleKey = createRuleKey(MissingPluginVersion.KEY);
+
+    executor.usePom(pomXml).execute();
+
+    List<Violation> violations = getViolationsFor("MavenInvoker:MavenInvoker", ruleKey);
+
+//    api.showQueryAndResult(violations);
 
     assertThat(violations).isNotEmpty();
     assertThat(violations).are(onlyForFile(pomXml.getName()));
@@ -71,6 +90,6 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
 
     // test this http://localhost:9000/api/resources?depth=-1&scope=FIL&resource=1981&qualifier=FIL
     // not yet running
-    Resource project = api.getProjectWithKey(projectKey);
+//    Resource project = api.getProjectWithKey(projectKey);
   }
 }

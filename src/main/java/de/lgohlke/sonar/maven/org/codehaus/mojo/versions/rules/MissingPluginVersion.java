@@ -33,7 +33,7 @@ import org.sonar.check.Rule;
     name = MissingPluginVersion.NAME,
     description = MissingPluginVersion.DESCRIPTION)
 public class MissingPluginVersion implements MavenRule {
-  protected static final String KEY = "Missing Plugin Version";
+  public static final String KEY = "Missing Plugin Version";
   protected static final String NAME = "[POM] found an plugin with no version";
   protected static final String DESCRIPTION = "Set an explicit version for this plugin";
 }
