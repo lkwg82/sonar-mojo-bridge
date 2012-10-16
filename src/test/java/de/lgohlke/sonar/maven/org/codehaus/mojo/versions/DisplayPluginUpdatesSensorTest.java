@@ -20,19 +20,24 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import de.lgohlke.sonar.MavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
 import lombok.Getter;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
+import org.fest.assertions.core.Condition;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.check.Rule;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -43,25 +48,48 @@ import static org.mockito.Mockito.when;
  * User: lgohlke
  */
 public class DisplayPluginUpdatesSensorTest {
-  @Test
-  public void shouldAnalyse() throws Exception {
+  private DisplayPluginUpdatesSensor sensor;
+  private DisplayPluginUpdatesResultHandler resultTransferHandler;
+  private TestSensorContext context;
+
+  @BeforeTest
+  public void init() {
     MavenProject mavenProject = mock(MavenProject.class);
     when(mavenProject.getFile()).thenReturn(new File("."));
 
-    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject);
+    context = new TestSensorContext();
+    sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject);
+    resultTransferHandler = sensor.getHandler().getResultTransferHandler();
+    resultTransferHandler.setMissingVersionPlugins(new ArrayList<Dependency>());
+    resultTransferHandler.setIncompatibleParentAndProjectMavenVersion(null);
+    resultTransferHandler.setPluginUpdates(new ArrayList<ArtifactUpdate>());
+    resultTransferHandler.setWarninNoMinimumVersion(false);
+  }
 
-    Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
-    List<ArtifactUpdate> updateList = Lists.newArrayList(mock(ArtifactUpdate.class));
-    String artifactQualifier = "group:artifact:version:goal";
-    when(updateList.get(0).toString()).thenReturn(artifactQualifier);
-    updateMap.put(DisplayDependencyUpdatesBridgeMojo.DEPENDENCIES, updateList);
-    sensor.getHandler().getResultTransferHandler().setUpdateMap(updateMap);
+  @Test
+  public void shouldHaveNoMinimumVersion() throws Exception {
 
-    TestSensorContext context = new TestSensorContext();
+    resultTransferHandler.setWarninNoMinimumVersion(true);
+
     sensor.analyse(mock(Project.class), context);
 
     assertThat(context.getViolations()).hasSize(1);
-    assertThat(context.getViolations().get(0).getMessage()).contains(artifactQualifier);
+    assertThat(context.getViolations()).is(hasViolationOfRule(NoMinimumMavenVersion.class));
+  }
+
+  private Condition<? super List<Violation>> hasViolationOfRule(final Class<? extends MavenRule> ruleClass) {
+    return new Condition<List<Violation>>() {
+      @Override
+      public boolean matches(final List<Violation> violations) {
+        String key = ruleClass.getAnnotation(Rule.class).key();
+        for (Violation violation : violations) {
+          if (key.equals(violation.getRule().getKey())) {
+            return true;
+          }
+        }
+        return false;
+      }
+    };
   }
 
   private static class TestSensorContext extends DefaultSensorContext {
