@@ -23,18 +23,22 @@ import de.lgohlke.sonar.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
+
 /**
  * User: lars
  */
 @Rule(
-    key = NoMinimumMavenVersion.KEY, priority = Priority.MAJOR,
-    name = NoMinimumMavenVersion.NAME, description = NoMinimumMavenVersion.DESCRIPTION
+  key = NoMinimumMavenVersion.KEY, priority = Priority.MAJOR, name = NoMinimumMavenVersion.NAME,
+  description = NoMinimumMavenVersion.DESCRIPTION
 )
 public class NoMinimumMavenVersion implements MavenRule {
   public static final String KEY = "NO MINIMUM MAVEN VERSION";
   public static final String NAME = "[POM] found no minimum maven version";
   public static final String DESCRIPTION = "Update the pom.xml to contain\n" +
-      "    <prerequisites>\n" +
-      "      <maven><!-- minimum version of Maven that the plugin works with --></maven>\n" +
-      "    </prerequisites>";
+    "    <prerequisites>\n" +
+    "      <maven><!-- minimum version of Maven that the plugin works with --></maven>\n" +
+    "    </prerequisites>";
+
+  private NoMinimumMavenVersion() {
+  }
 }

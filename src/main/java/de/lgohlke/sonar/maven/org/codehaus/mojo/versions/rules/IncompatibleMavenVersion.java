@@ -23,15 +23,20 @@ import de.lgohlke.sonar.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
+
 /**
  * User: lars
  */
 @Rule(
-    key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR,
-    name = IncompatibleMavenVersion.NAME, description = IncompatibleMavenVersion.DESCRIPTION
+  key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR, name = IncompatibleMavenVersion.NAME,
+  description = IncompatibleMavenVersion.DESCRIPTION
 )
 public class IncompatibleMavenVersion implements MavenRule {
   public static final String KEY = "INCOMPATIBLE MAVEN VERSION";
   public static final String NAME = "[POM] found incompatible maven version";
-  public static final String DESCRIPTION = "the parent pom and the project pom define a pair of incompatible minimum versions";
+  public static final String DESCRIPTION =
+    "the parent pom and the project pom define a pair of incompatible minimum versions";
+
+  private IncompatibleMavenVersion() {
+  }
 }

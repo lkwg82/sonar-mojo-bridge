@@ -39,21 +39,27 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
-
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-@Rules(values = {IncompatibleMavenVersion.class, MissingPluginVersion.class, PluginVersion.class, NoMinimumMavenVersion.class})
+
+@Rules(
+  values = {
+    IncompatibleMavenVersion.class, MissingPluginVersion.class, PluginVersion.class, NoMinimumMavenVersion.class
+  }
+)
 public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPluginUpdatesResultHandler> {
   private final DisplayPluginUpdatesResultHandler resultHandler = new DisplayPluginUpdatesResultHandler();
   @Getter
-  private final BridgeMojoMapper<DisplayPluginUpdatesResultHandler> handler = new BridgeMojoMapper<DisplayPluginUpdatesResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
+  private final BridgeMojoMapper<DisplayPluginUpdatesResultHandler> handler =
+    new BridgeMojoMapper<DisplayPluginUpdatesResultHandler>(DisplayPluginUpdatesBridgeMojo.class, resultHandler);
   private final MavenProject mavenProject;
   private final MavenBaseSensor<DisplayPluginUpdatesResultHandler> baseSensor;
 
   public DisplayPluginUpdatesSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor,
                                     MavenProject mavenProject) {
     this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayPluginUpdatesResultHandler>(rulesProfile, mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
+    baseSensor = new MavenBaseSensor<DisplayPluginUpdatesResultHandler>(rulesProfile, mavenPluginExecutor, mavenProject,
+      BASE_IDENTIFIER, this);
   }
 
   @Override
@@ -63,12 +69,12 @@ public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPlugi
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    DisplayPluginUpdatesResultHandler handler = this.handler.getResultTransferHandler();
+    DisplayPluginUpdatesResultHandler resultTransferHandler = this.handler.getResultTransferHandler();
 
     final File file = new File("", mavenProject.getFile().getName());
 
     // minimum version warning
-    if (handler.isWarninNoMinimumVersion()) {
+    if (resultTransferHandler.isWarninNoMinimumVersion()) {
       Rule rule = baseSensor.createRuleFrom(NoMinimumMavenVersion.class);
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
@@ -77,23 +83,27 @@ public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPlugi
     }
 
     // incompatible minimum versions
-    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion = handler.getIncompatibleParentAndProjectMavenVersion();
+    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion =
+      resultTransferHandler.getIncompatibleParentAndProjectMavenVersion();
     if (incompatibleParentAndProjectMavenVersion != null) {
       Rule rule = baseSensor.createRuleFrom(IncompatibleMavenVersion.class);
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
+
       ArtifactVersion parentVersion = incompatibleParentAndProjectMavenVersion.getParentVersion();
       ArtifactVersion projectVersion = incompatibleParentAndProjectMavenVersion.getProjectVersion();
-      violation.setMessage("Project does define incompatible minimum versions:  in parent pom " + parentVersion + " and in project pom " + projectVersion);
+      violation.setMessage("Project does define incompatible minimum versions:  in parent pom " + parentVersion +
+        " and in project pom " + projectVersion);
       context.saveViolation(violation);
     }
 
     // missing versions
-    if (!handler.getMissingVersionPlugins().isEmpty()) {
+    if (!resultTransferHandler.getMissingVersionPlugins().isEmpty()) {
       Rule rule = baseSensor.createRuleFrom(MissingPluginVersion.class);
-      for (Dependency dependency : handler.getMissingVersionPlugins()) {
+      for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
         Violation violation = Violation.create(rule, file);
         violation.setLineId(1);
+
         String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
         violation.setMessage(artifact + " has no version");
         context.saveViolation(violation);
@@ -102,7 +112,7 @@ public class DisplayPluginUpdatesSensor implements MavenBaseSensorI<DisplayPlugi
 
     // updates
     Rule rule = baseSensor.createRuleFrom(PluginVersion.class);
-    for (ArtifactUpdate update : handler.getPluginUpdates()) {
+    for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
       violation.setMessage(update.toString());

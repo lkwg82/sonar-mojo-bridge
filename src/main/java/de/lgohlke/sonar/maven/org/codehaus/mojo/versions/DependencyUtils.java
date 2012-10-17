@@ -21,10 +21,11 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import org.apache.maven.model.Dependency;
 
+
 /**
  * User: lars
  */
-public class DependencyUtils {
+public final class DependencyUtils {
   private DependencyUtils() {
   }
 

@@ -22,9 +22,10 @@ package de.lgohlke.sonar.maven;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 
+
 /**
  * User: lars
  */
 public interface MavenBaseSensorI<T extends ResultTransferHandler> extends DependsUponMavenPlugin, Sensor {
-  public BridgeMojoMapper<T> getHandler();
+  BridgeMojoMapper<T> getHandler();
 }

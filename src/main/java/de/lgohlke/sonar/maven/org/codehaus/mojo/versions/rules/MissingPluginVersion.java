@@ -23,17 +23,21 @@ import de.lgohlke.sonar.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
+
 /**
  * User: lars
  */
 
 
-@Rule(key = MissingPluginVersion.KEY,
-    priority = Priority.MINOR,
-    name = MissingPluginVersion.NAME,
-    description = MissingPluginVersion.DESCRIPTION)
+@Rule(
+  key = MissingPluginVersion.KEY, priority = Priority.MINOR, name = MissingPluginVersion.NAME,
+  description = MissingPluginVersion.DESCRIPTION
+)
 public class MissingPluginVersion implements MavenRule {
   public static final String KEY = "Missing Plugin Version";
   protected static final String NAME = "[POM] found an plugin with no version";
   protected static final String DESCRIPTION = "Set an explicit version for this plugin";
+
+  private MissingPluginVersion() {
+  }
 }

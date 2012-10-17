@@ -34,17 +34,18 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
-
 import java.util.List;
 import java.util.Map;
-
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-@Rules(values = {DependencyVersion.class})
+
+@Rules(values = { DependencyVersion.class })
 public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayDependencyUpdatesResultHandler> {
   private final DisplayDependencyUpdatesResultHandler resultHandler = new DisplayDependencyUpdatesResultHandler();
   @Getter
-  private final BridgeMojoMapper<DisplayDependencyUpdatesResultHandler> handler = new BridgeMojoMapper<DisplayDependencyUpdatesResultHandler>(DisplayDependencyUpdatesBridgeMojo.class, resultHandler);
+  private final BridgeMojoMapper<DisplayDependencyUpdatesResultHandler> handler =
+    new BridgeMojoMapper<DisplayDependencyUpdatesResultHandler>(DisplayDependencyUpdatesBridgeMojo.class,
+      resultHandler);
   private final MavenBaseSensor<DisplayDependencyUpdatesResultHandler> baseSensor;
   private MavenProject mavenProject;
 
@@ -53,7 +54,8 @@ public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayD
                                         MavenPluginExecutor mavenPluginExecutor,
                                         MavenProject mavenProject) {
     this.mavenProject = mavenProject;
-    baseSensor = new MavenBaseSensor<DisplayDependencyUpdatesResultHandler>(rulesProfile, mavenPluginExecutor, mavenProject, BASE_IDENTIFIER, this);
+    baseSensor = new MavenBaseSensor<DisplayDependencyUpdatesResultHandler>(rulesProfile, mavenPluginExecutor,
+      mavenProject, BASE_IDENTIFIER, this);
   }
 
   @Override
@@ -68,13 +70,13 @@ public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayD
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
-    DisplayDependencyUpdatesResultHandler handler = this.handler.getResultTransferHandler();
+    DisplayDependencyUpdatesResultHandler resultTransferHandler = this.handler.getResultTransferHandler();
 
     Rule rule = baseSensor.createRuleFrom(DependencyVersion.class);
     final File file = new File("", mavenProject.getFile().getName());
-//    file.setLanguage(Xml.INSTANCE);
+    //    file.setLanguage(Xml.INSTANCE);
 
-    for (Map.Entry<String, List<ArtifactUpdate>> entry : handler.getUpdateMap().entrySet()) {
+    for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
       String section = entry.getKey();
       List<ArtifactUpdate> updates = entry.getValue();
       for (ArtifactUpdate update : updates) {

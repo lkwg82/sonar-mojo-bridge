@@ -19,7 +19,6 @@
  */
 package de.lgohlke.sonar.maven;
 
-import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.maven.internals.PlexusSlf4JLogger;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
@@ -30,12 +29,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -63,6 +64,8 @@ public class Maven3SonarEmbedder {
   public static class MavenSonarEmbedderBuilder {
     public static final String M2_HOME = "M2_HOME";
     public static final String MAVEN_HOME_KEY = "maven.home";
+    public static final int MIN_LOG_LEVEL = 0;
+    public static final int MAX_LOG_LEVEL = 5;
     private String pom = "pom.xml"; // default
     private String goal = null;
     private File mavenHome = null;
@@ -70,13 +73,13 @@ public class Maven3SonarEmbedder {
     private boolean showErrors;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
-      Preconditions.checkNotNull(pomFile);
+      checkNotNull(pomFile);
       this.pom = pomFile;
       return this;
     }
 
     public MavenSonarEmbedderBuilder goal(final String goal) {
-      Preconditions.checkNotNull(goal);
+      checkNotNull(goal);
       this.goal = goal;
       return this;
     }
@@ -97,7 +100,7 @@ public class Maven3SonarEmbedder {
      * </pre>
      */
     public MavenSonarEmbedderBuilder logLevel(final int level) {
-      Preconditions.checkArgument((level > -1) && (level < 6));
+      checkArgument((level >= MIN_LOG_LEVEL) && (level <= MAX_LOG_LEVEL));
       this.logLevel = level;
       return this;
     }
@@ -106,14 +109,14 @@ public class Maven3SonarEmbedder {
      * could be called multiple times
      */
     public MavenSonarEmbedderBuilder setAlternativeMavenHome(final File mavenHome) {
-      Preconditions.checkNotNull(mavenHome);
+      checkNotNull(mavenHome);
       if ((this.mavenHome == null) && mavenHome.isDirectory()) {
         this.mavenHome = mavenHome;
       }
       return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());
@@ -137,8 +140,9 @@ public class Maven3SonarEmbedder {
           }
         }
 
-        Preconditions.checkNotNull(mavenHome, "we did not find the maven directory");
-        Preconditions.checkArgument(mavenHome.isDirectory(), "maveHome is " + mavenHome + ", but a directory is needed");
+        checkNotNull(mavenHome, "we did not find the maven directory");
+        checkArgument(mavenHome.isDirectory(),
+          "maveHome is " + mavenHome + ", but a directory is needed");
       }
     }
 
@@ -148,10 +152,10 @@ public class Maven3SonarEmbedder {
     }
 
     public Maven3SonarEmbedder build() throws MavenEmbedderException {
-      Preconditions.checkNotNull(pom, "missing pom");
+      checkNotNull(pom, "missing pom");
 
-      Preconditions.checkNotNull(goal, "missing goal");
-      Preconditions.checkState(goal.length() > 0, "goal is empty");
+      checkNotNull(goal, "missing goal");
+      checkState(goal.length() > 0, "goal is empty");
 
       MavenRequest mavenRequest = new MavenRequest();
       mavenRequest.setPom(pom);
@@ -163,7 +167,7 @@ public class Maven3SonarEmbedder {
 
       try {
         final File m2File = new File(mavenHome.getCanonicalPath() + "/bin/m2.conf");
-        Preconditions.checkArgument(m2File.exists(), "not found bin/m2.conf in " + mavenHome);
+        checkArgument(m2File.exists(), "not found bin/m2.conf in " + mavenHome);
       } catch (IOException e1) {
         throw new MavenEmbedderException(e1);
       }
