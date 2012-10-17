@@ -33,11 +33,8 @@ import org.sonar.check.Rule;
   key = MissingPluginVersion.KEY, priority = Priority.MINOR, name = MissingPluginVersion.NAME,
   description = MissingPluginVersion.DESCRIPTION
 )
-public final class MissingPluginVersion implements MavenRule {
-  public static final String KEY = "Missing Plugin Version";
-  public static final String NAME = "[POM] found an plugin with no version";
-  public static final String DESCRIPTION = "Set an explicit version for this plugin";
-
-  private MissingPluginVersion() {
-  }
+public interface MissingPluginVersion extends MavenRule {
+  String KEY = "Missing Plugin Version";
+  String NAME = "[POM] found an plugin with no version";
+  String DESCRIPTION = "Set an explicit version for this plugin";
 }

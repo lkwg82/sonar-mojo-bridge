@@ -28,11 +28,8 @@ import org.sonar.check.Rule;
   key = PluginVersion.KEY, priority = Priority.MINOR, name = PluginVersion.NAME,
   description = PluginVersion.DESCRIPTION
 )
-public final class PluginVersion implements MavenRule {
-  public static final String KEY = "Old Plugin";
-  protected static final String DESCRIPTION = "found an updated version for plugin";
-  protected static final String NAME = "[POM] " + DESCRIPTION;
-
-  private PluginVersion() {
-  }
+public interface PluginVersion extends MavenRule {
+  String KEY = "Old Plugin";
+  String DESCRIPTION = "found an updated version for plugin";
+  String NAME = "[POM] " + DESCRIPTION;
 }

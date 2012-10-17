@@ -25,14 +25,11 @@ import org.sonar.check.Rule;
 
 
 @Rule(
-  key = DependencyVersion.KEY, priority = Priority.MINOR, name = DependencyVersion.NAME,
-  description = DependencyVersion.DESCRIPTION
+    key = DependencyVersion.KEY, priority = Priority.MINOR, name = DependencyVersion.NAME,
+    description = DependencyVersion.DESCRIPTION
 )
-public final class DependencyVersion implements MavenRule {
-  public static final String KEY = "Old Dependency";
-  public static final String NAME = "[POM] found an newer version for a dependency in use";
-  public static final String DESCRIPTION = "this dependency has a newer version available";
-
-  private DependencyVersion() {
-  }
+public interface DependencyVersion extends MavenRule {
+  String KEY = "Old Dependency";
+  String NAME = "[POM] found an newer version for a dependency in use";
+  String DESCRIPTION = "this dependency has a newer version available";
 }
