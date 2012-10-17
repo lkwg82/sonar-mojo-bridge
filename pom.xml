@@ -64,7 +64,8 @@
         <sonar.version>3.2.1</sonar.version>
 
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
+        <!-- this code has a lot of violations, by design -->
+        <sonar.exclusions>**/*BridgeMojo.java</sonar.exclusions>
         <test.database>h2</test.database>
         <test.jdbcDriver>org.h2.Driver</test.jdbcDriver>
         <test.jdbcUrl>jdbc:h2:tcp://localhost:9092/sonar</test.jdbcUrl>

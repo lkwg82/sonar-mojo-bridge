@@ -34,6 +34,7 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.plugins.xml.language.Xml;
 import java.util.List;
 import java.util.Map;
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
@@ -74,7 +75,7 @@ public class DisplayDependencyUpdatesSensor implements MavenBaseSensorI<DisplayD
 
     Rule rule = baseSensor.createRuleFrom(DependencyVersion.class);
     final File file = new File("", mavenProject.getFile().getName());
-    //    file.setLanguage(Xml.INSTANCE);
+    file.setLanguage(Xml.INSTANCE);
 
     for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
       String section = entry.getKey();

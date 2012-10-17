@@ -28,10 +28,10 @@ import org.sonar.check.Rule;
   key = DependencyVersion.KEY, priority = Priority.MINOR, name = DependencyVersion.NAME,
   description = DependencyVersion.DESCRIPTION
 )
-public class DependencyVersion implements MavenRule {
+public final class DependencyVersion implements MavenRule {
   public static final String KEY = "Old Dependency";
-  protected static final String NAME = "[POM] found an newer version for a dependency in use";
-  protected static final String DESCRIPTION = "this dependency has a newer version available";
+  public static final String NAME = "[POM] found an newer version for a dependency in use";
+  public static final String DESCRIPTION = "this dependency has a newer version available";
 
   private DependencyVersion() {
   }
