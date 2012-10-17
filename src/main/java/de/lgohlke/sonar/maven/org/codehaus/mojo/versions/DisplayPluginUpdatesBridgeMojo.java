@@ -63,7 +63,7 @@ import static org.fest.reflect.core.Reflection.field;
 import static org.fest.reflect.core.Reflection.method;
 
 
-@Goal(Configuration.Goals.DISPLAY_PLUGIN_UPDATES)
+@Goal("display-plugin-updates")
 @SuppressWarnings("deprecation")
 public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
   implements BridgeMojo<DisplayPluginUpdatesSensor.ResultTransferHandler> {

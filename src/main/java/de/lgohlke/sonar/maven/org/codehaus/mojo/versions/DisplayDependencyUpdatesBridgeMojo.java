@@ -41,7 +41,7 @@ import java.util.Map.Entry;
 import static org.fest.reflect.core.Reflection.staticMethod;
 
 
-@Goal(Configuration.Goals.DISPLAY_DEPENDENCY_UPDATES)
+@Goal("display-dependency-updates")
 @SuppressWarnings("deprecation")
 public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
