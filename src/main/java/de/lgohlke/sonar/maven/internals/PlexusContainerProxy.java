@@ -43,7 +43,7 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
   }
 
   @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Exception {
     if (method.getName().equals("addComponentDescriptor")) {
       MojoDescriptor descriptor = (MojoDescriptor) args[0];
       checkGoal(descriptor);

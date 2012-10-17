@@ -124,12 +124,12 @@ public class Maven3SonarEmbedder {
         if (envMap.containsKey("maven.home")) {
           mavenHome = new File(envMap.get("maven.home"));
         } else if (envMap.containsKey(M2_HOME)) {
-          final Object value = envMap.get(M2_HOME);
-          if (value instanceof File) {
-            mavenHome = (File) value;
-          } else {
-            mavenHome = new File(value + "");
-          }
+          final String value = envMap.get(M2_HOME);
+//          if (value instanceof File) {
+//            mavenHome = (File) value;
+//          } else {
+            mavenHome = new File(value);
+//          }
         } else {
           final String currentProgramm = System.getenv("_");
           if (currentProgramm != null) {

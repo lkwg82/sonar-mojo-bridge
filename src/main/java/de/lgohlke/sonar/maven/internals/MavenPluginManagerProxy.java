@@ -36,7 +36,7 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
    * see  MavenPluginManager#setupPluginRealm(PluginDescriptor, MavenSession, ClassLoader, List, DependencyFilter)
    */
   @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Exception {
     if (method.getName().equals("setupPluginRealm")) {
       args[2] = classloader;
     }

@@ -53,7 +53,6 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
-  private final String baseIdentifier;
   @Getter
   private BridgeMojoMapper<T> mojoMapper;
 
@@ -65,7 +64,6 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
     checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
     SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
-    this.baseIdentifier = configuration.mavenBaseIdentifier();
     Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
     try {
       T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
@@ -104,10 +102,9 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     return false;
   }
 
-  public List<String> getAssociatedRules() {
-    List<Class<? extends MavenRule>> rules = Arrays.asList(getClass().getAnnotation(Rules.class).values());
+  private List<String> getAssociatedRules() {
     List<String> ruleKeys = Lists.newArrayList();
-    for (Class<? extends MavenRule> rule : rules) {
+    for (Class<? extends MavenRule> rule : getClass().getAnnotation(Rules.class).values()) {
       ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
     }
     return ruleKeys;
@@ -115,6 +112,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
+    String baseIdentifier = getClass().getAnnotation(SensorConfiguration.class).mavenBaseIdentifier();
     return MavenPluginHandlerFactory.createHandler(baseIdentifier + mojoMapper.getGoal());
   }
 

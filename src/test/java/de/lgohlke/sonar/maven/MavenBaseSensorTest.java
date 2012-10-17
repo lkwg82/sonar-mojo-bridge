@@ -21,12 +21,15 @@ package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.MavenRule;
+import de.lgohlke.sonar.maven.internals.Maven3ExecutionProcessTest;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.versions.HelpMojo;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -62,6 +65,18 @@ public class MavenBaseSensorTest {
   public static interface MyRule extends MavenRule{
            String key = "X";
   }
+
+  @Goal("help")
+  public static class MyBridgeMojo extends HelpMojo implements BridgeMojo<Maven3ExecutionProcessTest.MyResultTransferHandler> {
+    @Setter
+    private Maven3ExecutionProcessTest.MyResultTransferHandler resultHandler;
+
+    @Override
+    public void execute() throws MojoExecutionException {
+      resultHandler.setPing(true);
+    }
+  }
+
   @Rules(values = MyRule.class)
   @SensorConfiguration(
       bridgeMojo = MyBridgeMojo.class,
