@@ -55,7 +55,7 @@ public class DisplayDependencyUpdatesSensorTest {
     String artifactQualifier = "group:artifact:version:goal";
     when(updateList.get(0).toString()).thenReturn(artifactQualifier);
     updateMap.put(DisplayDependencyUpdatesBridgeMojo.DEPENDENCIES, updateList);
-    sensor.getHandler().getResultTransferHandler().setUpdateMap(updateMap);
+    sensor.getMojoMapper().getResultTransferHandler().setUpdateMap(updateMap);
 
     TestSensorContext context = new TestSensorContext();
     sensor.analyse(mock(Project.class), context);

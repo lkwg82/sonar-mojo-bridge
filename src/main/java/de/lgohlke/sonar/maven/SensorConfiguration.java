@@ -19,13 +19,20 @@
  */
 package de.lgohlke.sonar.maven;
 
-import org.sonar.api.batch.Sensor;
-import org.sonar.api.batch.maven.DependsUponMavenPlugin;
-
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * User: lars
  */
-public interface MavenBaseSensorI<T extends ResultTransferHandler> extends DependsUponMavenPlugin, Sensor {
-  BridgeMojoMapper<T> getHandler();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface SensorConfiguration {
+  Class<? extends BridgeMojo> bridgeMojo();
+
+  Class<? extends ResultTransferHandler> resultTransferHandler();
+
+  String mavenBaseIdentifier();
 }

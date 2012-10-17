@@ -66,7 +66,7 @@ import static org.fest.reflect.core.Reflection.method;
 @Goal(Configuration.Goals.DISPLAY_PLUGIN_UPDATES)
 @SuppressWarnings("deprecation")
 public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
-  implements BridgeMojo<DisplayPluginUpdatesResultHandler> {
+  implements BridgeMojo<DisplayPluginUpdatesSensor.ResultTransferHandler> {
   @Data
   @RequiredArgsConstructor
   public static class IncompatibleParentAndProjectMavenVersion {
@@ -80,7 +80,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
   private IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion;
 
   @Setter
-  private DisplayPluginUpdatesResultHandler resultHandler;
+  private DisplayPluginUpdatesSensor.ResultTransferHandler resultHandler;
 
   @Override
   @SuppressWarnings("unchecked")
@@ -506,7 +506,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
       .withParameterTypes(Map.class, Map.class, Map.class, Map.class, Set.class)
       .in(this)
       .invoke(superPomPluginManagement, parentPluginManagement, parentBuildPlugins, parentReportPlugins,
-        pluginsWithVersionsSpecified);
+          pluginsWithVersionsSpecified);
   }
 
   private static String oGetPluginArtifactId(Object plugin) {

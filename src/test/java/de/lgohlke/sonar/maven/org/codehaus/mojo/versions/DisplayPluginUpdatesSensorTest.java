@@ -49,7 +49,7 @@ import static org.mockito.Mockito.when;
  */
 public class DisplayPluginUpdatesSensorTest {
   private DisplayPluginUpdatesSensor sensor;
-  private DisplayPluginUpdatesResultHandler resultTransferHandler;
+  private DisplayPluginUpdatesSensor.ResultTransferHandler resultTransferHandler;
   private TestSensorContext context;
 
   @BeforeTest
@@ -59,7 +59,7 @@ public class DisplayPluginUpdatesSensorTest {
 
     context = new TestSensorContext();
     sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject);
-    resultTransferHandler = sensor.getHandler().getResultTransferHandler();
+    resultTransferHandler = sensor.getMojoMapper().getResultTransferHandler();
     resultTransferHandler.setMissingVersionPlugins(new ArrayList<Dependency>());
     resultTransferHandler.setIncompatibleParentAndProjectMavenVersion(null);
     resultTransferHandler.setPluginUpdates(new ArrayList<ArtifactUpdate>());

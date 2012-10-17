@@ -25,9 +25,11 @@ import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
+import org.sonar.api.batch.Sensor;
+import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
@@ -39,18 +41,41 @@ import org.sonar.batch.MavenPluginExecutor;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * User: lars
  */
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Data
 @Slf4j
-public class MavenBaseSensor<T extends ResultTransferHandler> implements DependsUponMavenPlugin {
+public abstract class MavenBaseSensor<T extends ResultTransferHandler> implements DependsUponMavenPlugin, Sensor {
   private final RulesProfile rulesProfile;
   private final MavenPluginExecutor mavenPluginExecutor;
   private final MavenProject mavenProject;
   private final String baseIdentifier;
-  private final MavenBaseSensorI<T> mavenBaseSensorI;
+  @Getter
+  private BridgeMojoMapper<T> mojoMapper;
+
+  public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
+    this.rulesProfile = rulesProfile;
+    this.mavenPluginExecutor = mavenPluginExecutor;
+    this.mavenProject = mavenProject;
+
+    checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
+    checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
+    SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
+    this.baseIdentifier = configuration.mavenBaseIdentifier();
+    Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
+    try {
+      T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
+      this.mojoMapper = new BridgeMojoMapper<T>(bridgeMojoClass, resultTransferHandler);
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    }
+  }
 
   public boolean shouldExecuteOnProject(final Project project) {
     String prop = (String) project.getProperty(MavenPlugin.ANALYSIS_ENABLED);
@@ -60,7 +85,7 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
 
     boolean isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
     if (isMaven3) {
-      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), getHandler());
+      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), mojoMapper);
     } else {
       MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
     }
@@ -68,7 +93,7 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
     return Boolean.parseBoolean(prop) && isMaven3 && checkIfAtLeastOneRuleIsEnabled();
   }
 
-  private boolean checkIfAtLeastOneRuleIsEnabled() {
+  protected boolean checkIfAtLeastOneRuleIsEnabled() {
     List<String> associatedRules = getAssociatedRules();
     for (ActiveRule rule : rulesProfile.getActiveRules()) {
       Rule innerRule = rule.getRule();
@@ -80,7 +105,7 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
   }
 
   public List<String> getAssociatedRules() {
-    List<Class<? extends MavenRule>> rules = Arrays.asList(mavenBaseSensorI.getClass().getAnnotation(Rules.class).values());
+    List<Class<? extends MavenRule>> rules = Arrays.asList(getClass().getAnnotation(Rules.class).values());
     List<String> ruleKeys = Lists.newArrayList();
     for (Class<? extends MavenRule> rule : rules) {
       ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
@@ -90,19 +115,17 @@ public class MavenBaseSensor<T extends ResultTransferHandler> implements Depends
 
   @Override
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    return MavenPluginHandlerFactory.createHandler(baseIdentifier + getHandler().getGoal());
-  }
-
-  public BridgeMojoMapper<T> getHandler() {
-    return mavenBaseSensorI.getHandler();
+    return MavenPluginHandlerFactory.createHandler(baseIdentifier + mojoMapper.getGoal());
   }
 
   public String toString() {
-    return mavenBaseSensorI.getClass().getSimpleName();
+    return getClass().getSimpleName();
   }
 
   public Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
     String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
     return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
   }
+
+  public abstract void analyse(final Project project, final SensorContext context);
 }
