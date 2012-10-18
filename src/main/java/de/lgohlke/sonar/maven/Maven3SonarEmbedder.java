@@ -29,14 +29,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+
+import static com.google.common.base.Preconditions.*;
 
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -116,7 +116,7 @@ public class Maven3SonarEmbedder {
       return this;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());
@@ -124,26 +124,26 @@ public class Maven3SonarEmbedder {
         if (envMap.containsKey("maven.home")) {
           mavenHome = new File(envMap.get("maven.home"));
         } else if (envMap.containsKey(M2_HOME)) {
-          final String value = envMap.get(M2_HOME);
-//          if (value instanceof File) {
-//            mavenHome = (File) value;
-//          } else {
-            mavenHome = new File(value);
-//          }
+          mavenHome = new File(envMap.get(M2_HOME));
         } else {
-          final String currentProgramm = System.getenv("_");
-          if (currentProgramm != null) {
-            File mvnBinary = new File(currentProgramm);
-            if (mvnBinary.exists()) {
-              mavenHome = mvnBinary.getParentFile().getParentFile();
-            }
-          }
+          mavenHome = getMavenHomeFromRunningInstance();
         }
 
         checkNotNull(mavenHome, "we did not find the maven directory");
         checkArgument(mavenHome.isDirectory(),
-          "maveHome is " + mavenHome + ", but a directory is needed");
+            "maveHome is " + mavenHome + ", but a directory is needed");
       }
+    }
+
+    private File getMavenHomeFromRunningInstance() {
+      final String currentProgramm = System.getenv("_");
+      if (currentProgramm != null) {
+        File mvnBinary = new File(currentProgramm);
+        if (mvnBinary.exists()) {
+          return mvnBinary.getParentFile().getParentFile();
+        }
+      }
+      return null;
     }
 
     public MavenSonarEmbedderBuilder showErrors(final boolean showErrors) {
