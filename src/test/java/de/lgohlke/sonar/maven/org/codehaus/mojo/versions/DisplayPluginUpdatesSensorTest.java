@@ -21,7 +21,10 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.collect.Lists;
 import de.lgohlke.sonar.MavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
 import lombok.Getter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
@@ -32,7 +35,6 @@ import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.check.Rule;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -52,7 +54,6 @@ public class DisplayPluginUpdatesSensorTest {
   private DisplayPluginUpdatesSensor.ResultTransferHandler resultTransferHandler;
   private TestSensorContext context;
 
-  @BeforeTest
   public void init() {
     MavenProject mavenProject = mock(MavenProject.class);
     when(mavenProject.getFile()).thenReturn(new File("."));
@@ -68,13 +69,61 @@ public class DisplayPluginUpdatesSensorTest {
 
   @Test
   public void shouldHaveNoMinimumVersion() throws Exception {
-
+    init();
     resultTransferHandler.setWarninNoMinimumVersion(true);
 
     sensor.analyse(mock(Project.class), context);
 
     assertThat(context.getViolations()).hasSize(1);
     assertThat(context.getViolations()).is(hasViolationOfRule(NoMinimumMavenVersion.class));
+  }
+
+  @Test
+  public void shouldHaveNoNoMinimumVersion() throws Exception {
+    init();
+    resultTransferHandler.setWarninNoMinimumVersion(false);
+
+    sensor.analyse(mock(Project.class), context);
+
+    assertThat(context.getViolations()).isEmpty();
+  }
+
+  @Test
+  public void shouldHaveUpdates() throws Exception {
+    init();
+    resultTransferHandler.setPluginUpdates(new ArrayList<ArtifactUpdate>());
+    ArtifactUpdate update = mock(ArtifactUpdate.class);
+    when(update.toString()).thenReturn("a:b:c:d");
+    resultTransferHandler.getPluginUpdates().add(update);
+
+    sensor.analyse(mock(Project.class), context);
+
+    assertThat(context.getViolations()).hasSize(1);
+    assertThat(context.getViolations()).is(hasViolationOfRule(PluginVersion.class));
+  }
+
+  @Test
+  public void shouldHaveIncompatibleVersion() throws Exception {
+    init();
+    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleVersion = mock(DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion.class);
+    resultTransferHandler.setIncompatibleParentAndProjectMavenVersion(incompatibleVersion);
+
+    sensor.analyse(mock(Project.class), context);
+
+    assertThat(context.getViolations()).hasSize(1);
+    assertThat(context.getViolations()).is(hasViolationOfRule(IncompatibleMavenVersion.class));
+  }
+
+  @Test
+  public void shouldHaveSomePluginsMissingTheirVersions() throws Exception {
+    init();
+    List<Dependency> missingVersionPlugins = Lists.newArrayList(mock(Dependency.class));
+    resultTransferHandler.setMissingVersionPlugins(missingVersionPlugins);
+
+    sensor.analyse(mock(Project.class), context);
+
+    assertThat(context.getViolations()).hasSize(1);
+    assertThat(context.getViolations()).is(hasViolationOfRule(MissingPluginVersion.class));
   }
 
   private Condition<? super List<Violation>> hasViolationOfRule(final Class<? extends MavenRule> ruleClass) {

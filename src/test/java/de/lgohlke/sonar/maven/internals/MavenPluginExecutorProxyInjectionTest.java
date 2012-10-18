@@ -17,17 +17,28 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar.maven.internals;
 
-import de.lgohlke.sonar.MavenRule;
+import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.maven3.Maven3PluginExecutor;
+import org.testng.annotations.Test;
 
-import java.lang.annotation.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * User: lars
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Rules {
-  Class<? extends MavenRule>[] values() default {};
+public class MavenPluginExecutorProxyInjectionTest {
+  @Test
+  public void testCheckIfIsMaven3Negative() throws Exception {
+    MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);
+    assertThat(MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor)).isFalse();
+  }
+
+  @Test
+  public void testCheckIfIsMaven3Positiv() throws Exception {
+    MavenPluginExecutor mavenPluginExecutor = mock(Maven3PluginExecutor.class);
+    assertThat(MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor)).isTrue();
+  }
 }

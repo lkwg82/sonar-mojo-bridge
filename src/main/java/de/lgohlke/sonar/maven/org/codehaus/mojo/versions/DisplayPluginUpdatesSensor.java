@@ -52,7 +52,7 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
 @SensorConfiguration(
     bridgeMojo = DisplayPluginUpdatesBridgeMojo.class,
     resultTransferHandler = DisplayPluginUpdatesSensor.ResultTransferHandler.class,
-    mavenBaseIdentifier=BASE_IDENTIFIER
+    mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpdatesSensor.ResultTransferHandler> {
 
@@ -101,16 +101,14 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     }
 
     // missing versions
-    if (!resultTransferHandler.getMissingVersionPlugins().isEmpty()) {
-      Rule rule = createRuleFrom(MissingPluginVersion.class);
-      for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
-        Violation violation = Violation.create(rule, file);
-        violation.setLineId(1);
+    Rule missingVersionRule = createRuleFrom(MissingPluginVersion.class);
+    for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
+      Violation violation = Violation.create(missingVersionRule, file);
+      violation.setLineId(1);
 
-        String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
-        violation.setMessage(artifact + " has no version");
-        context.saveViolation(violation);
-      }
+      String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
+      violation.setMessage(artifact + " has no version");
+      context.saveViolation(violation);
     }
 
     // updates

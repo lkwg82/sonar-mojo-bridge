@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.google.common.collect.Lists;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.Maven3ExecutionProcessTest;
@@ -42,11 +43,9 @@ import org.sonar.batch.MavenPluginExecutor;
 import org.sonar.check.Rule;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.sonatype.aether.RepositorySystemSession;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -62,8 +61,8 @@ public class MavenBaseSensorTest {
   private MyMavenVersionSensor mavenVersionSensor;
 
   @Rule(key = MyRule.key)
-  public static interface MyRule extends MavenRule{
-           String key = "X";
+  public static interface MyRule extends MavenRule {
+    String key = "X";
   }
 
   @Goal("help")
@@ -83,8 +82,10 @@ public class MavenBaseSensorTest {
       resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class,
       mavenBaseIdentifier = "a:b:c:")
   public static class MyMavenVersionSensor extends MavenBaseSensor<MyMavenVersionSensor.MyResultTransferHandler> {
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean rulesEnabled;
+
     public static class MyResultTransferHandler implements ResultTransferHandler {
     }
 
@@ -92,7 +93,7 @@ public class MavenBaseSensorTest {
       super(rulesProfile, mavenPluginExecutor, mavenProject);
     }
 
-    protected boolean checkIfAtLeastOneRuleIsEnabled(){
+    protected boolean checkIfAtLeastOneRuleIsEnabled() {
       return rulesEnabled;
     }
 
@@ -110,12 +111,6 @@ public class MavenBaseSensorTest {
     public BridgeMojoMapper getMojoMapper() {
       return null;
     }
-
-  }
-
-  @BeforeTest
-  public void createMavenVersionSensor() throws Exception {
-    mavenVersionSensor = new MyMavenVersionSensor(profile, mavenPluginExecutor, mavenProject);
   }
 
   class Maven3PluginExecutorMock extends Maven3PluginExecutor {
@@ -144,7 +139,7 @@ public class MavenBaseSensorTest {
   }
 
   @Test
-  public void shouldNotExecuteOnProjectWithMaven3() {
+  public void shouldNotExecuteOnProjectWithMaven3NotRunninWithMaven3() {
     MavenPluginExecutor mavenXPluginExecutor = mock(MavenPluginExecutor.class);
     mavenVersionSensor = new MyMavenVersionSensor(profile, mavenXPluginExecutor, mavenProject);
 
@@ -158,6 +153,15 @@ public class MavenBaseSensorTest {
 
     final Project projectMock = mock(Project.class);
     when(projectMock.getProperty(MavenPlugin.ANALYSIS_ENABLED)).thenReturn("false");
+    assertThat(mavenVersionSensor.shouldExecuteOnProject(projectMock)).isFalse();
+  }
+
+  @Test
+  public void shouldNotRunBecauseNoRuleActivated() {
+    when(profile.getActiveRules()).thenReturn(new ArrayList<ActiveRule>());
+    mavenVersionSensor = new MyMavenVersionSensor(profile, new Maven3PluginExecutorMock(), mavenProject);
+
+    final Project projectMock = mock(Project.class);
     assertThat(mavenVersionSensor.shouldExecuteOnProject(projectMock)).isFalse();
   }
 }

@@ -23,6 +23,7 @@ import hudson.maven.MavenEmbedderException;
 import org.apache.maven.lifecycle.LifecyclePhaseNotFoundException;
 import org.apache.maven.plugin.MojoNotFoundException;
 import org.codehaus.plexus.logging.Logger;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -60,6 +61,31 @@ public class Maven3SonarEmbedderTest {
         build();
   }
 
+  @Test(expectedExceptions = IllegalStateException.class)
+  public void shouldFailOnEmptyGoal() throws MavenEmbedderException {
+    Maven3SonarEmbedder.configure().
+        usePomFile("pom.xml").
+        setAlternativeMavenHome(MAVEN_HOME).goal("").
+        build();
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void shouldFailTooLowLogLevel() throws MavenEmbedderException {
+    Maven3SonarEmbedder.configure().
+        usePomFile("pom.xml").
+        setAlternativeMavenHome(MAVEN_HOME).logLevel(-1).
+        build();
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void shouldFailTooHighLogLevel() throws MavenEmbedderException {
+    Maven3SonarEmbedder.configure().
+        usePomFile("pom.xml").
+        setAlternativeMavenHome(MAVEN_HOME).logLevel(100).
+        build();
+  }
+
+
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void shouldFailOnWrongMavenHome() throws MavenEmbedderException {
     System.setProperty(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, "wrong");
@@ -79,6 +105,23 @@ public class Maven3SonarEmbedderTest {
         goal(goal).
         setAlternativeMavenHome(new File("x")).
         build();
+  }
+
+  @Test
+  public void shouldDetectMavenfromRunningInstance() throws MavenEmbedderException {
+    if (System.getenv("_") == null){
+      throw new SkipException("not running from maven");
+    }
+    try{
+    Maven3SonarEmbedder.configure().
+        usePomFile("pom.xml").
+        goal(goal).
+        build();
+    }catch (MavenEmbedderException e){
+      if ( e.getCause() instanceof IllegalArgumentException){
+        // ok, we fail at the end, because m2.conf was not found
+      }
+    }
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)

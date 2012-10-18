@@ -29,12 +29,8 @@ public final class MavenPluginExecutorProxyInjection {
   }
 
   public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
-    try {
-      if (mavenPluginExecutor instanceof Maven3PluginExecutor) {
-        Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
-      }
-    } catch (NoClassDefFoundError e) {
-      // ok, this happens when maven 2 is used
+    if (checkIfIsMaven3(mavenPluginExecutor)) {
+      Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
     }
   }
 
@@ -42,7 +38,7 @@ public final class MavenPluginExecutorProxyInjection {
     try {
       return mavenPluginExecutor instanceof Maven3PluginExecutor;
     } catch (NoClassDefFoundError e) {
-      return false;
+      return false; // ok, this happens when maven 2 is used
     }
   }
 }
