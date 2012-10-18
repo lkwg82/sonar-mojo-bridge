@@ -67,10 +67,10 @@ public class Maven3SonarEmbedder {
     public static final int MIN_LOG_LEVEL = 0;
     public static final int MAX_LOG_LEVEL = 5;
     private String pom = "pom.xml"; // default
-    private String goal = null;
+    private String mavenGoal = null;
     private File mavenHome = null;
-    private int logLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
-    private boolean showErrors;
+    private int mavenLogLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
+    private boolean mavenShowErrors;
 
     public MavenSonarEmbedderBuilder usePomFile(final String pomFile) {
       checkNotNull(pomFile);
@@ -80,7 +80,7 @@ public class Maven3SonarEmbedder {
 
     public MavenSonarEmbedderBuilder goal(final String goal) {
       checkNotNull(goal);
-      this.goal = goal;
+      this.mavenGoal = goal;
       return this;
     }
 
@@ -101,7 +101,7 @@ public class Maven3SonarEmbedder {
      */
     public MavenSonarEmbedderBuilder logLevel(final int level) {
       checkArgument((level >= MIN_LOG_LEVEL) && (level <= MAX_LOG_LEVEL));
-      this.logLevel = level;
+      this.mavenLogLevel = level;
       return this;
     }
 
@@ -147,21 +147,21 @@ public class Maven3SonarEmbedder {
     }
 
     public MavenSonarEmbedderBuilder showErrors(final boolean showErrors) {
-      this.showErrors = showErrors;
+      this.mavenShowErrors = showErrors;
       return this;
     }
 
     public Maven3SonarEmbedder build() throws MavenEmbedderException {
       checkNotNull(pom, "missing pom");
 
-      checkNotNull(goal, "missing goal");
-      checkState(goal.length() > 0, "goal is empty");
+      checkNotNull(mavenGoal, "missing mavenGoal");
+      checkState(mavenGoal.length() > 0, "mavenGoal is empty");
 
       MavenRequest mavenRequest = new MavenRequest();
       mavenRequest.setPom(pom);
-      mavenRequest.setShowErrors(showErrors);
-      mavenRequest.setGoals(Arrays.asList(goal));
-      mavenRequest.setLoggingLevel(logLevel);
+      mavenRequest.setShowErrors(mavenShowErrors);
+      mavenRequest.setGoals(Arrays.asList(mavenGoal));
+      mavenRequest.setLoggingLevel(mavenLogLevel);
       mavenRequest.setMavenLoggerManager(new MavenLoggerManager(new PlexusSlf4JLogger(log)));
       detectMavenHomeIfNull();
 
