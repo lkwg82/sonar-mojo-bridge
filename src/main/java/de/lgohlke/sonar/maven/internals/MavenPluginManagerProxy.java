@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.internals;
 
 import org.apache.maven.plugin.MavenPluginManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
@@ -36,10 +37,16 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
    * see  MavenPluginManager#setupPluginRealm(PluginDescriptor, MavenSession, ClassLoader, List, DependencyFilter)
    */
   @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Exception {
+  public Object invoke(final Object proxy, final Method method, final Object[] args) {
     if (method.getName().equals("setupPluginRealm")) {
       args[2] = classloader;
     }
-    return method.invoke(getUnderLying(), args);
+    try {
+      return method.invoke(getUnderLying(), args);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

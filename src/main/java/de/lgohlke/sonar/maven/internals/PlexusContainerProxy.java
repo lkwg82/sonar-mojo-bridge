@@ -25,6 +25,7 @@ import de.lgohlke.sonar.maven.BridgeMojoMapperException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -43,17 +44,25 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
   }
 
   @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Exception {
+  public Object invoke(final Object proxy, final Method method, final Object[] args) {
     if (method.getName().equals("addComponentDescriptor")) {
       MojoDescriptor descriptor = (MojoDescriptor) args[0];
       checkGoal(descriptor);
     }
-
-    Object result = method.invoke(getUnderLying(), args);
-
-    if (method.getName().equals("lookup")) {
-      checkMojoInstance(result);
+    Object result;
+    try {
+      result = method.invoke(getUnderLying(), args);
+      if (method.getName().equals("lookup")) {
+        checkMojoInstance(result);
+      }
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(e);
+    } catch (BridgeMojoMapperException e) {
+      throw new RuntimeException(e);
     }
+
     return result;
   }
 
