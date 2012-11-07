@@ -12,6 +12,7 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 * CI   : https://sonarplugins.ci.cloudbees.com/job/maven-checks/
 * Sonar: http://nemo.sonarsource.org/dashboard/index/org.codehaus.sonar-plugins:sonar-maven-checks
 * jira : http://jira.codehaus.org/browse/SONARPLUGINS/component/15663
+* snapshots: http://repository-sonarplugins.forge.cloudbees.com/snapshot/org/codehaus/sonar-plugins/sonar-maven-checks
 
 ## mojos integrated ##
 
