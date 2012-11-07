@@ -60,7 +60,7 @@
     <properties>
         <jdk.min.version>1.6</jdk.min.version>
         <mavenVersion>3.0.4</mavenVersion>
-        <sonar.version>3.2.1</sonar.version>
+        <sonar.version>3.3.1</sonar.version>
 
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- this code has a lot of violations, by design -->
@@ -80,6 +80,46 @@
         <dependency>
             <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-plugin-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-testing-harness</artifactId>
+            <version>3.3</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-plugin-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-batch</artifactId>
+            <version>${sonar.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-plugin-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-maven3-plugin</artifactId>
+            <version>${sonar.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-ws-client</artifactId>
+            <version>${sonar.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -187,52 +227,16 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.sonar</groupId>
-            <artifactId>sonar-testing-harness</artifactId>
-            <version>${sonar.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.sonar</groupId>
-                    <artifactId>sonar-plugin-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.sonar</groupId>
-            <artifactId>sonar-batch</artifactId>
-            <version>${sonar.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.sonar</groupId>
-                    <artifactId>sonar-plugin-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.sonar</groupId>
-            <artifactId>sonar-maven3-plugin</artifactId>
-            <version>${sonar.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.sonar</groupId>
-            <artifactId>sonar-ws-client</artifactId>
-            <version>${sonar.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert-core</artifactId>
             <version>2.0M7</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.easytesting</groupId>
@@ -242,7 +246,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>0.11.4</version>
+            <version>0.11.6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -411,7 +415,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>12.0.1</version>
+                <version>13.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -421,12 +425,12 @@
             <dependency>
                 <groupId>javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.4.GA</version>
+                <version>3.12.1.GA</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.2</version>
+                <version>1.7.2</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
@@ -436,7 +440,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.0.1</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.sonar</groupId>
@@ -473,6 +477,11 @@
                 <groupId>org.easytesting</groupId>
                 <artifactId>fest-util</artifactId>
                 <version>1.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.json-simple</groupId>
+                <artifactId>json-simple</artifactId>
+                <version>1.1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
