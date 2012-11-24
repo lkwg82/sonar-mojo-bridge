@@ -30,8 +30,10 @@ import org.sonar.check.Rule;
 
 
 @Rule(
-  key = MissingPluginVersion.KEY, priority = Priority.MINOR, name = MissingPluginVersion.NAME,
-  description = MissingPluginVersion.DESCRIPTION
+    description = MissingPluginVersion.DESCRIPTION,
+    name = MissingPluginVersion.NAME,
+    key = MissingPluginVersion.KEY,
+    priority = Priority.MINOR
 )
 public interface MissingPluginVersion extends MavenRule {
   String KEY = "Missing Plugin Version";

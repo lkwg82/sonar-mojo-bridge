@@ -28,14 +28,16 @@ import org.sonar.check.Rule;
  * User: lars
  */
 @Rule(
-  key = NoMinimumMavenVersion.KEY, priority = Priority.MAJOR, name = NoMinimumMavenVersion.NAME,
-  description = NoMinimumMavenVersion.DESCRIPTION
+    description = NoMinimumMavenVersion.DESCRIPTION,
+    key = NoMinimumMavenVersion.KEY,
+    name = NoMinimumMavenVersion.NAME,
+    priority = Priority.MAJOR
 )
 public interface NoMinimumMavenVersion extends MavenRule {
   String KEY = "NO MINIMUM MAVEN VERSION";
   String NAME = "[POM] found no minimum maven version";
   String DESCRIPTION = "Update the pom.xml to contain <br>" +
-    "    &lt;prerequisites&gt;\n" +
-    "      <maven><!-- minimum version of Maven that the plugin works with --></maven>\n" +
-    "    </prerequisites>";
+      "&lt;prerequisites&gt;<br>" +
+      "&nbsp;&nbsp;&lt;maven&gt;&lt;!-- minimum version of Maven that the plugin works with --&gt;&lt;/maven&gt;<br>" +
+      "&lt;/prerequisites&gt;";
 }

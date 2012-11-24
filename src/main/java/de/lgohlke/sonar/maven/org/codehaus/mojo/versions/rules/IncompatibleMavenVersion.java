@@ -28,12 +28,13 @@ import org.sonar.check.Rule;
  * User: lars
  */
 @Rule(
-  key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR, name = IncompatibleMavenVersion.NAME,
-  description = IncompatibleMavenVersion.DESCRIPTION
+    description = IncompatibleMavenVersion.DESCRIPTION,
+    key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR,
+    name = IncompatibleMavenVersion.NAME
 )
 public interface IncompatibleMavenVersion extends MavenRule {
   String KEY = "INCOMPATIBLE MAVEN VERSION";
   String NAME = "[POM] found incompatible maven version";
   String DESCRIPTION =
-    "the parent pom and the project pom define a pair of incompatible minimum versions";
+      "the parent pom and the project pom define a pair of incompatible minimum versions";
 }
