@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sonar-config>
-    <version><![CDATA[321]]></version>
-    <date><![CDATA[2012-09-25]]></date>
+    <version><![CDATA[335]]></version>
+    <date><![CDATA[2012-11-24]]></date>
     <metrics/>
     <properties>
+        <property>
+            <key><![CDATA[sonar.profile.java]]></key>
+            <value><![CDATA[mine]]></value>
+        </property>
         <property>
             <key><![CDATA[sonar.role.codeviewer.TRK.defaultGroups]]></key>
             <value><![CDATA[sonar-users,Anyone]]></value>
