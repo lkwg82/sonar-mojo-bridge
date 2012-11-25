@@ -45,7 +45,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * User: lars
  */
-//@RequiredArgsConstructor
 @Data
 @Slf4j
 public abstract class MavenBaseSensor<T extends ResultTransferHandler> implements DependsUponMavenPlugin, Sensor {
@@ -66,7 +65,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
     try {
       T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
-      this.mojoMapper = new BridgeMojoMapper<T>(bridgeMojoClass, resultTransferHandler);
+      mojoMapper = new BridgeMojoMapper<T>(bridgeMojoClass, resultTransferHandler);
     } catch (InstantiationException e) {
       throw new IllegalStateException(e);
     } catch (IllegalAccessException e) {

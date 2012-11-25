@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
-@RequiredArgsConstructor
 public class BridgeMojoMapper<T extends ResultTransferHandler> {
   @Getter
   @NonNull
@@ -37,6 +36,11 @@ public class BridgeMojoMapper<T extends ResultTransferHandler> {
   @Getter
   @NonNull
   private final T resultTransferHandler;
+
+  public BridgeMojoMapper(final Class<? extends BridgeMojo<T>> bridgeMojoClass, final T resultTransferHandler) {
+    this.bridgeMojoClass=bridgeMojoClass;
+    this.resultTransferHandler=resultTransferHandler;
+  }
 
   /**
    * injects the {@link ResultTransferHandler} into a {@link BridgeMojo}
