@@ -28,8 +28,8 @@ import org.testng.annotations.Test;
 public class BridgeMojoMapperTest {
   @Data
   @Goal("test")
-  class MyBridgeMojo implements BridgeMojo {
-    ResultTransferHandler resultHandler;
+  class MyBridgeMojo implements BridgeMojo<MyResultTransferHandler> {
+    MyResultTransferHandler resultHandler;
   }
 
   @Data
@@ -38,7 +38,7 @@ public class BridgeMojoMapperTest {
     ResultTransferHandler resultHandler;
   }
 
-  class MyResultTransferHandler implements ResultTransferHandler {
+  public static class MyResultTransferHandler implements ResultTransferHandler {
 
   }
 

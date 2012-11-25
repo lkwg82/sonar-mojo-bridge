@@ -21,11 +21,13 @@ package de.lgohlke.sonar;
 
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayPluginUpdatesSensor;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.UpdateParentPomSensor;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
 import org.sonar.api.SonarPlugin;
 import org.sonar.plugins.xml.language.Xml;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class MavenPlugin extends SonarPlugin {
     return Arrays.asList(
       DisplayPluginUpdatesSensor.class,
       DisplayDependencyUpdatesSensor.class,
-
+      UpdateParentPomSensor.class,
 
       RulesRepository.class,
 

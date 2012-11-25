@@ -17,31 +17,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
-import com.google.common.collect.Lists;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.sonar.api.rules.Rule;
-import org.testng.annotations.Test;
-
-import java.util.List;
-
-import static org.fest.assertions.api.Assertions.assertThat;
+import de.lgohlke.sonar.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
 
-/**
- * User: lgohlke
- * User: lgohlke
- */
-public class RulesRepositoryTest {
-
-  @Test
-  public void shouldHaveCompleteRuleSet() throws Exception {
-    AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-    RulesRepository rulesRepository = new RulesRepository(ruleParser);
-    List<Rule> rules = rulesRepository.createRules();
-
-    assertThat(rules).hasSize(6);
-  }
+@Rule(
+    description = ParentPomVersion.DESCRIPTION,
+    key = ParentPomVersion.KEY,
+    name = ParentPomVersion.NAME,
+    priority = Priority.MINOR
+)
+public interface ParentPomVersion extends MavenRule {
+  String KEY = "Old Parent Pom";
+  String NAME = "[POM] found an newer version for the parent pom";
+  String DESCRIPTION = "a newer version of the parent pom is available";
 }

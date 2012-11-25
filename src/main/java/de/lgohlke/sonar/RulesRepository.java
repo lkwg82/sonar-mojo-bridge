@@ -45,7 +45,7 @@ public class RulesRepository extends RuleRepository {
   @SuppressWarnings("rawtypes")
   private static List<Class> getCheckedClasses() {
     return Arrays.asList((Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
-        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class);
+        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class);
   }
 
 }

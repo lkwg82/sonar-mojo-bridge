@@ -22,9 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.maven.MavenITAbstract;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
-import org.sonar.wsclient.services.Resource;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.ParentPomVersion;
 import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -49,18 +47,31 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
   }
 
   @Test
-  public void shouldHaveSomeViolations() throws Exception {
+  public void shouldHaveHaveOldDependency() throws Exception {
     skipTestIfNotMaven3();
 
     final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
     final String ruleKey = createRuleKey(DependencyVersion.KEY);
 
-
     executor.usePom(pomXml).execute();
 
     List<Violation> violations = getViolationsFor("org.codehaus.sonar-plugins:it-old-dependency", ruleKey);
 
-    // api.showQueryAndResult(violations);
+    assertThat(violations).isNotEmpty();
+    assertThat(violations).are(onlyForFile(pomXml.getName()));
+  }
+
+  @Test
+  public void shouldHaveHaveOldParentPom() throws Exception {
+    skipTestIfNotMaven3();
+
+    final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
+    final String ruleKey = createRuleKey(ParentPomVersion.KEY);
+
+
+    executor.usePom(pomXml).execute();
+
+    List<Violation> violations = getViolationsFor("org.codehaus.sonar-plugins:it-old-dependency", ruleKey);
 
     assertThat(violations).isNotEmpty();
     assertThat(violations).are(onlyForFile(pomXml.getName()));
