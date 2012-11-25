@@ -18,9 +18,9 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 
 * [versions:display-dependency-updates](http://mojo.codehaus.org/versions-maven-plugin/display-dependency-updates-mojo.html)
 * [versions:display-plugin-updates](http://mojo.codehaus.org/versions-maven-plugin/display-plugin-updates-mojo.html)
+* [versions:update-parent](http://mojo.codehaus.org/versions-maven-plugin/update-parent-mojo.html) (just show updates available)
 
 ## mojos/features planned ##
-* [versions:update-parent](http://mojo.codehaus.org/versions-maven-plugin/update-parent-mojo.html) (just show updates available)
 * [enforcer:enforce](http://maven.apache.org/plugins/maven-enforcer-plugin/enforce-mojo.html) ()
 * need some configuration to exclude "org.codehaus.sonar:sonar-batch:3.2.1 has newer version available: 3.3-RC2 (found in Dependencies)"
 
