@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.internals;
 
 import org.apache.maven.plugin.MavenPluginManager;
+import org.fest.reflect.exception.ReflectionError;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,9 +45,9 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
     try {
       return method.invoke(getUnderLying(), args);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw new ReflectionError(e.getMessage(),e);
     } catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
+      throw new ReflectionError(e.getMessage(),e);
     }
   }
 }

@@ -23,9 +23,12 @@ import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.InvocationHandler;
 
-@RequiredArgsConstructor
 public abstract class DynamicProxy<T> implements InvocationHandler {
   private final T underlying;
+
+  public DynamicProxy(final T underlying) {
+    this.underlying = underlying;
+  }
 
   public T getUnderLying() {
     return underlying;

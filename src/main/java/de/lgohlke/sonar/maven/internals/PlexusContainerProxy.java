@@ -24,6 +24,7 @@ import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.BridgeMojoMapperException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
+import org.fest.reflect.exception.ReflectionError;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,11 +57,11 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
         checkMojoInstance(result);
       }
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw new ReflectionError(e.getMessage(),e);
     } catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
+      throw new ReflectionError(e.getMessage(),e);
     } catch (BridgeMojoMapperException e) {
-      throw new RuntimeException(e);
+      throw new ReflectionError(e.getMessage(),e);
     }
 
     return result;
