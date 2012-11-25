@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar;
 
-import com.google.common.collect.Lists;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.testng.annotations.Test;

@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar.maven.internals;
 
-import lombok.RequiredArgsConstructor;
-
 import java.lang.reflect.InvocationHandler;
 
 public abstract class DynamicProxy<T> implements InvocationHandler {

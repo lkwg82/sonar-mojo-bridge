@@ -28,7 +28,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -41,7 +40,7 @@ public class Maven3ExecutionProcessTest {
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
   private Maven3SonarEmbedder embedder;
 
-//  @BeforeTest
+  //  @BeforeTest
   protected void init() throws Exception {
     embedder = Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal("versions:help").setAlternativeMavenHome(MAVEN_HOME).build();
   }

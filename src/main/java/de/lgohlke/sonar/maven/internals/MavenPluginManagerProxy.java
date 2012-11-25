@@ -45,9 +45,9 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
     try {
       return method.invoke(getUnderLying(), args);
     } catch (IllegalAccessException e) {
-      throw new ReflectionError(e.getMessage(),e);
+      throw new ReflectionError(e.getMessage(), e);
     } catch (InvocationTargetException e) {
-      throw new ReflectionError(e.getMessage(),e);
+      throw new ReflectionError(e.getMessage(), e);
     }
   }
 }

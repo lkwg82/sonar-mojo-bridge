@@ -22,7 +22,6 @@ package de.lgohlke.sonar.maven;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -38,8 +37,8 @@ public class BridgeMojoMapper<T extends ResultTransferHandler> {
   private final T resultTransferHandler;
 
   public BridgeMojoMapper(final Class<? extends BridgeMojo<T>> bridgeMojoClass, final T resultTransferHandler) {
-    this.bridgeMojoClass=bridgeMojoClass;
-    this.resultTransferHandler=resultTransferHandler;
+    this.bridgeMojoClass = bridgeMojoClass;
+    this.resultTransferHandler = resultTransferHandler;
   }
 
   /**

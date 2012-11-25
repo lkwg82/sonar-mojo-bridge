@@ -170,7 +170,7 @@ public class Maven3SonarEmbedder {
         checkArgument(m2File.exists(), "not found bin/m2.conf in " + mavenHome);
       } catch (IOException e1) {
         throw new MavenEmbedderException(e1);
-      }catch (IllegalArgumentException e2){
+      } catch (IllegalArgumentException e2) {
         throw new MavenEmbedderException(e2);
       }
 

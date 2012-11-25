@@ -46,7 +46,7 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
 @SensorConfiguration(
     bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
     resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class,
-    mavenBaseIdentifier=BASE_IDENTIFIER
+    mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   @Setter

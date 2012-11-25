@@ -57,11 +57,11 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
         checkMojoInstance(result);
       }
     } catch (IllegalAccessException e) {
-      throw new ReflectionError(e.getMessage(),e);
+      throw new ReflectionError(e.getMessage(), e);
     } catch (InvocationTargetException e) {
-      throw new ReflectionError(e.getMessage(),e);
+      throw new ReflectionError(e.getMessage(), e);
     } catch (BridgeMojoMapperException e) {
-      throw new ReflectionError(e.getMessage(),e);
+      throw new ReflectionError(e.getMessage(), e);
     }
 
     return result;

@@ -109,16 +109,16 @@ public class Maven3SonarEmbedderTest {
 
   @Test
   public void shouldDetectMavenfromRunningInstance() throws MavenEmbedderException {
-    if (System.getenv("_") == null){
+    if (System.getenv("_") == null) {
       throw new SkipException("not running from maven");
     }
-    try{
-    Maven3SonarEmbedder.configure().
-        usePomFile("pom.xml").
-        goal(goal).
-        build();
-    }catch (MavenEmbedderException e){
-      if ( e.getCause() instanceof IllegalArgumentException){
+    try {
+      Maven3SonarEmbedder.configure().
+          usePomFile("pom.xml").
+          goal(goal).
+          build();
+    } catch (MavenEmbedderException e) {
+      if (e.getCause() instanceof IllegalArgumentException) {
         // ok, we fail at the end, because m2.conf was not found
       }
     }

@@ -21,7 +21,10 @@ package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.MavenRule;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * User: lars
