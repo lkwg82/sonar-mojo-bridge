@@ -24,6 +24,11 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 * [enforcer:enforce](http://maven.apache.org/plugins/maven-enforcer-plugin/enforce-mojo.html) ()
 * need some configuration to exclude "org.codehaus.sonar:sonar-batch:3.2.1 has newer version available: 3.3-RC2 (found in Dependencies)"
 
+# limitations #
+
+* so far it does not run with maven2 (not planned to change)
+* so far it is not compatible and maybe disturb SonarRunner analysis runs (known bug by design)
+
 # roadmap #
 
 ## basics ##
