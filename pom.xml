@@ -490,7 +490,7 @@
                 </executions>
                 <configuration>
                     <parallel>classes</parallel>
-                    <threadCount>1</threadCount>
+                    <threadCount>5</threadCount>
                     <systemProperties>
                         <property>
                             <name>jdbcDriver</name>
