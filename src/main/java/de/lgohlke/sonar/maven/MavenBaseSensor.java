@@ -37,9 +37,7 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.batch.MavenPluginExecutor;
-
 import java.util.List;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -48,80 +46,84 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Data
 @Slf4j
 public abstract class MavenBaseSensor<T extends ResultTransferHandler> implements DependsUponMavenPlugin, Sensor {
-  private final RulesProfile rulesProfile;
-  private final MavenPluginExecutor mavenPluginExecutor;
-  private final MavenProject mavenProject;
-  @Getter
-  private BridgeMojoMapper<T> mojoMapper;
+    private final RulesProfile rulesProfile;
+    private final MavenPluginExecutor mavenPluginExecutor;
+    private final MavenProject mavenProject;
+    @Getter
+    private BridgeMojoMapper<T> mojoMapper;
 
-  public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
-    this.rulesProfile = rulesProfile;
-    this.mavenPluginExecutor = mavenPluginExecutor;
-    this.mavenProject = mavenProject;
+    public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
+        this.rulesProfile = rulesProfile;
+        this.mavenPluginExecutor = mavenPluginExecutor;
+        this.mavenProject = mavenProject;
 
-    checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
-    checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
-    SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
-    Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
-    try {
-      T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
-      mojoMapper = new BridgeMojoMapper<T>(bridgeMojoClass, resultTransferHandler);
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  public boolean shouldExecuteOnProject(final Project project) {
-    String prop = (String) project.getProperty(MavenPlugin.ANALYSIS_ENABLED);
-    if (prop == null) {
-      prop = MavenPlugin.DEFAULT;
+        checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
+        checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
+        SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
+        Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
+        try {
+            T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
+            mojoMapper = new BridgeMojoMapper<T>(bridgeMojoClass, resultTransferHandler);
+        } catch (InstantiationException e) {
+            throw new IllegalStateException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    boolean isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
-    if (isMaven3) {
-      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), mojoMapper);
-    } else {
-      MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
+    public boolean shouldExecuteOnProject(final Project project) {
+        String prop = (String) project.getProperty(MavenPlugin.ANALYSIS_ENABLED);
+        if (prop == null) {
+            prop = MavenPlugin.DEFAULT;
+        }
+        boolean activatedByConfiguration = Boolean.parseBoolean(prop);
+        boolean activatedByRules = checkIfAtLeastOneRuleIsEnabled();
+
+        boolean isActivated = activatedByConfiguration && activatedByRules;
+        boolean isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
+
+        if (isMaven3 && isActivated) {
+            MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), mojoMapper);
+        } else {
+            MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
+        }
+
+        return isActivated && isMaven3;
     }
 
-    return Boolean.parseBoolean(prop) && isMaven3 && checkIfAtLeastOneRuleIsEnabled();
-  }
-
-  protected boolean checkIfAtLeastOneRuleIsEnabled() {
-    List<String> associatedRules = getAssociatedRules();
-    for (ActiveRule rule : rulesProfile.getActiveRules()) {
-      Rule innerRule = rule.getRule();
-      if (MavenPlugin.REPOSITORY_KEY.equals(innerRule.getRepositoryKey()) && associatedRules.contains(innerRule.getKey())) {
-        return true;
-      }
+    protected boolean checkIfAtLeastOneRuleIsEnabled() {
+        List<String> associatedRules = getAssociatedRules();
+        for (ActiveRule rule : rulesProfile.getActiveRules()) {
+            Rule innerRule = rule.getRule();
+            if (MavenPlugin.REPOSITORY_KEY.equals(innerRule.getRepositoryKey()) && associatedRules.contains(innerRule.getKey())) {
+                return true;
+            }
+        }
+        return false;
     }
-    return false;
-  }
 
-  private List<String> getAssociatedRules() {
-    List<String> ruleKeys = Lists.newArrayList();
-    for (Class<? extends MavenRule> rule : getClass().getAnnotation(Rules.class).values()) {
-      ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
+    private List<String> getAssociatedRules() {
+        List<String> ruleKeys = Lists.newArrayList();
+        for (Class<? extends MavenRule> rule : getClass().getAnnotation(Rules.class).values()) {
+            ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
+        }
+        return ruleKeys;
     }
-    return ruleKeys;
-  }
 
-  @Override
-  public MavenPluginHandler getMavenPluginHandler(final Project project) {
-    String baseIdentifier = getClass().getAnnotation(SensorConfiguration.class).mavenBaseIdentifier();
-    return MavenPluginHandlerFactory.createHandler(baseIdentifier + mojoMapper.getGoal());
-  }
+    @Override
+    public MavenPluginHandler getMavenPluginHandler(final Project project) {
+        String baseIdentifier = getClass().getAnnotation(SensorConfiguration.class).mavenBaseIdentifier();
+        return MavenPluginHandlerFactory.createHandler(baseIdentifier + mojoMapper.getGoal());
+    }
 
-  public String toString() {
-    return getClass().getSimpleName();
-  }
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 
-  public Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
-    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
-    return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
-  }
+    public Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
+        String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
+        return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
+    }
 
-  public abstract void analyse(final Project project, final SensorContext context);
+    public abstract void analyse(final Project project, final SensorContext context);
 }
