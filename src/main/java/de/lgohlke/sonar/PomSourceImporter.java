@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.AbstractSourceImporter;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.SupportedEnvironment;
 import org.sonar.api.resources.Java;
 import org.sonar.api.resources.ProjectFileSystem;
 
@@ -30,6 +31,7 @@ import java.io.File;
 import java.util.List;
 
 
+@SupportedEnvironment("maven")
 public class PomSourceImporter extends AbstractSourceImporter {
   private final MavenProject project;
 
