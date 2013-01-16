@@ -37,10 +37,9 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.batch.MavenPluginExecutor;
-
 import java.util.List;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * User: lars
@@ -61,6 +60,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
 
     checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
     checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
+
     SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
     Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
     try {
@@ -79,14 +79,21 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
       prop = MavenPlugin.DEFAULT;
     }
 
+    boolean activatedByConfiguration = Boolean.parseBoolean(prop);
+    boolean activatedByRules = checkIfAtLeastOneRuleIsEnabled();
+
+    boolean isActivated = activatedByConfiguration && activatedByRules;
     boolean isMaven3 = MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor);
-    if (isMaven3) {
-      MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), mojoMapper);
-    } else {
-      MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
+
+    if (isActivated) {
+      if (isMaven3) {
+        MavenPluginExecutorProxyInjection.inject(mavenPluginExecutor, getClass().getClassLoader(), mojoMapper);
+      } else {
+        MavenBaseSensor.log.warn("this plugin is incompatible with maven2, run again with maven3");
+      }
     }
 
-    return Boolean.parseBoolean(prop) && isMaven3 && checkIfAtLeastOneRuleIsEnabled();
+    return isActivated && isMaven3;
   }
 
   protected boolean checkIfAtLeastOneRuleIsEnabled() {

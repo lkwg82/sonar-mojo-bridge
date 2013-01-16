@@ -66,7 +66,7 @@ public class DisplayDependencyUpdatesSensorTest {
 
   private static class TestSensorContext extends DefaultSensorContext {
     @Getter
-    List<Violation> violations = Lists.newArrayList();
+    private List<Violation> violations = Lists.newArrayList();
 
     public TestSensorContext() {
       super(null, null);

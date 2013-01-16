@@ -85,7 +85,7 @@ public class Maven3ExecutionProcessTest {
 
     MyResultTransferHandler resultTransferHandler1 = (MyResultTransferHandler) bridgeMojoMapper1.getResultTransferHandler();
     MyResultTransferHandler resultTransferHandler2 = (MyResultTransferHandler) bridgeMojoMapper2.getResultTransferHandler();
-    assertThat(resultTransferHandler1.isPing()).isTrue();
-    assertThat(resultTransferHandler2.isPing()).isFalse();
+    assertThat(resultTransferHandler2.isPing()).isTrue();
+    assertThat(resultTransferHandler1.isPing()).isFalse();
   }
 }

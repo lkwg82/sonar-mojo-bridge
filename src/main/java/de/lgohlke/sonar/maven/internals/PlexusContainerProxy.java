@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar.maven.internals;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.BridgeMojoMapperException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
@@ -28,19 +28,22 @@ import org.fest.reflect.exception.ReflectionError;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Set;
 
 import static org.fest.reflect.core.Reflection.field;
 
 
 public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
-  private List<MojoInjection> injections = Lists.newLinkedList();
+  private Set<MojoInjection> injections = Sets.newHashSet();
 
   public PlexusContainerProxy(final T underlying) {
     super(underlying);
   }
 
   public void addInjection(MojoInjection injection) {
+    if (injections.contains(injection)) {
+      injections.remove(injection);
+    }
     injections.add(injection);
   }
 

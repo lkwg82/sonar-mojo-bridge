@@ -49,4 +49,27 @@ public class MojoInjection {
   public String toString() {
     return Objects.toStringHelper(this).add("bridge mojo", getBridgeMojoClass()).add("goal", getGoal()).toString();
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof MojoInjection)) {
+      return false;
+    }
+
+    MojoInjection that = (MojoInjection) o;
+
+    if (!bridgeMojoMapper.equals(that.bridgeMojoMapper)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return bridgeMojoMapper.hashCode();
+  }
 }
