@@ -39,8 +39,8 @@ like to have some checks on a maven project, represented by its pom.xml (only ma
 * add comprehensive integration test (done)
 * <del>check way to do this with maven2</del>
 * <del>publish two artifacts for maven2 and maven3 injection</del>
-* check remote run, on teamcity cluster (in progress)
-* publish, according to http://docs.codehaus.org/display/SONAR/Plugin+Hosting (in progress)
+* check remote run, on teamcity cluster (done)
+* publish, according to http://docs.codehaus.org/display/SONAR/Plugin+Hosting (on hold, not accepted due to use of maven plugins inside plugin, see full discussion http://sonar.markmail.org/message/5xw7huebckrsopp7?q=list:org%2Ecodehaus%2Esonar%2Edev+maven-checks)
 * try using the Mojos directly (done)
 
 # ideas #
