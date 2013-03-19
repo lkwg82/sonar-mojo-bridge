@@ -23,6 +23,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import org.apache.maven.project.MavenProject;
+import org.sonar.api.config.PropertyDefinitions;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Violation;
@@ -38,7 +40,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 /**
  * User: lgohlke
  */
@@ -48,7 +49,11 @@ public class DisplayDependencyUpdatesSensorTest {
     MavenProject mavenProject = mock(MavenProject.class);
     when(mavenProject.getFile()).thenReturn(new File("."));
 
-    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject);
+    PropertyDefinitions definitions = new PropertyDefinitions();
+    definitions.addComponent(DisplayDependencyUpdatesSensor.class);
+
+    Settings settings = Settings.createForComponent(DisplayDependencyUpdatesSensor.class);
+    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject, settings);
 
     Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
     List<ArtifactUpdate> updateList = Lists.newArrayList(mock(ArtifactUpdate.class));

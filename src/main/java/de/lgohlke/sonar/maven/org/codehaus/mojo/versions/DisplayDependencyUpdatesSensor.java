@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
 import de.lgohlke.sonar.maven.Rules;
@@ -27,7 +28,11 @@ import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.project.MavenProject;
+import org.sonar.api.Properties;
+import org.sonar.api.Property;
+import org.sonar.api.PropertyType;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
@@ -41,14 +46,43 @@ import java.util.Map;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-
 @Rules(values = {DependencyVersion.class})
 @SensorConfiguration(
     bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
     resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class,
     mavenBaseIdentifier = BASE_IDENTIFIER
 )
+
+@Properties(
+    {
+        @Property(
+            key = DisplayDependencyUpdatesSensor.WHITELIST_KEY,
+            name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
+            description = "this regex controls whitelisting",
+            defaultValue = ".*",
+            global = true,
+            project = true,
+            type = PropertyType.REGULAR_EXPRESSION
+        ),
+        @Property(
+            key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
+            name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
+            description = "this regex controls blacklisting",
+            defaultValue = "",
+            global = true,
+            project = true,
+            type = PropertyType.REGULAR_EXPRESSION
+        )
+    }
+)
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
+  static final String SENSOR_KEY = MavenPlugin.PLUGIN_KEY + ".dependencyUpdates";
+  static final String BASE_NAME = "DependencyUpdates |";
+  static final String WHITELIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".whitelist";
+  static final String BLACKLIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".blacklist";
+
+  private final ArtifactFilter filter;
+
   @Setter
   @Getter
   public static class DisplayDependencyUpdatesResultHandler implements ResultTransferHandler {
@@ -57,8 +91,11 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
 
   public DisplayDependencyUpdatesSensor(RulesProfile rulesProfile,
                                         MavenPluginExecutor mavenPluginExecutor,
-                                        MavenProject mavenProject) {
+                                        MavenProject mavenProject,
+                                        Settings settings) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
+
+    filter = ArtifactFilterFactory.createFilter(settings, WHITELIST_KEY, BLACKLIST_KEY);
   }
 
   @Override
@@ -73,15 +110,16 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
       String section = entry.getKey();
       List<ArtifactUpdate> updates = entry.getValue();
       for (ArtifactUpdate update : updates) {
-        Violation violation = Violation.create(rule, file);
-        violation.setLineId(1);
+        if (filter.acceptArtifact(update.toString())) {
+          Violation violation = Violation.create(rule, file);
+          violation.setLineId(1);
 
-        String hint = "(found in " + section + ")";
-        violation.setMessage(update.toString() + " " + hint);
-        context.saveViolation(violation);
+          String hint = "(found in " + section + ")";
+          violation.setMessage(update.toString() + " " + hint);
+          context.saveViolation(violation);
+        }
       }
     }
   }
-
 
 }
