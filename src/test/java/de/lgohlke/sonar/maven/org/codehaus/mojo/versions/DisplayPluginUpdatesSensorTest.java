@@ -29,6 +29,7 @@ import lombok.Getter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.fest.assertions.core.Condition;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Violation;
@@ -59,7 +60,9 @@ public class DisplayPluginUpdatesSensorTest {
     when(mavenProject.getFile()).thenReturn(new File("."));
 
     context = new TestSensorContext();
-    sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject);
+    Settings settings = Settings.createForComponent(DisplayPluginUpdatesSensor.class);
+    sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject,settings);
+
     resultTransferHandler = sensor.getMojoMapper().getResultTransferHandler();
     resultTransferHandler.setMissingVersionPlugins(new ArrayList<Dependency>());
     resultTransferHandler.setIncompatibleParentAndProjectMavenVersion(null);
