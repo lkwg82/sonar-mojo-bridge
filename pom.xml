@@ -61,6 +61,7 @@
         <jdk.min.version>1.6</jdk.min.version>
         <mavenVersion>3.0.4</mavenVersion>
         <sonar.version>3.4.1</sonar.version>
+        <sonar-plugin-api.version>3.4</sonar-plugin-api.version>
 
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- this code has a lot of violations, by design -->
@@ -280,7 +281,7 @@
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-plugin-api</artifactId>
                 <!-- minimum version supported -->
-                <version>3.2</version>
+                <version>${sonar-plugin-api.version}</version>
             </dependency>
 
             <dependency>
