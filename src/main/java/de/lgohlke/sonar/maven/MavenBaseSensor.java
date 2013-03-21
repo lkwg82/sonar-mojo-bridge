@@ -36,8 +36,10 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
-import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
+
 import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 

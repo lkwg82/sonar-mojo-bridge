@@ -34,7 +34,7 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
-import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.check.Rule;
 import org.testng.annotations.Test;
 

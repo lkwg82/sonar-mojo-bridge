@@ -23,7 +23,7 @@ import de.lgohlke.sonar.maven.BridgeMojoMapper;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.codehaus.plexus.PlexusContainer;
-import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.codehaus.sonar-plugins</groupId>
         <artifactId>parent</artifactId>
-        <version>14</version>
+        <version>16</version>
     </parent>
 
     <artifactId>sonar-maven-checks</artifactId>
@@ -60,8 +60,8 @@
     <properties>
         <jdk.min.version>1.6</jdk.min.version>
         <mavenVersion>3.0.4</mavenVersion>
-        <sonar.version>3.4.1</sonar.version>
-        <sonar-plugin-api.version>3.4</sonar-plugin-api.version>
+        <sonar.version>3.5</sonar.version>
+        <sonar-plugin-api.version>3.5</sonar-plugin-api.version>
 
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- this code has a lot of violations, by design -->

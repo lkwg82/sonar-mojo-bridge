@@ -38,7 +38,7 @@ import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.check.Rule;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.sonatype.aether.RepositorySystemSession;

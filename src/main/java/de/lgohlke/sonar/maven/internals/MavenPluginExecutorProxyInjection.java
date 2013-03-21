@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven.internals;
 
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
-import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
 

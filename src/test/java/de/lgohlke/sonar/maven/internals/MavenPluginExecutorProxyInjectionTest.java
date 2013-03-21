@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar.maven.internals;
 
-import org.sonar.batch.MavenPluginExecutor;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.Test;
 
