@@ -85,7 +85,7 @@
         <dependency>
             <groupId>org.codehaus.sonar-plugins</groupId>
             <artifactId>sonar-xml-plugin</artifactId>
-            <version>0.2</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
@@ -235,13 +235,13 @@
         <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert-core</artifactId>
-            <version>2.0M7</version>
+            <version>2.0M10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-reflect</artifactId>
-            <version>1.4</version>
+            <version>1.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -332,7 +332,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>3.0.9</version>
+                <version>3.0.10</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -342,7 +342,7 @@
             <dependency>
                 <groupId>org.sonatype.sisu</groupId>
                 <artifactId>sisu-inject-plexus</artifactId>
-                <version>2.3.2</version>
+                <version>2.3.3</version>
             </dependency>
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
@@ -352,7 +352,7 @@
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-provider-api</artifactId>
-                <version>2.3</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>org.sonatype.aether</groupId>
