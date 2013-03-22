@@ -20,14 +20,13 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import org.testng.annotations.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * User: lars
  */
 public class ArtifactFilterTest {
-
   @Test
   public void testWhitelist() throws Exception {
     ArtifactFilter filter = new ArtifactFilter(".*", "");
@@ -42,6 +41,17 @@ public class ArtifactFilterTest {
     String identifier = "org.apache.karaf.features:spring:3.0.0.RC1";
 
     assertThat(filter.acceptArtifact(identifier)).isFalse();
+  }
+
+  @Test
+  public void testBlacklist2() throws Exception {
+    ArtifactFilter filter = new ArtifactFilter(".*", "[^:].*?:[^:].*?:[^:].*RC.*");
+
+    String identifierPositive = "org.apache.karaf.RC:spring:3.0.0.M1";
+    String identifierNegative = "org.apache.karaf.xy:spring:3.0.0.RC1";
+
+    assertThat(filter.acceptArtifact(identifierPositive)).isTrue();
+    assertThat(filter.acceptArtifact(identifierNegative)).isFalse();
   }
 
   @Test
