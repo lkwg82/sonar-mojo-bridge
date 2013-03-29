@@ -29,7 +29,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class ArtifactFilterTest {
   @Test
   public void testWhitelist() throws Exception {
-    ArtifactFilter filter = new ArtifactFilter(".*", "");
+    ArtifactFilter filter = new ArtifactFilter(".*");
     String identifier = "org.apache.karaf.features:spring:3.0.0.RC1";
 
     assertThat(filter.acceptArtifact(identifier)).isTrue();
@@ -63,15 +63,8 @@ public class ArtifactFilterTest {
   }
 
   @Test
-  public void testDefaultFilterSettingsAllowAllDenyNothing() {
-    ArtifactFilter filter = new ArtifactFilter();
-
-    assertThat(filter.acceptArtifact("org.apache.karaf.features:spring:3.0.0.RC1")).isTrue();
-  }
-
-  @Test
   public void testBlacklistGroup() {
-    ArtifactFilter filter = new ArtifactFilter();
+    ArtifactFilter filter = new ArtifactFilter(".*");
     filter.
         addBlacklistRegex("[^:]+spring[^:]+:.*").         // spring as pattern for groupId
         addBlacklistRegex("[^:]+:[^:]*spring[^:]*:.*");   // spring as pattern for artifactId
