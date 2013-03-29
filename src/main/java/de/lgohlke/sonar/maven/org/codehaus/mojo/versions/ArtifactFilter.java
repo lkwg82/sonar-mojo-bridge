@@ -63,9 +63,9 @@ public class ArtifactFilter {
     boolean blacklistMatches = groupIdArtifactIdVersion.matches(blacklistRegex);
 
     log.debug("testing \"{}\"", groupIdArtifactIdVersion);
-    log.debug("\t whitelist regex: {}", whitelistRegex);
+    log.debug("\t whitelist regex: \"{}\"", whitelistRegex);
     log.debug("\t matches whitelist: {}", whitelistMatches);
-    log.debug("\t blacklist regex: {}", blacklistRegex);
+    log.debug("\t blacklist regex: \"{}\"", blacklistRegex);
     log.debug("\t matches blacklist: {}", blacklistMatches);
 
     return whitelistMatches && !blacklistMatches;
