@@ -19,17 +19,57 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import lombok.RequiredArgsConstructor;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import org.fest.util.Preconditions;
+
+import java.util.List;
 
 /**
  * User: lars
  */
-@RequiredArgsConstructor
 public class ArtifactFilter {
-  private final String whitelistRegex;
-  private final String blacklistRegex;
+
+  private final List<String> whitelistRegexList = Lists.newArrayList();
+  private final List<String> blacklistRegexList = Lists.newArrayList();
+  private String whitelistRegex;
+  private String blacklistRegex;
+
+  public ArtifactFilter() {
+    whitelistRegexList.add(".*");
+  }
+
+  public ArtifactFilter(String whiteListRegex, String blackListRegex) {
+    whitelistRegexList.add(whiteListRegex);
+    blacklistRegexList.add(blackListRegex);
+  }
 
   public boolean acceptArtifact(String groupIdArtifactIdVersion) {
+    if (whitelistRegex == null) {
+      whitelistRegex = buildRegex(whitelistRegexList);
+    }
+    if (blacklistRegex == null) {
+      blacklistRegex = buildRegex(blacklistRegexList);
+    }
+
     return groupIdArtifactIdVersion.matches(whitelistRegex) && !groupIdArtifactIdVersion.matches(blacklistRegex);
+  }
+
+  private String buildRegex(List<String> regexList) {
+    return regexList.isEmpty() ? "" : "(" + Joiner.on(")|(").join(regexList) + ")";
+  }
+
+  public ArtifactFilter addWhitelistRegex(String regex) {
+    Preconditions.checkNotNull(regex);
+    whitelistRegexList.add(regex);
+    whitelistRegex = null;
+    return this;
+  }
+
+  public ArtifactFilter addBlacklistRegex(String regex) {
+    Preconditions.checkNotNull(regex);
+    blacklistRegexList.add(regex);
+    blacklistRegex = null;
+    return this;
   }
 }
