@@ -22,7 +22,9 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.config.Settings;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * User: lars
@@ -36,7 +38,7 @@ public class ArtifactFilterFactory {
     ArtifactFilter filter = new ArtifactFilter();
 
     String whiteListRegex = settings.getString(whitelistKey);
-    if (!whitelistKey.isEmpty()){
+    if (!whitelistKey.isEmpty()) {
       filter.addWhitelistRegex(whiteListRegex);
     }
 
@@ -46,7 +48,7 @@ public class ArtifactFilterFactory {
       blackListRegex = definition.getDefaultValue();
     }
 
-    if (!blackListRegex.isEmpty()){
+    if (!blackListRegex.isEmpty()) {
       filter.addBlacklistRegex(blackListRegex);
     }
 
@@ -70,5 +72,27 @@ public class ArtifactFilterFactory {
       }
     }
     return filter;
+  }
+
+  public static ArtifactFilter createFilterFromMerge(ArtifactFilter... filters) {
+    ArtifactFilter mergedFilter = new ArtifactFilter();
+
+    Set<String> whiteListRegexSet = new HashSet<String>();
+    Set<String> blackListRegexSet = new HashSet<String>();
+
+    for (ArtifactFilter f : filters) {
+      whiteListRegexSet.addAll(f.getWhitelistRegexList());
+      blackListRegexSet.addAll(f.getBlacklistRegexList());
+    }
+
+    for (String regex : whiteListRegexSet) {
+      mergedFilter.addWhitelistRegex(regex);
+    }
+
+    for (String regex : blackListRegexSet) {
+      mergedFilter.addBlacklistRegex(regex);
+    }
+
+    return mergedFilter;
   }
 }

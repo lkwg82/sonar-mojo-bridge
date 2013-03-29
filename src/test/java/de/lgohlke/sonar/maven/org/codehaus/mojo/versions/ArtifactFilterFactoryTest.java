@@ -80,4 +80,15 @@ public class ArtifactFilterFactoryTest {
     assertThat(filter.getWhitelistRegexList()).hasSize(2);
     assertThat(filter.getBlacklistRegexList()).isEmpty();
   }
+
+  @Test
+  public void testMergeOfFilters() throws Exception {
+    ArtifactFilter filter1 = new ArtifactFilter(".*");
+    ArtifactFilter filter2 = new ArtifactFilter(".*", "x");
+
+    ArtifactFilter filterFromMerge = ArtifactFilterFactory.createFilterFromMerge(filter1, filter2);
+
+    assertThat(filterFromMerge.getWhitelistRegexList()).hasSize(1);
+    assertThat(filterFromMerge.getBlacklistRegexList()).hasSize(1);
+  }
 }
