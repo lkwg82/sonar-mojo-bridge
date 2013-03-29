@@ -48,18 +48,25 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
 @Properties(
   {
     @Property(
-      key = DisplayDependencyUpdatesSensor.WHITELIST_KEY, name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
+            key = DisplayDependencyUpdatesSensor.WHITELIST_KEY,
+            name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
       description = "this regex controls whitelisting <br>" +
         "<i>examples:</i><br/>" +
         "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-        "wildcard <tt>org.apache..*?:spring:.*</tt><br/>", defaultValue = ".*", global = true, project = true, type = PropertyType.REGULAR_EXPRESSION
+                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>", defaultValue = ".*",
+            global = false,
+            project = true,
+            type = PropertyType.STRING
     ),
     @Property(
       key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
       name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
       description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
         "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
-      defaultValue = "", global = true, project = true, type = PropertyType.REGULAR_EXPRESSION
+            defaultValue = "",
+            global = false,
+            project = true,
+            type = PropertyType.STRING
     )
   }
 )
