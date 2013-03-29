@@ -40,40 +40,41 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
+
 import java.util.List;
 import java.util.Map;
+
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-
 @Properties(
-  {
-    @Property(
+    {
+        @Property(
             key = DisplayDependencyUpdatesSensor.WHITELIST_KEY,
             name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
-      description = "this regex controls whitelisting <br>" +
-        "<i>examples:</i><br/>" +
-        "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
+            description = "this regex controls whitelisting <br>" +
+                "<i>examples:</i><br/>" +
+                "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
                 "wildcard <tt>org.apache..*?:spring:.*</tt><br/>", defaultValue = ".*",
             global = false,
             project = true,
             type = PropertyType.STRING
-    ),
-    @Property(
-      key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
-      name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
-      description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
-        "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
+        ),
+        @Property(
+            key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
+            name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
+            description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
+                "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
             defaultValue = "",
             global = false,
             project = true,
             type = PropertyType.STRING
-    )
-  }
+        )
+    }
 )
 @Rules(values = { DependencyVersion.class })
 @SensorConfiguration(
-  bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
-  resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
+    bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
+    resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   static final String SENSOR_KEY = MavenPlugin.PLUGIN_KEY + ".dependencyUpdates";
@@ -95,7 +96,11 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
                                         Settings settings) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
 
-    filter = ArtifactFilterFactory.createFilter(settings, WHITELIST_KEY, BLACKLIST_KEY);
+    Map<String, String> mappedParams = createRulePropertiesMap(DependencyVersion.class);
+    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST, DependencyVersion.RULE_PROPERTY_BLACKLIST);
+    ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
+
+    filter = ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
   }
 
   @Override
@@ -121,5 +126,4 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
       }
     }
   }
-
 }
