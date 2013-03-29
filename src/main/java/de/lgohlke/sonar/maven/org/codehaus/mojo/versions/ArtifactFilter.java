@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.fest.util.Preconditions;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 /**
  * User: lars
  */
+@Slf4j
 public class ArtifactFilter {
 
   private final List<String> whitelistRegexList = Lists.newArrayList();
@@ -52,7 +54,16 @@ public class ArtifactFilter {
       blacklistRegex = buildRegex(blacklistRegexList);
     }
 
-    return groupIdArtifactIdVersion.matches(whitelistRegex) && !groupIdArtifactIdVersion.matches(blacklistRegex);
+    boolean whitelistMatches = groupIdArtifactIdVersion.matches(whitelistRegex);
+    boolean blacklistMatches = groupIdArtifactIdVersion.matches(blacklistRegex);
+
+    log.debug("testing \"{}\"", groupIdArtifactIdVersion);
+    log.debug("\t whitelist regex: {}", whitelistRegex);
+    log.debug("\t matches whitelist: {}", whitelistMatches);
+    log.debug("\t blacklist regex: {}", blacklistRegex);
+    log.debug("\t matches blacklist: {}", blacklistMatches);
+
+    return whitelistMatches && !blacklistMatches;
   }
 
   private String buildRegex(List<String> regexList) {
@@ -61,6 +72,7 @@ public class ArtifactFilter {
 
   public ArtifactFilter addWhitelistRegex(String regex) {
     Preconditions.checkNotNull(regex);
+    log.debug("adding whitelist regex {}", regex);
     whitelistRegexList.add(regex);
     whitelistRegex = null;
     return this;
@@ -68,6 +80,7 @@ public class ArtifactFilter {
 
   public ArtifactFilter addBlacklistRegex(String regex) {
     Preconditions.checkNotNull(regex);
+    log.debug("adding blacklist regex {}", regex);
     blacklistRegexList.add(regex);
     blacklistRegex = null;
     return this;
