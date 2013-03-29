@@ -22,19 +22,53 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.config.Settings;
 
+import java.util.Map;
+
 /**
  * User: lars
  */
 public class ArtifactFilterFactory {
 
-  public static ArtifactFilter createFilter(Settings settings, String whitelistKey, String blacklistKey) {
+  private static final String NEWLINE = "\\r?\\n";
+
+  public static ArtifactFilter createFilterFromSettings(Settings settings, String whitelistKey, String blacklistKey) {
+
+    ArtifactFilter filter = new ArtifactFilter();
 
     String whiteListRegex = settings.getString(whitelistKey);
+    if (!whitelistKey.isEmpty()){
+      filter.addWhitelistRegex(whiteListRegex);
+    }
+
     String blackListRegex = settings.getString(blacklistKey);
     if (blackListRegex == null) {
       PropertyDefinition definition = settings.getDefinitions().get(blacklistKey);
       blackListRegex = definition.getDefaultValue();
     }
-    return new ArtifactFilter(whiteListRegex, blackListRegex);
+
+    if (!blackListRegex.isEmpty()){
+      filter.addBlacklistRegex(blackListRegex);
+    }
+
+    return filter;
+  }
+
+  public static ArtifactFilter createFilterFromMap(Map<String, String> mappedParams, String whitelistKey, String blacklistKey) {
+    ArtifactFilter filter = new ArtifactFilter();
+
+    for (String regex : mappedParams.get(whitelistKey).split(NEWLINE)) {
+      // filter empty lines
+      if (!regex.isEmpty()) {
+        filter.addWhitelistRegex(regex);
+      }
+    }
+
+    for (String regex : mappedParams.get(blacklistKey).split(NEWLINE)) {
+      // filter empty lines
+      if (!regex.isEmpty()) {
+        filter.addBlacklistRegex(regex);
+      }
+    }
+    return filter;
   }
 }
