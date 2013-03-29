@@ -102,7 +102,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
                                     MavenProject mavenProject,
                                     Settings settings) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
-    filter = ArtifactFilterFactory.createFilter(settings, WHITELIST_KEY, BLACKLIST_KEY);
+    filter = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
   }
 
   @Override
