@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.config.Settings;
@@ -48,11 +49,19 @@ public class ArtifactFilterFactory {
     if (blackListRegex == null) {
       PropertyDefinition definition = settings.getDefinitions().get(blacklistKey);
       blackListRegex = definition.getDefaultValue();
+
+      XStream xstream = new XStream();
+      xstream.setClassLoader(ArtifactFilterFactory.class.getClassLoader());
+      String xml = xstream.toXML(definition);
+
+      log.debug("blacklist definition {} ",xml );
     }
 
     if (blackListRegex.length() > 0) {
       filter.addBlacklistRegex(blackListRegex);
     }
+
+    log.debug("created filter from settings: {}",filter);
 
     return filter;
   }
@@ -82,6 +91,8 @@ public class ArtifactFilterFactory {
       log.warn("could not find key \"{}\"", whitelistKey);
     }
 
+    log.debug("created filter from map: {}",filter);
+
     return filter;
   }
 
@@ -92,6 +103,9 @@ public class ArtifactFilterFactory {
     Set<String> blackListRegexSet = new HashSet<String>();
 
     for (ArtifactFilter f : filters) {
+
+      log.debug("use filter for merge : {}",f);
+
       whiteListRegexSet.addAll(f.getWhitelistRegexList());
       blackListRegexSet.addAll(f.getBlacklistRegexList());
     }
@@ -103,6 +117,8 @@ public class ArtifactFilterFactory {
     for (String regex : blackListRegexSet) {
       mergedFilter.addBlacklistRegex(regex);
     }
+
+    log.debug("created filter from filters: {}",mergedFilter);
 
     return mergedFilter;
   }
