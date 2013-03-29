@@ -22,7 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 import de.lgohlke.sonar.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-
+import org.sonar.check.RuleProperty;
 
 @Rule(
     description = DependencyVersion.DESCRIPTION,
@@ -30,8 +30,16 @@ import org.sonar.check.Rule;
     name = DependencyVersion.NAME,
     priority = Priority.MINOR
 )
-public interface DependencyVersion extends MavenRule {
-  String KEY = "Old Dependency";
-  String NAME = "[POM] found an newer version for a dependency in use";
-  String DESCRIPTION = "this dependency has a newer version available";
+public class DependencyVersion implements MavenRule {
+  public static final String KEY = "Old Dependency";
+  static final String NAME = "[POM] found an newer version for a dependency in use";
+  static final String DESCRIPTION = "this dependency has a newer version available";
+
+  public static final String RULE_PROPERTY_WHITELIST = "whitelist";
+  @RuleProperty(key = RULE_PROPERTY_WHITELIST, defaultValue = ".*", type = "TEXT")
+  private String whiteList;
+
+  public static final String RULE_PROPERTY_BLACKLIST = "blacklist";
+  @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "", type = "TEXT")
+  private String blackList;
 }

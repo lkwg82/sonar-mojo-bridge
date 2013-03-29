@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
@@ -35,10 +36,12 @@ import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -132,4 +135,17 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   }
 
   public abstract void analyse(final Project project, final SensorContext context);
+
+  protected Map<String, String> createRulePropertiesMap(Class<? extends MavenRule> ruleClass) {
+    Map<String, String> mappedParams = Maps.newHashMap();
+    String ruleKey = createRuleFrom(ruleClass).getKey();
+    ActiveRule activeRuleByConfigKey = getRulesProfile().getActiveRuleByConfigKey(MavenPlugin.REPOSITORY_KEY, ruleKey);
+    if (null != activeRuleByConfigKey) {
+      List<ActiveRuleParam> activeRuleParams = activeRuleByConfigKey.getActiveRuleParams();
+      for (ActiveRuleParam activeRuleParam : activeRuleParams) {
+        mappedParams.put(activeRuleParam.getKey(), activeRuleParam.getValue());
+      }
+    }
+    return mappedParams;
+  }
 }
