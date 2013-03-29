@@ -99,22 +99,21 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   }
 
   protected boolean checkIfAtLeastOneRuleIsEnabled() {
-    List<String> associatedRules = getAssociatedRules();
-    for (ActiveRule rule : rulesProfile.getActiveRules()) {
-      Rule innerRule = rule.getRule();
-      if (MavenPlugin.REPOSITORY_KEY.equals(innerRule.getRepositoryKey()) && associatedRules.contains(innerRule.getKey())) {
+    List<Rule> associatedRules = getAssociatedRules();
+    for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
+      if ( associatedRules.contains(activeRule.getRule())){
         return true;
       }
     }
     return false;
   }
 
-  private List<String> getAssociatedRules() {
-    List<String> ruleKeys = Lists.newArrayList();
-    for (Class<? extends MavenRule> rule : getClass().getAnnotation(Rules.class).values()) {
-      ruleKeys.add(rule.getAnnotation(org.sonar.check.Rule.class).key());
+  private List<Rule> getAssociatedRules() {
+    List<Rule> rules = Lists.newArrayList();
+    for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
+      rules.add(createRuleFrom(ruleClass));
     }
-    return ruleKeys;
+    return rules;
   }
 
   @Override
@@ -127,7 +126,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     return getClass().getSimpleName();
   }
 
-  public Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
+  protected static Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
     String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
     return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
   }
