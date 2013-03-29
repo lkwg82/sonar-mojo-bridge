@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.config.Settings;
 
@@ -29,6 +30,7 @@ import java.util.Set;
 /**
  * User: lars
  */
+@Slf4j
 public class ArtifactFilterFactory {
 
   private static final String NEWLINE = "\\r?\\n";
@@ -38,7 +40,7 @@ public class ArtifactFilterFactory {
     ArtifactFilter filter = new ArtifactFilter();
 
     String whiteListRegex = settings.getString(whitelistKey);
-    if (!whitelistKey.isEmpty()) {
+    if (whitelistKey.length() > 0) {
       filter.addWhitelistRegex(whiteListRegex);
     }
 
@@ -48,7 +50,7 @@ public class ArtifactFilterFactory {
       blackListRegex = definition.getDefaultValue();
     }
 
-    if (!blackListRegex.isEmpty()) {
+    if (blackListRegex.length() > 0) {
       filter.addBlacklistRegex(blackListRegex);
     }
 
@@ -58,19 +60,28 @@ public class ArtifactFilterFactory {
   public static ArtifactFilter createFilterFromMap(Map<String, String> mappedParams, String whitelistKey, String blacklistKey) {
     ArtifactFilter filter = new ArtifactFilter();
 
-    for (String regex : mappedParams.get(whitelistKey).split(NEWLINE)) {
-      // filter empty lines
-      if (!regex.isEmpty()) {
-        filter.addWhitelistRegex(regex);
+    if (mappedParams.containsKey(whitelistKey)) {
+      for (String regex : mappedParams.get(whitelistKey).split(NEWLINE)) {
+        // filter empty lines
+        if (regex.length() > 0) {
+          filter.addWhitelistRegex(regex);
+        }
       }
+    } else {
+      log.warn("could not find key \"{}\"", whitelistKey);
     }
 
-    for (String regex : mappedParams.get(blacklistKey).split(NEWLINE)) {
-      // filter empty lines
-      if (!regex.isEmpty()) {
-        filter.addBlacklistRegex(regex);
+    if (mappedParams.containsKey(blacklistKey)) {
+      for (String regex : mappedParams.get(blacklistKey).split(NEWLINE)) {
+        // filter empty lines
+        if (regex.length() > 0) {
+          filter.addBlacklistRegex(regex);
+        }
       }
+    } else {
+      log.warn("could not find key \"{}\"", whitelistKey);
     }
+
     return filter;
   }
 
