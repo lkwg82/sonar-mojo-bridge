@@ -52,12 +52,7 @@ public class ArtifactFilter {
   }
 
   public boolean acceptArtifact(String groupIdArtifactIdVersion) {
-    if (whitelistRegex == null) {
-      whitelistRegex = buildRegex(whitelistRegexList);
-    }
-    if (blacklistRegex == null) {
-      blacklistRegex = buildRegex(blacklistRegexList);
-    }
+    buildRegexIfNeeded();
 
     boolean whitelistMatches = groupIdArtifactIdVersion.matches(whitelistRegex);
     boolean blacklistMatches = groupIdArtifactIdVersion.matches(blacklistRegex);
@@ -69,6 +64,15 @@ public class ArtifactFilter {
     log.debug("\t matches blacklist: {}", blacklistMatches);
 
     return whitelistMatches && !blacklistMatches;
+  }
+
+  private void buildRegexIfNeeded() {
+    if (whitelistRegex == null) {
+      whitelistRegex = buildRegex(whitelistRegexList);
+    }
+    if (blacklistRegex == null) {
+      blacklistRegex = buildRegex(blacklistRegexList);
+    }
   }
 
   private String buildRegex(List<String> regexList) {
@@ -89,5 +93,15 @@ public class ArtifactFilter {
     blacklistRegexList.add(regex);
     blacklistRegex = null;
     return this;
+  }
+
+  public String toString() {
+    buildRegexIfNeeded();
+    StringBuilder builder = new StringBuilder();
+
+    builder.append(getClass().getSimpleName()).append("{\n")
+        .append("\t whitelist : ").append(whitelistRegex).append("\n")
+        .append("\t blacklist : ").append(blacklistRegex).append("\n}");
+    return builder.toString();
   }
 }
