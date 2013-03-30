@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.collect.Lists;
-import de.lgohlke.sonar.MavenRule;
+import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;

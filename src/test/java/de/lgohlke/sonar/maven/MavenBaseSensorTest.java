@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.MavenPlugin;
-import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.Maven3ExecutionProcessTest;
 import lombok.Getter;
 import lombok.Setter;

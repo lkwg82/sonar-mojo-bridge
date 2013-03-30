@@ -22,7 +22,6 @@ package de.lgohlke.sonar.maven;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.MavenPlugin;
-import de.lgohlke.sonar.MavenRule;
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
 import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
 import lombok.Data;

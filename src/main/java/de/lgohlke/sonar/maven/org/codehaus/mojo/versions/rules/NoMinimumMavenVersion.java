@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
-import de.lgohlke.sonar.MavenRule;
+import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
