@@ -22,7 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 import de.lgohlke.sonar.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
-
+import org.sonar.check.RuleProperty;
 
 @Rule(
     description = PluginVersion.DESCRIPTION,
@@ -30,8 +30,16 @@ import org.sonar.check.Rule;
     name = PluginVersion.NAME,
     priority = Priority.MINOR
 )
-public interface PluginVersion extends MavenRule {
-  String KEY = "Old Plugin";
-  String DESCRIPTION = "found an updated version for plugin";
-  String NAME = "[POM] " + DESCRIPTION;
+public class PluginVersion implements MavenRule {
+  public static final String KEY = "Old Plugin";
+  static final String DESCRIPTION = "found an updated version for plugin";
+  static final String NAME = "[POM] " + DESCRIPTION;
+
+  public static final String RULE_PROPERTY_WHITELIST = "whitelist";
+  @RuleProperty(key = RULE_PROPERTY_WHITELIST, defaultValue = ".*", type = "TEXT")
+  private String whiteList;
+
+  public static final String RULE_PROPERTY_BLACKLIST = "blacklist";
+  @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "", type = "TEXT")
+  private String blackList;
 }
