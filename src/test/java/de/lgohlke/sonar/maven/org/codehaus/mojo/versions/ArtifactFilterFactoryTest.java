@@ -20,11 +20,11 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.api.config.Settings;
+import org.testng.annotations.Test;
 
 import java.util.Map;
 
