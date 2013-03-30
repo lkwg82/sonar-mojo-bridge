@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.MavenPlugin;
+import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
 import de.lgohlke.sonar.maven.Rules;
@@ -39,7 +40,6 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-import org.sonar.plugins.xml.language.Xml;
 
 import java.util.List;
 import java.util.Map;
@@ -81,6 +81,7 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
         )
     }
 )
+//@DependsUpon(PomSourceImporter.BARRIER_POM_IMPORTED)
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   static final String SENSOR_KEY = MavenPlugin.PLUGIN_KEY + ".dependencyUpdates";
   static final String BASE_NAME = "DependencyUpdates |";
@@ -88,6 +89,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
   static final String BLACKLIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".blacklist";
 
   private final Settings settings;
+  private final PomSourceImporter pomSourceImporter;
 
   @Getter
   @Setter
@@ -98,9 +100,11 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
   public DisplayDependencyUpdatesSensor(RulesProfile rulesProfile,
                                         MavenPluginExecutor mavenPluginExecutor,
                                         MavenProject mavenProject,
-                                        Settings settings) {
+                                        Settings settings,
+                                        PomSourceImporter pomSourceImporter) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
     this.settings = settings;
+    this.pomSourceImporter = pomSourceImporter;
   }
 
   @Override
@@ -108,8 +112,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
     DisplayDependencyUpdatesResultHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
 
     Rule rule = createRuleFrom(DependencyVersion.class);
-    final File file = new File("", getMavenProject().getFile().getName());
-    file.setLanguage(Xml.INSTANCE);
+    final File file = pomSourceImporter.getPomFile();
 
     ArtifactFilter filter = createFilter(settings);
 
@@ -128,6 +131,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
       }
     }
   }
+
 
   private ArtifactFilter createFilter(Settings settings) {
     Map<String, String> mappedParams = createRulePropertiesMap(DependencyVersion.class);

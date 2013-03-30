@@ -21,23 +21,27 @@ package de.lgohlke.sonar;
 
 import com.google.common.collect.Lists;
 import org.apache.maven.project.MavenProject;
+import org.sonar.api.BatchComponent;
 import org.sonar.api.batch.AbstractSourceImporter;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.SonarIndex;
 import org.sonar.api.batch.SupportedEnvironment;
 import org.sonar.api.resources.Java;
 import org.sonar.api.resources.ProjectFileSystem;
+import org.sonar.plugins.xml.language.Xml;
 
 import java.io.File;
 import java.util.List;
 
-
 @SupportedEnvironment("maven")
-public class PomSourceImporter extends AbstractSourceImporter {
+public class PomSourceImporter extends AbstractSourceImporter implements BatchComponent {
   private final MavenProject project;
+  private final SonarIndex index;
 
-  public PomSourceImporter(final MavenProject project) {
+  public PomSourceImporter(final MavenProject project, final SonarIndex index) {
     super(Java.INSTANCE);
     this.project = project;
+    this.index = index;
   }
 
   @Override
@@ -49,6 +53,17 @@ public class PomSourceImporter extends AbstractSourceImporter {
     files.add(project.getFile());
     dirs.add(project.getFile().getParentFile());
     parseDirs(context, files, dirs, false, fileSystem.getSourceCharset());
+  }
+
+  public String getSourceOfPom() {
+    final org.sonar.api.resources.File file = new org.sonar.api.resources.File("", project.getFile().getName());
+    return index.getSource(file);
+  }
+
+  public org.sonar.api.resources.File getPomFile() {
+    final org.sonar.api.resources.File file = new org.sonar.api.resources.File("", project.getFile().getName());
+    file.setLanguage(Xml.INSTANCE);
+    return file;
   }
 
   @Override

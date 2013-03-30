@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import lombok.Getter;
 import org.apache.maven.project.MavenProject;
@@ -87,7 +88,9 @@ public class DisplayDependencyUpdatesSensorTest {
 
     Settings settings = Settings.createForComponent(DisplayDependencyUpdatesSensor.class);
 
-    return new DisplayDependencyUpdatesSensor(rulesProfile, mock(MavenPluginExecutor.class), mavenProject, settings);
+    PomSourceImporter pomSourceImporter = mock(PomSourceImporter.class);
+    when(pomSourceImporter.getPomFile()).thenReturn(new org.sonar.api.resources.File("", "pom.xml"));
+    return new DisplayDependencyUpdatesSensor(rulesProfile, mock(MavenPluginExecutor.class), mavenProject, settings, pomSourceImporter);
   }
 
   private ActiveRuleParam getActiveRuleParam(String rulePropertyBlacklist, String value) {
