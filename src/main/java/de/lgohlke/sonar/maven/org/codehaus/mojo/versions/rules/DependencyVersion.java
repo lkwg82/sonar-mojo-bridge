@@ -20,12 +20,13 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules;
 
 import de.lgohlke.sonar.MavenRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
 @Rule(
-    description = DependencyVersion.DESCRIPTION,
+    description = DependencyVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION,
     key = DependencyVersion.KEY,
     name = DependencyVersion.NAME,
     priority = Priority.MINOR
@@ -36,10 +37,18 @@ public class DependencyVersion implements MavenRule {
   static final String DESCRIPTION = "this dependency has a newer version available";
 
   public static final String RULE_PROPERTY_WHITELIST = "whitelist";
-  @RuleProperty(key = RULE_PROPERTY_WHITELIST, defaultValue = ".*", type = "TEXT")
+  @RuleProperty(
+      key = RULE_PROPERTY_WHITELIST,
+      defaultValue = ".*",
+      type = "TEXT",
+      description = "this regex controls whitelisting")
   private String whiteList;
 
   public static final String RULE_PROPERTY_BLACKLIST = "blacklist";
-  @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "", type = "TEXT")
+  @RuleProperty(
+      key = RULE_PROPERTY_BLACKLIST,
+      defaultValue = "",
+      type = "TEXT",
+      description = "this regex controls blacklisting")
   private String blackList;
 }
