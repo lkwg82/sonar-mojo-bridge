@@ -34,6 +34,8 @@ import java.util.Set;
 @Slf4j
 public class ArtifactFilterFactory {
 
+  private ArtifactFilterFactory(){}
+
   private static final String NEWLINE = "\\r?\\n";
 
   public static ArtifactFilter createFilterFromSettings(Settings settings, String whitelistKey, String blacklistKey) {
