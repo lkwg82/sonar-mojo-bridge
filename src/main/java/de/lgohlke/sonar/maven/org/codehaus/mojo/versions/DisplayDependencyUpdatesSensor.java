@@ -46,6 +46,16 @@ import java.util.Map;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
+@Rules(
+    values = {
+        DependencyVersion.class
+    }
+)
+@SensorConfiguration(
+    bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
+    resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class,
+    mavenBaseIdentifier = BASE_IDENTIFIER
+)
 @Properties(
     {
         @Property(
@@ -71,18 +81,13 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
         )
     }
 )
-@Rules(values = { DependencyVersion.class })
-@SensorConfiguration(
-    bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
-    resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
-)
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   static final String SENSOR_KEY = MavenPlugin.PLUGIN_KEY + ".dependencyUpdates";
   static final String BASE_NAME = "DependencyUpdates |";
   static final String WHITELIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".whitelist";
   static final String BLACKLIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".blacklist";
 
-  private final ArtifactFilter filter;
+  private final Settings settings;
 
   @Getter
   @Setter
@@ -95,12 +100,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
                                         MavenProject mavenProject,
                                         Settings settings) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
-
-    Map<String, String> mappedParams = createRulePropertiesMap(DependencyVersion.class);
-    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST, DependencyVersion.RULE_PROPERTY_BLACKLIST);
-    ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
-
-    filter = ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
+    this.settings = settings;
   }
 
   @Override
@@ -110,6 +110,8 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
     Rule rule = createRuleFrom(DependencyVersion.class);
     final File file = new File("", getMavenProject().getFile().getName());
     file.setLanguage(Xml.INSTANCE);
+
+    ArtifactFilter filter = createFilter(settings);
 
     for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
       String section = entry.getKey();
@@ -125,5 +127,13 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
         }
       }
     }
+  }
+
+  private ArtifactFilter createFilter(Settings settings) {
+    Map<String, String> mappedParams = createRulePropertiesMap(DependencyVersion.class);
+    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST, DependencyVersion.RULE_PROPERTY_BLACKLIST);
+    ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
+
+    return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
   }
 }
