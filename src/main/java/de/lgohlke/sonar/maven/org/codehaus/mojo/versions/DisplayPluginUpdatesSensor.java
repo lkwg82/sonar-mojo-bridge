@@ -23,10 +23,7 @@ import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.SensorConfiguration;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -45,12 +42,16 @@ import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
+import java.util.Map;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
 @Rules(
     values = {
-        IncompatibleMavenVersion.class, MissingPluginVersion.class, PluginVersion.class, NoMinimumMavenVersion.class
+        IncompatibleMavenVersion.class,
+        MissingPluginVersion.class,
+        PluginVersion.class,
+        NoMinimumMavenVersion.class
     }
 )
 @SensorConfiguration(
@@ -65,7 +66,7 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
             name = DisplayPluginUpdatesSensor.BASE_NAME + " whitelist regex",
             description = "this regex controls whitelisting",
             defaultValue = ".*",
-            global = true,
+            global = false,
             project = true,
             type = PropertyType.REGULAR_EXPRESSION
         ),
@@ -74,7 +75,7 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
             name = DisplayPluginUpdatesSensor.BASE_NAME + " blacklist regex",
             description = "this regex controls blacklisting",
             defaultValue = "",
-            global = true,
+            global = false,
             project = true,
             type = PropertyType.REGULAR_EXPRESSION
         )
@@ -86,7 +87,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
   static final String WHITELIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".whitelist";
   static final String BLACKLIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".blacklist";
 
-  private final ArtifactFilter filter;
+  private final Settings settings;
 
   @Setter
   @Getter
@@ -102,7 +103,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
                                     MavenProject mavenProject,
                                     Settings settings) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
-    filter = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
+    this.settings = settings;
   }
 
   @Override
@@ -148,6 +149,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
 
     // updates
     Rule rule = createRuleFrom(PluginVersion.class);
+    ArtifactFilter filter = createFilter(settings);
     for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
       if (filter.acceptArtifact(update.toString())) {
         Violation violation = Violation.create(rule, file);
@@ -156,5 +158,13 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
         context.saveViolation(violation);
       }
     }
+  }
+
+  private ArtifactFilter createFilter(Settings settings) {
+    Map<String, String> mappedParams = createRulePropertiesMap(PluginVersion.class);
+    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, PluginVersion.RULE_PROPERTY_WHITELIST, PluginVersion.RULE_PROPERTY_BLACKLIST);
+    ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
+
+    return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
   }
 }
