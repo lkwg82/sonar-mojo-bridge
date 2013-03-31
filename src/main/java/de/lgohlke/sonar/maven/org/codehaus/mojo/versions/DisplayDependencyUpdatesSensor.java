@@ -117,21 +117,19 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
     ArtifactFilter filter = createFilter(settings);
 
     for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
-      String section = entry.getKey();
       List<ArtifactUpdate> updates = entry.getValue();
       for (ArtifactUpdate update : updates) {
         if (filter.acceptArtifact(update.toString())) {
-          Violation violation = Violation.create(rule, file);
-          violation.setLineId(1);
 
-          String hint = "(found in " + section + ")";
-          violation.setMessage(update.toString() + " " + hint);
+          Violation violation = Violation.create(rule, file);
+          int line = update.getDependency().getLocation("version").getLineNumber();
+          violation.setLineId(line);
+          violation.setMessage(" a new version is available: " + update.getArtifactVersion().toString());
           context.saveViolation(violation);
         }
       }
     }
   }
-
 
   private ArtifactFilter createFilter(Settings settings) {
     Map<String, String> mappedParams = createRulePropertiesMap(DependencyVersion.class);

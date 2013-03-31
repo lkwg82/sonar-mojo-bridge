@@ -25,6 +25,9 @@ import com.google.common.collect.Maps;
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import lombok.Getter;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.InputLocation;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.api.config.Settings;
@@ -60,8 +63,18 @@ public class DisplayDependencyUpdatesSensorTest {
     DisplayDependencyUpdatesSensor sensor = getDisplayDependencyUpdatesSensor(mockActiveRuleParams);
 
     Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
-    List<ArtifactUpdate> updateList = Lists.newArrayList(mock(ArtifactUpdate.class));
+    ArtifactUpdate artifactUpdate = mock(ArtifactUpdate.class);
+
+    Dependency mockDependency = mock(Dependency.class);
+    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1,1));
+
     String artifactQualifier = "group:artifact:version:goal";
+    when(artifactUpdate.getDependency()).thenReturn(mockDependency);
+    ArtifactVersion mockArtifactVersion = mock(ArtifactVersion.class)        ;
+    when(mockArtifactVersion.toString()).thenReturn(artifactQualifier);
+    when(artifactUpdate.getArtifactVersion()).thenReturn(mockArtifactVersion);
+
+    List<ArtifactUpdate> updateList = Lists.newArrayList(artifactUpdate);
     when(updateList.get(0).toString()).thenReturn(artifactQualifier);
     updateMap.put(DisplayDependencyUpdatesBridgeMojo.DEPENDENCIES, updateList);
     sensor.getMojoMapper().getResultTransferHandler().setUpdateMap(updateMap);
@@ -90,6 +103,7 @@ public class DisplayDependencyUpdatesSensorTest {
 
     PomSourceImporter pomSourceImporter = mock(PomSourceImporter.class);
     when(pomSourceImporter.getPomFile()).thenReturn(new org.sonar.api.resources.File("", "pom.xml"));
+
     return new DisplayDependencyUpdatesSensor(rulesProfile, mock(MavenPluginExecutor.class), mavenProject, settings, pomSourceImporter);
   }
 
