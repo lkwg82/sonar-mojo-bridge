@@ -206,7 +206,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.8</version>
+            <version>6.8.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -521,53 +521,6 @@
                         <useSystemClassLoader>true</useSystemClassLoader>
                         <parallel>both</parallel>
                         <runOrder>random</runOrder>
-                    </configuration>
-                </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build
-               itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.sonar
-                                        </groupId>
-                                        <artifactId>
-                                            sonar-packaging-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>
-                                                check-dependencies
-                                            </goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.mycila.maven-license-plugin</groupId>
-                                        <artifactId>maven-license-plugin</artifactId>
-                                        <versionRange>[1.9.0,)</versionRange>
-                                        <goals>
-                                            <goal>check</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
             </plugins>
