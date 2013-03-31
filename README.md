@@ -4,7 +4,14 @@ sonar-maven-integration
 
 # about #
 
-like to have some checks on a maven project, represented by its pom.xml (only maven3 support)
+like to have some checks on a maven project based on existing maven pluginsv(only maven3 support)
+
+# changelog #
+
+2013-03-31
+- [versions] added line detection to sho correct line in pom.xml
+
+# screenshot #
 
 ![screenshot](https://github.com/SonarCommunity/sonar-maven-checks/blob/master/src/main/docs/screenshot.png?raw=true "screenshot")
 
