@@ -20,8 +20,6 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.testng.annotations.Test;
 
@@ -41,12 +39,27 @@ public class PomUtilsTest {
     dependency.setArtifactId("maven-surefire-plugin");
     dependency.setVersion("2.10");
 
-    ArtifactVersion artifactVersion = new DefaultArtifactVersion("1.0");
-
-    ArtifactUpdate artifactUpdate = new ArtifactUpdate(dependency, artifactVersion);
-
-    assertThat(PomUtils.getLine(source, artifactUpdate,PomUtils.TYPE.plugin)).isEqualTo(37);
+    assertThat(PomUtils.getLine(source, dependency,PomUtils.TYPE.plugin)).isEqualTo(37);
   }
 
+  @Test
+  public void testFindLineForArtifactWithoutAnyVersion() throws Exception {
+    String source = "<project>\n" +
+        "<build>\n" +
+        "  <plugins>\n" +
+        "    <plugin>\n" +
+        "       <groupId>a</groupId>\n" +
+        "       <artifactId>a</artifactId>\n" +
+        "    </plugin>\n" +
+        "  </plugins>\n" +
+        "</build>\n" +
+        "</project>";
 
+    Dependency dependency = new Dependency();
+    dependency.setGroupId("a");
+    dependency.setArtifactId("a");
+    dependency.setVersion("");
+
+    assertThat(PomUtils.getLine(source, dependency,PomUtils.TYPE.plugin)).isEqualTo(6);
+  }
 }

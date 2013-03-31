@@ -20,7 +20,10 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.base.Joiner;
+import org.apache.maven.model.Dependency;
 import org.fest.util.Preconditions;
+
+import java.util.Arrays;
 
 /**
  * User: lars
@@ -41,24 +44,27 @@ public final class PomUtils {
     };
 
     abstract String getStart();
-
     abstract String getEnd();
   }
 
   private PomUtils() {
   }
 
-  public static int getLine(String source, ArtifactUpdate artifactUpdate, TYPE type) {
-    Preconditions.checkNotNull(source);
-
+  public static int getLine(String source, Dependency dependency, TYPE type) { Preconditions.checkNotNull(source);
+    Preconditions.checkNotNull(dependency);
     String[] lines = source.split("\\r?\\n");
 
-    String groupd = "<groupId>" + artifactUpdate.getDependency().getGroupId() + "</groupId>";
-    String artifact = "<artifactId>" + artifactUpdate.getDependency().getArtifactId() + "</artifactId>";
-    String version = "<version>" + artifactUpdate.getDependency().getVersion() + "</version>";
+    String groupd = "<groupId>" + dependency.getGroupId() + "</groupId>";
+    String artifact = "<artifactId>" + dependency.getArtifactId() + "</artifactId>";
+    String version = "";
+    if ( dependency.getVersion() != null && dependency.getVersion().length()>0){
+     version = "<version>" + dependency.getVersion() + "</version>";
+    }
+
+    String token = version.length() > 0 ? version: artifact;
 
     for (int i = 0; i < lines.length; i++) {
-      if (lines[i].contains(version)) {
+      if (lines[i].contains(token)) {
         if (containsEntry(lines, i, type, groupd, artifact, version)) {
           return i + 1;
         }
@@ -72,19 +78,14 @@ public final class PomUtils {
     int start = findStartOrEndOfBlock(lines, currentPosition, -1, type);
     int end = findStartOrEndOfBlock(lines, currentPosition, +1, type);
 
-    String[] part = new String[end - start + 1];
-    for (int i = start; i <= end; i++) {
-      part[i - start] = lines[i];
-    }
-
-    String fullBlock = Joiner.on("").join(part);
+    String fullBlock = Joiner.on("").join(Arrays.copyOfRange(lines,start,end));
 
     return fullBlock.contains(version) && fullBlock.contains(artifact) && fullBlock.contains(group);
   }
 
   private static int findStartOrEndOfBlock(String[] lines, int currentPosition, int step, TYPE type) {
     int i = currentPosition;
-    int limitToSearch = 10;
+    int limitToSearch = lines.length;
     while (i > 0 && Math.abs(currentPosition - i) <= limitToSearch) {
       if (lines[i].contains(type.getStart()) || lines[i].contains(type.getEnd())) {
         return i;
