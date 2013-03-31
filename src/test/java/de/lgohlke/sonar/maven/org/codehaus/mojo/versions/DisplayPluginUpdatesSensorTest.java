@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.collect.Lists;
+import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
@@ -27,6 +28,7 @@ import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVer
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
 import lombok.Getter;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.InputLocation;
 import org.apache.maven.project.MavenProject;
 import org.fest.assertions.core.Condition;
 import org.sonar.api.config.Settings;
@@ -43,9 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 
 /**
  * User: lgohlke
@@ -61,7 +63,11 @@ public class DisplayPluginUpdatesSensorTest {
 
     context = new TestSensorContext();
     Settings settings = Settings.createForComponent(DisplayPluginUpdatesSensor.class);
-    sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject,settings);
+    PomSourceImporter pomSourceImporter = mock(PomSourceImporter.class);
+    when(pomSourceImporter.getPomFile()).thenReturn(new org.sonar.api.resources.File("", "pom.xml"));
+    when(pomSourceImporter.getSourceOfPom()).thenReturn("");
+
+    sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject, settings, pomSourceImporter);
 
     resultTransferHandler = sensor.getMojoMapper().getResultTransferHandler();
     resultTransferHandler.setMissingVersionPlugins(new ArrayList<Dependency>());
@@ -95,8 +101,14 @@ public class DisplayPluginUpdatesSensorTest {
   public void shouldHaveUpdates() throws Exception {
     init();
     resultTransferHandler.setPluginUpdates(new ArrayList<ArtifactUpdate>());
+
+    Dependency mockDependency = mock(Dependency.class);
+    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1,1));
+
     ArtifactUpdate update = mock(ArtifactUpdate.class);
     when(update.toString()).thenReturn("a:b:c:d");
+    when(update.getDependency()).thenReturn(mockDependency);
+
     resultTransferHandler.getPluginUpdates().add(update);
 
     sensor.analyse(mock(Project.class), context);
@@ -120,7 +132,9 @@ public class DisplayPluginUpdatesSensorTest {
   @Test
   public void shouldHaveSomePluginsMissingTheirVersions() throws Exception {
     init();
-    List<Dependency> missingVersionPlugins = Lists.newArrayList(mock(Dependency.class));
+    Dependency mockDependency = mock(Dependency.class);
+    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1,1));
+    List<Dependency> missingVersionPlugins = Lists.newArrayList(mockDependency);
     resultTransferHandler.setMissingVersionPlugins(missingVersionPlugins);
 
     sensor.analyse(mock(Project.class), context);

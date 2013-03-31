@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.MavenPlugin;
+import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.SensorConfiguration;
@@ -88,6 +89,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
   static final String BLACKLIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".blacklist";
 
   private final Settings settings;
+  private final PomSourceImporter pomSourceImporter;
 
   @Setter
   @Getter
@@ -101,16 +103,19 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
   public DisplayPluginUpdatesSensor(RulesProfile rulesProfile,
                                     MavenPluginExecutor mavenPluginExecutor,
                                     MavenProject mavenProject,
-                                    Settings settings) {
+                                    Settings settings,
+                                    PomSourceImporter pomSourceImporter) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
     this.settings = settings;
+    this.pomSourceImporter = pomSourceImporter;
   }
 
   @Override
   public void analyse(final Project project, final SensorContext context) {
     ResultTransferHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
 
-    final File file = new File("", getMavenProject().getFile().getName());
+    final File file = pomSourceImporter.getPomFile();
+    String sourceOfPom = pomSourceImporter.getSourceOfPom();
 
     // minimum version warning
     if (resultTransferHandler.isWarninNoMinimumVersion()) {
@@ -140,7 +145,8 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     Rule missingVersionRule = createRuleFrom(MissingPluginVersion.class);
     for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
       Violation violation = Violation.create(missingVersionRule, file);
-      violation.setLineId(1);
+      int line = PomUtils.getLine(sourceOfPom,dependency,PomUtils.TYPE.plugin);
+      violation.setLineId(line);
 
       String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
       violation.setMessage(artifact + " has no version");
@@ -153,7 +159,8 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
       if (filter.acceptArtifact(update.toString())) {
         Violation violation = Violation.create(rule, file);
-        violation.setLineId(1);
+        int line = PomUtils.getLine(sourceOfPom,update.getDependency(),PomUtils.TYPE.plugin);
+        violation.setLineId(line);
         violation.setMessage(update.toString());
         context.saveViolation(violation);
       }
