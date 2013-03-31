@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.base.Joiner;
 import org.apache.maven.model.Dependency;
+import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 import org.fest.util.Preconditions;
 
 import java.util.Arrays;
@@ -44,24 +45,26 @@ public final class PomUtils {
     };
 
     abstract String getStart();
+
     abstract String getEnd();
   }
 
   private PomUtils() {
   }
 
-  public static int getLine(String source, Dependency dependency, TYPE type) { Preconditions.checkNotNull(source);
+  public static int getLine(String source, Dependency dependency, TYPE type) {
+    Preconditions.checkNotNull(source);
     Preconditions.checkNotNull(dependency);
     String[] lines = source.split("\\r?\\n");
 
     String groupd = "<groupId>" + dependency.getGroupId() + "</groupId>";
     String artifact = "<artifactId>" + dependency.getArtifactId() + "</artifactId>";
     String version = "";
-    if ( dependency.getVersion() != null && dependency.getVersion().length()>0){
-     version = "<version>" + dependency.getVersion() + "</version>";
+    if (dependency.getVersion() != null && dependency.getVersion().length() > 0) {
+      version = "<version>" + dependency.getVersion() + "</version>";
     }
 
-    String token = version.length() > 0 ? version: artifact;
+    String token = version.length() > 0 ? version : artifact;
 
     for (int i = 0; i < lines.length; i++) {
       if (lines[i].contains(token)) {
@@ -73,12 +76,14 @@ public final class PomUtils {
     return 0;
   }
 
+  @IgnoreJRERequirement
   private static boolean containsEntry(String[] lines, int currentPosition, TYPE type, String group, String artifact, String version) {
 
     int start = findStartOrEndOfBlock(lines, currentPosition, -1, type);
     int end = findStartOrEndOfBlock(lines, currentPosition, +1, type);
 
-    String fullBlock = Joiner.on("").join(Arrays.copyOfRange(lines,start,end));
+    String[] parts = Arrays.copyOfRange(lines, start, end);
+    String fullBlock = Joiner.on("").join(parts);
 
     return fullBlock.contains(version) && fullBlock.contains(artifact) && fullBlock.contains(group);
   }
