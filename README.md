@@ -12,6 +12,7 @@ presentation in German on this plugin here http://lkwg82.github.io/projects/2013
 
 2013-04-08
 - [versions] added white-/blacklisting for updates of artifacts to be notified of
+
 2013-03-31
 - [versions] added line detection to show correct line in pom.xml
 
