@@ -6,6 +6,8 @@ sonar-maven-integration
 
 like to have some checks on a maven project based on existing maven plugins (only for maven3)
 
+presentation in German on this plugin here http://lkwg82.github.io/projects/2013.04.08-is24-sonar-maven-checks/
+
 # changelog #
 
 2013-04-08
@@ -13,7 +15,7 @@ like to have some checks on a maven project based on existing maven plugins (onl
 2013-03-31
 - [versions] added line detection to show correct line in pom.xml
 
-# screenshot #
+# screenshots #
 
 ![screenshot](https://github.com/SonarCommunity/sonar-maven-checks/blob/master/screenshots/sonar_1.png?raw=true "screenshot")
 ![screenshot](https://github.com/SonarCommunity/sonar-maven-checks/blob/master/screenshots/sonar_2.png?raw=true "screenshot")
