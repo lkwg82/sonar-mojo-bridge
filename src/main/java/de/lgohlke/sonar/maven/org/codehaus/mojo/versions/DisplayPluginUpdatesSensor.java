@@ -24,7 +24,10 @@ import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.SensorConfiguration;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -145,8 +148,8 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     Rule missingVersionRule = createRuleFrom(MissingPluginVersion.class);
     for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
       Violation violation = Violation.create(missingVersionRule, file);
-      int line = PomUtils.getLine(sourceOfPom,dependency,PomUtils.TYPE.plugin);
-      violation.setLineId(line);
+      int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
+      violation.setLineId(line > 0 ? line : 1);
 
       String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
       violation.setMessage(artifact + " has no version");
@@ -159,8 +162,8 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
       if (filter.acceptArtifact(update.toString())) {
         Violation violation = Violation.create(rule, file);
-        int line = PomUtils.getLine(sourceOfPom,update.getDependency(),PomUtils.TYPE.plugin);
-        violation.setLineId(line);
+        int line = PomUtils.getLine(sourceOfPom, update.getDependency(), PomUtils.TYPE.plugin);
+        violation.setLineId(line > 0 ? line : 1);
         violation.setMessage(update.toString());
         context.saveViolation(violation);
       }
