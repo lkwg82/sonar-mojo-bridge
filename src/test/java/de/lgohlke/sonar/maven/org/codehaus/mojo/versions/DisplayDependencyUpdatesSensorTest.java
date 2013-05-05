@@ -19,9 +19,9 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import lombok.Getter;
@@ -29,18 +29,17 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.project.MavenProject;
-import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.rules.ActiveRuleParam;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RulePriority;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -55,12 +54,7 @@ import static org.mockito.Mockito.when;
 public class DisplayDependencyUpdatesSensorTest {
   @Test
   public void shouldAnalyse() throws Exception {
-    ActiveRuleParam mockedActiveRuleParamWhiteList = getActiveRuleParam(DependencyVersion.RULE_PROPERTY_WHITELIST, ".*");
-    ActiveRuleParam mockedActiveRuleParamBlackList = getActiveRuleParam(DependencyVersion.RULE_PROPERTY_BLACKLIST, "");
-
-    List<ActiveRuleParam> mockActiveRuleParams = ImmutableList.of(mockedActiveRuleParamWhiteList, mockedActiveRuleParamBlackList);
-
-    DisplayDependencyUpdatesSensor sensor = getDisplayDependencyUpdatesSensor(mockActiveRuleParams);
+    DisplayDependencyUpdatesSensor sensor = getDisplayDependencyUpdatesSensor();
 
     Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
     ArtifactUpdate artifactUpdate = mock(ArtifactUpdate.class);
@@ -86,32 +80,21 @@ public class DisplayDependencyUpdatesSensorTest {
     assertThat(context.getViolations().get(0).getMessage()).contains(artifactQualifier);
   }
 
-  private DisplayDependencyUpdatesSensor getDisplayDependencyUpdatesSensor(List<ActiveRuleParam> mockActiveRuleParams) {
-    ActiveRule mockedActiveRule = mock(ActiveRule.class);
-    when(mockedActiveRule.getActiveRuleParams()).thenReturn(mockActiveRuleParams);
+  private DisplayDependencyUpdatesSensor getDisplayDependencyUpdatesSensor() {
 
-    RulesProfile rulesProfile = mock(RulesProfile.class);
-    when(rulesProfile.getActiveRuleByConfigKey(any(String.class), any(String.class))).thenReturn(mockedActiveRule);
+    final RulesProfile rulesProfile = RulesProfile.create("mine", "java");
+    final Rule rule = Rule.create(MavenPlugin.REPOSITORY_KEY, DependencyVersion.KEY, DependencyVersion.NAME);
+    rule.createParameter(DependencyVersion.RULE_PROPERTY_WHITELIST);
+    rule.createParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST);
+    final ActiveRule activeRule = rulesProfile.activateRule(rule, RulePriority.MAJOR);
+    activeRule.setParameter(DependencyVersion.RULE_PROPERTY_WHITELIST, ".*");
+    activeRule.setParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST, "");
 
-    MavenProject mavenProject = mock(MavenProject.class);
-    when(mavenProject.getFile()).thenReturn(new File("."));
-
-    PropertyDefinitions definitions = new PropertyDefinitions();
-    definitions.addComponent(DisplayDependencyUpdatesSensor.class);
-
+    MavenProject mavenProject = TestHelper.getMavenProject();
     Settings settings = Settings.createForComponent(DisplayDependencyUpdatesSensor.class);
-
-    PomSourceImporter pomSourceImporter = mock(PomSourceImporter.class);
-    when(pomSourceImporter.getPomFile()).thenReturn(new org.sonar.api.resources.File("", "pom.xml"));
+    PomSourceImporter pomSourceImporter = TestHelper.getPomSourceImporter();
 
     return new DisplayDependencyUpdatesSensor(rulesProfile, mock(MavenPluginExecutor.class), mavenProject, settings, pomSourceImporter);
-  }
-
-  private ActiveRuleParam getActiveRuleParam(String rulePropertyBlacklist, String value) {
-    ActiveRuleParam mockedActiveRuleParamBlackList = mock(ActiveRuleParam.class);
-    when(mockedActiveRuleParamBlackList.getKey()).thenReturn(rulePropertyBlacklist);
-    when(mockedActiveRuleParamBlackList.getValue()).thenReturn(value);
-    return mockedActiveRuleParamBlackList;
   }
 
   private static class TestSensorContext extends DefaultSensorContext {

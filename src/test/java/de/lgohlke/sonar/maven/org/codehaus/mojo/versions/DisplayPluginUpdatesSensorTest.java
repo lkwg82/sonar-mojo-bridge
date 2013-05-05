@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.collect.Lists;
+import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
@@ -34,13 +35,13 @@ import org.fest.assertions.core.Condition;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.RulePriority;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.check.Rule;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,27 +54,33 @@ import static org.mockito.Mockito.when;
  * User: lgohlke
  */
 public class DisplayPluginUpdatesSensorTest {
-  private DisplayPluginUpdatesSensor sensor;
+  private final DisplayPluginUpdatesSensor sensor = getPluginUpdatesSensor();
+
   private DisplayPluginUpdatesSensor.ResultTransferHandler resultTransferHandler;
   private TestSensorContext context;
 
   public void init() {
-    MavenProject mavenProject = mock(MavenProject.class);
-    when(mavenProject.getFile()).thenReturn(new File("."));
-
     context = new TestSensorContext();
-    Settings settings = Settings.createForComponent(DisplayPluginUpdatesSensor.class);
-    PomSourceImporter pomSourceImporter = mock(PomSourceImporter.class);
-    when(pomSourceImporter.getPomFile()).thenReturn(new org.sonar.api.resources.File("", "pom.xml"));
-    when(pomSourceImporter.getSourceOfPom()).thenReturn("");
-
-    sensor = new DisplayPluginUpdatesSensor(mock(RulesProfile.class), mock(MavenPluginExecutor.class), mavenProject, settings, pomSourceImporter);
 
     resultTransferHandler = sensor.getMojoMapper().getResultTransferHandler();
     resultTransferHandler.setMissingVersionPlugins(new ArrayList<Dependency>());
     resultTransferHandler.setIncompatibleParentAndProjectMavenVersion(null);
     resultTransferHandler.setPluginUpdates(new ArrayList<ArtifactUpdate>());
     resultTransferHandler.setWarninNoMinimumVersion(false);
+  }
+
+  private DisplayPluginUpdatesSensor getPluginUpdatesSensor() {
+    final RulesProfile rulesProfile = RulesProfile.create("mine", "java");
+    final org.sonar.api.rules.Rule rule = org.sonar.api.rules.Rule.create(MavenPlugin.REPOSITORY_KEY, PluginVersion.KEY, PluginVersion.NAME);
+    rule.createParameter(PluginVersion.RULE_PROPERTY_WHITELIST).setDefaultValue(".*");
+    rule.createParameter(PluginVersion.RULE_PROPERTY_BLACKLIST).setDefaultValue("");
+    rulesProfile.activateRule(rule, RulePriority.MAJOR);
+
+    MavenProject mavenProject = TestHelper.getMavenProject();
+    Settings settings = Settings.createForComponent(DisplayPluginUpdatesSensor.class);
+    PomSourceImporter pomSourceImporter = TestHelper.getPomSourceImporter();
+
+    return new DisplayPluginUpdatesSensor(rulesProfile, mock(MavenPluginExecutor.class), mavenProject, settings, pomSourceImporter);
   }
 
   @Test
@@ -103,7 +110,7 @@ public class DisplayPluginUpdatesSensorTest {
     resultTransferHandler.setPluginUpdates(new ArrayList<ArtifactUpdate>());
 
     Dependency mockDependency = mock(Dependency.class);
-    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1,1));
+    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1, 1));
 
     ArtifactUpdate update = mock(ArtifactUpdate.class);
     when(update.toString()).thenReturn("a:b:c:d");
@@ -133,7 +140,7 @@ public class DisplayPluginUpdatesSensorTest {
   public void shouldHaveSomePluginsMissingTheirVersions() throws Exception {
     init();
     Dependency mockDependency = mock(Dependency.class);
-    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1,1));
+    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1, 1));
     List<Dependency> missingVersionPlugins = Lists.newArrayList(mockDependency);
     resultTransferHandler.setMissingVersionPlugins(missingVersionPlugins);
 
