@@ -43,6 +43,7 @@ import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -66,6 +67,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
 
     SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
+    verifyConfiguration(configuration);
     Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
     try {
       T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
@@ -75,6 +77,12 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     } catch (IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private static void verifyConfiguration(SensorConfiguration configuration) {
+    final String identifier = configuration.mavenBaseIdentifier();
+    checkArgument(identifier.length() > 0, "base identifier should not be empty");
+    checkArgument(identifier.matches("[^:]+:[^:]+:[^:]+:"), "base identifier should match 'group:artifact:version:' (excluding goal)");
   }
 
   public boolean shouldExecuteOnProject(final Project project) {

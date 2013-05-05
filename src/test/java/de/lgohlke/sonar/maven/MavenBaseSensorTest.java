@@ -111,6 +111,18 @@ public class MavenBaseSensorTest {
     }
   }
 
+  @Rules(values = MyRule.class)
+  @SensorConfiguration(
+      bridgeMojo = MyBridgeMojo.class,
+      resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class,
+      mavenBaseIdentifier = "a")
+  public static class MyBrokenMavenVersionSensor extends MyMavenVersionSensor {
+
+    public MyBrokenMavenVersionSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject) {
+      super(rulesProfile, mavenPluginExecutor, mavenProject);
+    }
+  }
+
   class Maven3PluginExecutorMock extends Maven3PluginExecutor {
     @SuppressWarnings("unused")
     private MavenSession mavenSession = null;
@@ -125,6 +137,12 @@ public class MavenBaseSensorTest {
         throw new IllegalStateException(e);
       }
     }
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void shouldFailOnWrongSensorconfiguration() {
+    Maven3PluginExecutor maven3PluginExecutor = new Maven3PluginExecutorMock();
+    mavenVersionSensor = new MyBrokenMavenVersionSensor(profile, maven3PluginExecutor, mavenProject);
   }
 
   @Test
