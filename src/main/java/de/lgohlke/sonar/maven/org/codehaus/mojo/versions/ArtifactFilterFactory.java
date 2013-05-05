@@ -33,8 +33,14 @@ import java.util.Set;
  */
 @Slf4j
 public class ArtifactFilterFactory {
+  private static final XStream XSTREAM = new XStream();
 
-  private ArtifactFilterFactory(){}
+  static {
+    XSTREAM.setClassLoader(ArtifactFilterFactory.class.getClassLoader());
+  }
+
+  private ArtifactFilterFactory() {
+  }
 
   private static final String NEWLINE = "\\r?\\n";
 
@@ -52,8 +58,6 @@ public class ArtifactFilterFactory {
       PropertyDefinition definition = settings.getDefinitions().get(blacklistKey);
       blackListRegex = definition.getDefaultValue();
 
-      XStream xstream = new XStream();
-      xstream.setClassLoader(ArtifactFilterFactory.class.getClassLoader());
       String xml = xstream.toXML(definition);
 
       log.debug("blacklist definition {} ",xml );
