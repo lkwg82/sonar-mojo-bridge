@@ -58,7 +58,7 @@ public class ArtifactFilterFactory {
       PropertyDefinition definition = settings.getDefinitions().get(blacklistKey);
       blackListRegex = definition.getDefaultValue();
 
-      String xml = xstream.toXML(definition);
+      String xml = XSTREAM.toXML(definition);
 
       log.debug("blacklist definition {} ",xml );
     }
@@ -94,7 +94,7 @@ public class ArtifactFilterFactory {
         }
       }
     } else {
-      log.warn("could not find key \"{}\"", whitelistKey);
+      log.warn("could not find key \"{}\"", blacklistKey);
     }
 
     log.debug("created filter from map: {}",filter);
