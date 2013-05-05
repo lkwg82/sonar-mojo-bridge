@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>sonar-maven-checks</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1-is24-20130505</version>
   <packaging>sonar-plugin</packaging>
   <name>Sonar maven checks plugin</name>
   <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
