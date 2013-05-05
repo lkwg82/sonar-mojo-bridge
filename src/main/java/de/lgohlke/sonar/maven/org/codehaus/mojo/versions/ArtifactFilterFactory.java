@@ -22,7 +22,6 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
-import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.config.Settings;
 
 import java.util.HashSet;
@@ -46,25 +45,15 @@ public class ArtifactFilterFactory {
   private static final String NEWLINE = "\\r?\\n";
 
   public static ArtifactFilter createFilterFromSettings(Settings settings, String whitelistKey, String blacklistKey) {
-
     ArtifactFilter filter = new ArtifactFilter();
 
     String whiteListRegex = settings.getString(whitelistKey);
-    if (whitelistKey.length() > 0) {
+    if (whiteListRegex!= null && whiteListRegex.length() > 0) {
       filter.addWhitelistRegex(whiteListRegex);
     }
 
     String blackListRegex = settings.getString(blacklistKey);
-    if (blackListRegex == null) {
-      PropertyDefinition definition = settings.getDefinitions().get(blacklistKey);
-      blackListRegex = definition.getDefaultValue();
-
-      String xml = XSTREAM.toXML(definition);
-
-      log.debug("blacklist definition {} ", xml);
-    }
-
-    if (blackListRegex.length() > 0) {
+    if (blackListRegex!=null && blackListRegex.length() > 0) {
       filter.addBlacklistRegex(blackListRegex);
     }
 
