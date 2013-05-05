@@ -37,13 +37,13 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 
 /**
  * User: lars
@@ -103,7 +103,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   protected boolean checkIfAtLeastOneRuleIsEnabled() {
     List<Rule> associatedRules = getAssociatedRules();
     for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
-      if ( associatedRules.contains(activeRule.getRule())){
+      if (associatedRules.contains(activeRule.getRule())) {
         return true;
       }
     }
@@ -143,6 +143,14 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
       List<ActiveRuleParam> activeRuleParams = activeRuleByConfigKey.getActiveRuleParams();
       for (ActiveRuleParam activeRuleParam : activeRuleParams) {
         mappedParams.put(activeRuleParam.getKey(), activeRuleParam.getValue());
+      }
+
+      // fill with default values for params not set
+      final List<RuleParam> params = activeRuleByConfigKey.getRule().getParams();
+      for (RuleParam ruleParam : params) {
+        if (!mappedParams.containsKey(ruleParam.getKey())) {
+          mappedParams.put(ruleParam.getKey(), ruleParam.getDefaultValue());
+        }
       }
     }
     return mappedParams;
