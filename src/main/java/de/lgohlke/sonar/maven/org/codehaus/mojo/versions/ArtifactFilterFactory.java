@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
+import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
 import org.sonar.api.config.PropertyDefinition;
@@ -60,44 +61,39 @@ public class ArtifactFilterFactory {
 
       String xml = XSTREAM.toXML(definition);
 
-      log.debug("blacklist definition {} ",xml );
+      log.debug("blacklist definition {} ", xml);
     }
 
     if (blackListRegex.length() > 0) {
       filter.addBlacklistRegex(blackListRegex);
     }
 
-    log.debug("created filter from settings: {}",filter);
+    log.debug("created filter from settings: {}", filter);
 
     return filter;
   }
 
   public static ArtifactFilter createFilterFromMap(Map<String, String> mappedParams, String whitelistKey, String blacklistKey) {
+    Preconditions.checkArgument(mappedParams.containsKey(whitelistKey), "could not find key \"" + whitelistKey + "\"");
+    Preconditions.checkArgument(mappedParams.containsKey(blacklistKey), "could not find key \"" + blacklistKey + "\"");
+
     ArtifactFilter filter = new ArtifactFilter();
 
-    if (mappedParams.containsKey(whitelistKey)) {
-      for (String regex : mappedParams.get(whitelistKey).split(NEWLINE)) {
-        // filter empty lines
-        if (regex.length() > 0) {
-          filter.addWhitelistRegex(regex);
-        }
+    for (String regex : mappedParams.get(whitelistKey).split(NEWLINE)) {
+      // filter empty lines
+      if (regex.length() > 0) {
+        filter.addWhitelistRegex(regex);
       }
-    } else {
-      log.warn("could not find key \"{}\"", whitelistKey);
     }
 
-    if (mappedParams.containsKey(blacklistKey)) {
-      for (String regex : mappedParams.get(blacklistKey).split(NEWLINE)) {
-        // filter empty lines
-        if (regex.length() > 0) {
-          filter.addBlacklistRegex(regex);
-        }
+    for (String regex : mappedParams.get(blacklistKey).split(NEWLINE)) {
+      // filter empty lines
+      if (regex.length() > 0) {
+        filter.addBlacklistRegex(regex);
       }
-    } else {
-      log.warn("could not find key \"{}\"", blacklistKey);
     }
 
-    log.debug("created filter from map: {}",filter);
+    log.debug("created filter from map: {}", filter);
 
     return filter;
   }
@@ -110,7 +106,7 @@ public class ArtifactFilterFactory {
 
     for (ArtifactFilter f : filters) {
 
-      log.debug("use filter for merge : {}",f);
+      log.debug("use filter for merge : {}", f);
 
       whiteListRegexSet.addAll(f.getWhitelistRegexList());
       blackListRegexSet.addAll(f.getBlacklistRegexList());
@@ -124,7 +120,7 @@ public class ArtifactFilterFactory {
       mergedFilter.addBlacklistRegex(regex);
     }
 
-    log.debug("created filter from filters: {}",mergedFilter);
+    log.debug("created filter from filters: {}", mergedFilter);
 
     return mergedFilter;
   }
