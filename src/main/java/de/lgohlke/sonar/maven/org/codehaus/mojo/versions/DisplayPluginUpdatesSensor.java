@@ -168,7 +168,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
   }
 
   private ArtifactFilter createFilter(Settings settings) {
-    Map<String, String> mappedParams = createRulePropertiesMap(PluginVersion.class);
+    Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(PluginVersion.class);
     ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, PluginVersion.RULE_PROPERTY_WHITELIST, PluginVersion.RULE_PROPERTY_BLACKLIST);
     ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
 

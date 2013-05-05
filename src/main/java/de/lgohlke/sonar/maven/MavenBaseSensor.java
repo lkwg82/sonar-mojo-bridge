@@ -135,7 +135,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
 
   public abstract void analyse(final Project project, final SensorContext context);
 
-  protected Map<String, String> createRulePropertiesMap(Class<? extends MavenRule> ruleClass) {
+  protected Map<String, String> createRulePropertiesMapFromQualityProfile(Class<? extends MavenRule> ruleClass) {
     Map<String, String> mappedParams = Maps.newHashMap();
     String ruleKey = createRuleFrom(ruleClass).getKey();
     ActiveRule activeRuleByConfigKey = getRulesProfile().getActiveRuleByConfigKey(MavenPlugin.REPOSITORY_KEY, ruleKey);

@@ -132,7 +132,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
   }
 
   private ArtifactFilter createFilter(Settings settings) {
-    Map<String, String> mappedParams = createRulePropertiesMap(DependencyVersion.class);
+    Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(DependencyVersion.class);
     ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST, DependencyVersion.RULE_PROPERTY_BLACKLIST);
     ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
 
