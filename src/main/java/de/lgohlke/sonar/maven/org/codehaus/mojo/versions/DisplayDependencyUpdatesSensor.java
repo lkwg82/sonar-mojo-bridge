@@ -64,7 +64,8 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
             description = "this regex controls whitelisting <br>" +
                 "<i>examples:</i><br/>" +
                 "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>", defaultValue = ".*",
+                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>",
+            defaultValue = ".*",
             global = false,
             project = true,
             type = PropertyType.STRING
@@ -81,7 +82,6 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
         )
     }
 )
-//@DependsUpon(PomSourceImporter.BARRIER_POM_IMPORTED)
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   static final String SENSOR_KEY = MavenPlugin.PLUGIN_KEY + ".dependencyUpdates";
   static final String BASE_NAME = "DependencyUpdates |";
