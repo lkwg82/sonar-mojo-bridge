@@ -31,24 +31,24 @@ import org.sonar.check.RuleProperty;
     name = PluginVersion.NAME,
     priority = Priority.MINOR
 )
-public class PluginVersion implements MavenRule {
-  public static final String KEY = "Old Plugin";
-  static final String DESCRIPTION = "found an updated version for plugin";
-  static final String NAME = "[POM] " + DESCRIPTION;
+public interface PluginVersion extends MavenRule {
+  String KEY = "Old Plugin";
+  String DESCRIPTION = "found an updated version for plugin";
+  String NAME = "[POM] " + DESCRIPTION;
 
-  public static final String RULE_PROPERTY_WHITELIST = "whitelist";
+  String RULE_PROPERTY_WHITELIST = "whitelist";
   @RuleProperty(
       key = RULE_PROPERTY_WHITELIST,
       defaultValue = ".*",
       type = "TEXT",
       description = "this regex controls whitelisting" )
-  private String whiteList;
+  String whiteList=null;
 
-  public static final String RULE_PROPERTY_BLACKLIST = "blacklist";
+  String RULE_PROPERTY_BLACKLIST = "blacklist";
   @RuleProperty(
       key = RULE_PROPERTY_BLACKLIST,
       defaultValue = "",
       type = "TEXT",
       description = "this regex controls blacklisting" )
-  private String blackList;
+  String blackList=null;
 }

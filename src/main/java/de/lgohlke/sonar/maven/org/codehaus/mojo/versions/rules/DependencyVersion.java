@@ -31,24 +31,24 @@ import org.sonar.check.RuleProperty;
     name = DependencyVersion.NAME,
     priority = Priority.MINOR
 )
-public class DependencyVersion implements MavenRule {
-  public static final String KEY = "Old Dependency";
-  static final String NAME = "[POM] found an newer version for a dependency in use";
-  static final String DESCRIPTION = "this dependency has a newer version available";
+public interface DependencyVersion extends MavenRule {
+  String KEY = "Old Dependency";
+  String NAME = "[POM] found an newer version for a dependency in use";
+  String DESCRIPTION = "this dependency has a newer version available";
 
-  public static final String RULE_PROPERTY_WHITELIST = "whitelist";
+  String RULE_PROPERTY_WHITELIST = "whitelist";
   @RuleProperty(
       key = RULE_PROPERTY_WHITELIST,
       defaultValue = ".*",
       type = "TEXT",
       description = "this regex controls whitelisting")
-  private String whiteList;
+  String whiteList=null;
 
-  public static final String RULE_PROPERTY_BLACKLIST = "blacklist";
+  String RULE_PROPERTY_BLACKLIST = "blacklist";
   @RuleProperty(
       key = RULE_PROPERTY_BLACKLIST,
       defaultValue = "",
       type = "TEXT",
       description = "this regex controls blacklisting")
-  private String blackList;
+  String blackList=null;
 }
