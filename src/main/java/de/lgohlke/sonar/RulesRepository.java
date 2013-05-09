@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar;
 
+import de.lgohlke.sonar.maven.org.apache.enforcer.DependencyConvergenceRule;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
@@ -45,7 +46,7 @@ public class RulesRepository extends RuleRepository {
   @SuppressWarnings("rawtypes")
   private static List<Class> getCheckedClasses() {
     return Arrays.asList((Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
-        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class);
+        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class, DependencyConvergenceRule.class);
   }
 
 }

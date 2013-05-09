@@ -37,7 +37,7 @@ public final class Maven3ExecutionProcess {
 
   public static void decorate(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
     try {
-      PlexusContainer container = field("mavenSession.container").ofType(PlexusContainer.class).in(mavenPluginExecutor).get();
+      PlexusContainer container = getOrCreatePlexusContainerProxyInMavenSession(mavenPluginExecutor);
       MavenPluginManager mavenPluginManager = container.lookup(MavenPluginManager.class);
       BuildPluginManager pluginManager = container.lookup(BuildPluginManager.class);
       PlexusContainer plexusContainerProxy = getOrCreatePlexusContainerProxy(container, mavenPluginManager);
@@ -46,6 +46,17 @@ public final class Maven3ExecutionProcess {
       field("mavenPluginManager").ofType(MavenPluginManager.class).in(pluginManager).set(mavenPluginManager);
     } catch (Exception e) {
       throw new IllegalStateException(e);
+    }
+  }
+
+  private static PlexusContainer getOrCreatePlexusContainerProxyInMavenSession(final MavenPluginExecutor mavenPluginExecutor) {
+    PlexusContainer oldContainer = field("mavenSession.container").ofType(PlexusContainer.class).in(mavenPluginExecutor).get();
+    if (oldContainer instanceof Proxy) {
+      return oldContainer;
+    } else {
+      PlexusContainer plexusContainerProxy = getPlexusContainerProxy(PlexusContainer.class, oldContainer);
+      field("mavenSession.container").ofType(PlexusContainer.class).in(mavenPluginExecutor).set(plexusContainerProxy);
+      return plexusContainerProxy;
     }
   }
 

@@ -17,25 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.org.apache.enforcer;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
 /**
- * User: lgohlke
- * User: lgohlke
+ * User: lars
  */
-public class RulesRepositoryTest {
-
-  @Test
-  public void shouldHaveCompleteRuleSet() throws Exception {
-    AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-    RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-    assertThat(rulesRepository.createRules()).hasSize(7);
-  }
+@Rule(
+    description = DependencyConvergenceRule.DESCRIPTION,
+    key = DependencyConvergenceRule.KEY,
+    name = DependencyConvergenceRule.NAME,
+    priority = Priority.MINOR
+)
+public interface DependencyConvergenceRule extends MavenRule {
+  String DESCRIPTION = "x";
+  String KEY = "DependencyConvergenceRule";
+  String NAME = "DependencyConvergenceRule";
 }

@@ -17,25 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.org.apache.enforcer;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
+import com.google.common.collect.Lists;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+import lombok.Data;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
+import java.util.List;
 
 /**
- * User: lgohlke
- * User: lgohlke
+ * User: lars
  */
-public class RulesRepositoryTest {
-
-  @Test
-  public void shouldHaveCompleteRuleSet() throws Exception {
-    AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-    RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-    assertThat(rulesRepository.createRules()).hasSize(7);
-  }
+@Data
+public class RuleTransferHandler implements ResultTransferHandler{
+  private List<EnforcerRule> rules = Lists.newArrayList();
 }

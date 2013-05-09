@@ -274,6 +274,27 @@
       <version>1.9</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-enforcer-plugin</artifactId>
+      <version>1.2</version>
+      <exclusions>
+        <!--<exclusion>-->
+          <!--<groupId>org.apache.maven</groupId>-->
+          <!--<artifactId>maven-plugin-api</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+          <!--<groupId>org.apache.maven</groupId>-->
+          <!--<artifactId>maven-project</artifactId>-->
+        <!--</exclusion>-->
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.2</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -431,6 +452,56 @@
         <artifactId>maven-reporting-impl</artifactId>
         <version>2.2</version>
       </dependency>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.6</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>10.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.6.2</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.easytesting</groupId>
+        <artifactId>fest-util</artifactId>
+        <version>1.2.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>3.3.2.GA</version>
+      </dependency>
+      <dependency>
+        <groupId>javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.12.1.GA</version>
+      </dependency>
+      <!--<dependency>-->
+        <!--<groupId>org.codehaus.plexus</groupId>-->
+        <!--<artifactId>plexus-classworlds</artifactId>-->
+        <!--<version>2.4</version>-->
+      <!--</dependency>-->
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-project</artifactId>
+        <version>2.2.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
@@ -513,6 +584,24 @@
           </includes>
         </configuration>
       </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-enforcer-plugin</artifactId>-->
+        <!--<version>1.2</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<id>enforce-versions</id>-->
+            <!--<goals>-->
+              <!--<goal>enforce</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<rules>-->
+                <!--<DependencyConvergence/>-->
+              <!--</rules>-->
+            <!--</configuration>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
     </plugins>
     <pluginManagement>
       <plugins>

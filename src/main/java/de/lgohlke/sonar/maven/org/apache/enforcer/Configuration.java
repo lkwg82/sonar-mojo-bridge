@@ -17,25 +17,8 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.org.apache.enforcer;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-
-
-/**
- * User: lgohlke
- * User: lgohlke
- */
-public class RulesRepositoryTest {
-
-  @Test
-  public void shouldHaveCompleteRuleSet() throws Exception {
-    AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-    RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-    assertThat(rulesRepository.createRules()).hasSize(7);
-  }
+public interface Configuration {
+  String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.2:";
 }

@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar;
 
+import de.lgohlke.sonar.maven.org.apache.enforcer.EnforceSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayPluginUpdatesSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.UpdateParentPomSensor;
@@ -59,8 +60,9 @@ public class MavenPlugin extends SonarPlugin {
         DisplayDependencyUpdatesSensor.class,
         UpdateParentPomSensor.class,
 
-        RulesRepository.class,
+        EnforceSensor.class,
 
+        RulesRepository.class,
         // xml language from xml-plugin
         Xml.class,
 
