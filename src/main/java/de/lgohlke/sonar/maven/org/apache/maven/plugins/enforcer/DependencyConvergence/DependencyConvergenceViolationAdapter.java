@@ -19,16 +19,19 @@
  */
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.ViolationAdapter;
 import lombok.Setter;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.sonar.api.resources.File;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.plugins.xml.language.Xml;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,7 +39,7 @@ import java.util.List;
  */
 public class DependencyConvergenceViolationAdapter extends ViolationAdapter<DependencyConvergenceRule> {
   @Setter
-  private Collection<String> errors;
+  private List<List<DependencyNode>> errors;
 
   public DependencyConvergenceViolationAdapter(MavenProject mavenProject) {
     super(mavenProject);
@@ -50,12 +53,23 @@ public class DependencyConvergenceViolationAdapter extends ViolationAdapter<Depe
     file.setLanguage(Xml.INSTANCE);
 
     Rule rule = getRule(DependencyConvergenceRule.class);
-    for (String error : errors) {
+
+    for (List<DependencyNode> error : errors) {
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
-      violation.setMessage(error);
+      violation.setMessage(createMessage(error));
       violations.add(violation);
     }
     return violations;
+  }
+
+  private String createMessage(List<DependencyNode> nodeList) {
+    final DependencyNode dependencyNode = nodeList.get(0);
+    final Artifact artifact = dependencyNode.getArtifact();
+    List<String> versions = Lists.newArrayList();
+    for (DependencyNode node : nodeList) {
+      versions.add(node.getArtifact().getVersion());
+    }
+    return "found multiple version for " + artifact.getGroupId() + ":" + artifact.getArtifactId() + " (" + Joiner.on(",").join(versions) + ")";
   }
 }

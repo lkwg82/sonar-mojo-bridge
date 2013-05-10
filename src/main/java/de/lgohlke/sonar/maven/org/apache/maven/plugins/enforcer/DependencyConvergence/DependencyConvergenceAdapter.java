@@ -64,7 +64,7 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
       visitor.setUniqueVersions(uniqueVersions);
       node.accept(visitor);
 
-      violationAdapter.setErrors(gettConvergenceErrorMsgs(visitor.getConflictedVersionNumbers()));
+      violationAdapter.setErrors(visitor.getConflictedVersionNumbers());
     } catch (Exception e) {
       throw new EnforcerRuleException(e.getLocalizedMessage(), e);
     }
