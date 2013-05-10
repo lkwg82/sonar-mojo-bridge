@@ -17,21 +17,20 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence;
 
 import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-
 /**
  * User: lars
  */
 @Rule(
-  description = DependencyConvergenceRule.DESCRIPTION, //
-  key = DependencyConvergenceRule.KEY, //
-  name = DependencyConvergenceRule.NAME, //
-  priority = Priority.MINOR
+    description = DependencyConvergenceRule.DESCRIPTION, //
+    key = DependencyConvergenceRule.KEY, //
+    name = DependencyConvergenceRule.NAME, //
+    priority = Priority.MINOR
 )
 public interface DependencyConvergenceRule extends MavenRule {
   String DESCRIPTION = "x";

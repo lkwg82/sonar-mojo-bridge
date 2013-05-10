@@ -20,17 +20,19 @@
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
 import de.lgohlke.sonar.maven.MavenRule;
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence.DependencyConvergenceAdapter;
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence.DependencyConvergenceRule;
+
 import java.util.HashMap;
 import java.util.Map;
-
 
 public interface Configuration {
   String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.2:";
 
   Map<Class<? extends MavenRule>, Class<? extends EnforcerRule>> RULE_IMPLEMENTATION_REPOSITORY =
-    new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
-      {
-        put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
-      }
-    };
+      new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
+        {
+          put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
+        }
+      };
 }

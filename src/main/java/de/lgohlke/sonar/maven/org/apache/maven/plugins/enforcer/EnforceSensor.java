@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
 import de.lgohlke.sonar.maven.*;
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence.DependencyConvergenceRule;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;

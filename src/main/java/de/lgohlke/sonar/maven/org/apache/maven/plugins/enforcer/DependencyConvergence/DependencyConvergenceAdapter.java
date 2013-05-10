@@ -17,8 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence;
 
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.ConfigurableEnforceMavenPluginHandler;
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.EnforcerRule;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -38,10 +40,11 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.fest.reflect.reference.TypeRef;
+
 import java.util.Collection;
 import java.util.List;
-import static org.fest.reflect.core.Reflection.method;
 
+import static org.fest.reflect.core.Reflection.method;
 
 /**
  * User: lars
@@ -69,12 +72,12 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
 
   private Collection<String> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
     return
-      method("getConvergenceErrorMsgs") //
-      .withReturnType(new TypeRef<Collection<String>>() {
-        }) //
-      .withParameterTypes(List.class) //
-      .in(this) //
-      .invoke(conflictedVersionNumbers);
+        method("getConvergenceErrorMsgs") //
+            .withReturnType(new TypeRef<Collection<String>>() {
+            }) //
+            .withParameterTypes(List.class) //
+            .in(this) //
+            .invoke(conflictedVersionNumbers);
   }
 
   /**
@@ -99,7 +102,7 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
       ArtifactCollector collector = (ArtifactCollector) helper.getComponent(ArtifactCollector.class);
       ArtifactFilter filter = null; // we need to evaluate all scopes
       DependencyNode node = dependencyTreeBuilder.buildDependencyTree(project, repository, factory, metadataSource, filter,
-        collector);
+          collector);
       return node;
     } catch (ExpressionEvaluationException e) {
       throw new EnforcerRuleException("Unable to lookup an expression " + e.getLocalizedMessage(), e);

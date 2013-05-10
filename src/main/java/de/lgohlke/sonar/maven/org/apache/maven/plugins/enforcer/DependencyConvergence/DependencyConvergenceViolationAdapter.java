@@ -17,18 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergence;
 
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.ViolationAdapter;
 import lombok.Setter;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.resources.File;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.plugins.xml.language.Xml;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 
 /**
  * User: lgohlke
