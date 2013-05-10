@@ -17,15 +17,16 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.internals;
+package de.lgohlke.sonar.maven;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.sonar.api.batch.maven.MavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 
 /**
@@ -44,7 +45,7 @@ public final class MavenPluginHandlerFactory {
     final String[] parts = groupArtifactVersionGoalString.split(":");
 
     checkArgument(parts.length == 4,
-        "the string must be consist of four parts, seperated by : e.g.: org.codehaus.mojo:versions-maven-plugin:1.3.1:help ");
+      "the string must be consist of four parts, seperated by : e.g.: org.codehaus.mojo:versions-maven-plugin:1.3.1:help ");
 
     return new InnerMavenPluginHandler(parts[0], parts[1], parts[2], parts[3]);
   }
@@ -59,7 +60,7 @@ public final class MavenPluginHandlerFactory {
     private final String goal;
 
     public String[] getGoals() {
-      return new String[]{goal};
+      return new String[] { goal };
     }
 
     @Override

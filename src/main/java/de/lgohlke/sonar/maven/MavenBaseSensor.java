@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.internals.MavenPluginExecutorProxyInjection;
-import de.lgohlke.sonar.maven.internals.MavenPluginHandlerFactory;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +38,11 @@ import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-
 import java.util.List;
 import java.util.Map;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * User: lars
@@ -68,6 +66,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
 
     SensorConfiguration configuration = getClass().getAnnotation(SensorConfiguration.class);
     verifyConfiguration(configuration);
+
     Class<? extends BridgeMojo<T>> bridgeMojoClass = (Class<? extends BridgeMojo<T>>) configuration.bridgeMojo();
     try {
       T resultTransferHandler = (T) configuration.resultTransferHandler().newInstance();
@@ -132,6 +131,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     return MavenPluginHandlerFactory.createHandler(baseIdentifier + mojoMapper.getGoal());
   }
 
+  @Override
   public String toString() {
     return getClass().getSimpleName();
   }
