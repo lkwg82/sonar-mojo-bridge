@@ -38,11 +38,12 @@ import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
+
 import java.util.List;
 import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 
 /**
  * User: lars
@@ -120,14 +121,9 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   protected List<Rule> getAssociatedRules() {
     List<Rule> rules = Lists.newArrayList();
     for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
-      rules.add(createRuleFrom(ruleClass));
+      rules.add(RuleUtils.createRuleFrom(ruleClass));
     }
     return rules;
-  }
-
-  protected static Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
-    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
-    return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
   }
 
   @Override
@@ -145,7 +141,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
 
   protected Map<String, String> createRulePropertiesMapFromQualityProfile(Class<? extends MavenRule> ruleClass) {
     Map<String, String> mappedParams = Maps.newHashMap();
-    String ruleKey = createRuleFrom(ruleClass).getKey();
+    String ruleKey = RuleUtils.createRuleFrom(ruleClass).getKey();
     ActiveRule activeRuleByConfigKey = getRulesProfile().getActiveRuleByConfigKey(MavenPlugin.REPOSITORY_KEY, ruleKey);
     if (null != activeRuleByConfigKey) {
       List<ActiveRuleParam> activeRuleParams = activeRuleByConfigKey.getActiveRuleParams();

@@ -19,10 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
-import de.lgohlke.sonar.maven.MavenBaseSensor;
-import de.lgohlke.sonar.maven.MavenRule;
-import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.SensorConfiguration;
+import de.lgohlke.sonar.maven.*;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -32,16 +29,17 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
+
 import java.util.List;
+
 import static de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.Configuration.BASE_IDENTIFIER;
 import static org.fest.reflect.core.Reflection.constructor;
 
-
-@Rules(values = { DependencyConvergenceRule.class })
+@Rules(values = {DependencyConvergenceRule.class})
 @SensorConfiguration(
-  bridgeMojo = EnforceBridgeMojo.class, //
-  resultTransferHandler = RuleTransferHandler.class, //
-  mavenBaseIdentifier = BASE_IDENTIFIER
+    bridgeMojo = EnforceBridgeMojo.class, //
+    resultTransferHandler = RuleTransferHandler.class, //
+    mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
   private final EnforceMavenPluginHandler mavenPluginHandler;
@@ -55,7 +53,7 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
 
   private void configureMavenPluginHandler(RulesProfile rulesProfile, MavenProject mavenProject) {
     for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
-      Rule rule = createRuleFrom(ruleClass);
+      Rule rule = RuleUtils.createRuleFrom(ruleClass);
       for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
         if (rule.equals(activeRule.getRule())) {
           initEnforcerRule(mavenProject, ruleClass);

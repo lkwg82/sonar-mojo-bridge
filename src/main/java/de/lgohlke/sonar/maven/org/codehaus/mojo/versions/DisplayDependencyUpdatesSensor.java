@@ -21,10 +21,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.PomSourceImporter;
-import de.lgohlke.sonar.maven.MavenBaseSensor;
-import de.lgohlke.sonar.maven.ResultTransferHandler;
-import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.SensorConfiguration;
+import de.lgohlke.sonar.maven.*;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import lombok.Getter;
 import lombok.Setter;
@@ -111,7 +108,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
   public void analyse(final Project project, final SensorContext context) {
     DisplayDependencyUpdatesResultHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
 
-    Rule rule = createRuleFrom(DependencyVersion.class);
+    Rule rule = RuleUtils.createRuleFrom(DependencyVersion.class);
     final File file = pomSourceImporter.getPomFile();
 
     ArtifactFilter filter = createFilter(settings);

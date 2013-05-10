@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenBaseSensor;
+import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.SensorConfiguration;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
@@ -122,7 +123,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
 
     // minimum version warning
     if (resultTransferHandler.isWarninNoMinimumVersion()) {
-      Rule rule = createRuleFrom(NoMinimumMavenVersion.class);
+      Rule rule = RuleUtils.createRuleFrom(NoMinimumMavenVersion.class);
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
       violation.setMessage("Project does not define minimum Maven version, default is: 2.0");
@@ -133,7 +134,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion =
         resultTransferHandler.getIncompatibleParentAndProjectMavenVersion();
     if (incompatibleParentAndProjectMavenVersion != null) {
-      Rule rule = createRuleFrom(IncompatibleMavenVersion.class);
+      Rule rule = RuleUtils.createRuleFrom(IncompatibleMavenVersion.class);
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
 
@@ -145,7 +146,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     }
 
     // missing versions
-    Rule missingVersionRule = createRuleFrom(MissingPluginVersion.class);
+    Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
     for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
       Violation violation = Violation.create(missingVersionRule, file);
       int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
@@ -157,7 +158,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
     }
 
     // updates
-    Rule rule = createRuleFrom(PluginVersion.class);
+    Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
     ArtifactFilter filter = createFilter(settings);
     for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
       if (filter.acceptArtifact(update.toString())) {

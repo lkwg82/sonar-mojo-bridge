@@ -19,10 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
-import de.lgohlke.sonar.maven.MavenBaseSensor;
-import de.lgohlke.sonar.maven.ResultTransferHandler;
-import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.SensorConfiguration;
+import de.lgohlke.sonar.maven.*;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.ParentPomVersion;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +35,6 @@ import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
 
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
-
 
 @Rules(values = {ParentPomVersion.class})
 @SensorConfiguration(
@@ -64,7 +60,7 @@ public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor
   public void analyse(final Project project, final SensorContext context) {
     ResultHandler resultHandler = getMojoMapper().getResultTransferHandler();
     if (resultHandler.getNewerVersion() != null) {
-      Rule rule = createRuleFrom(ParentPomVersion.class);
+      Rule rule = RuleUtils.createRuleFrom(ParentPomVersion.class);
       File file = new File("", getMavenProject().getFile().getName());
       file.setLanguage(Xml.INSTANCE);
 
