@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -37,7 +38,6 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.fest.reflect.reference.TypeRef;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import static org.fest.reflect.core.Reflection.method;
@@ -46,9 +46,12 @@ import static org.fest.reflect.core.Reflection.method;
 /**
  * User: lars
  */
-public class DependencyConvergenceAdapter extends DependencyConvergence {
+public class DependencyConvergenceAdapter extends DependencyConvergence implements EnforcerRule<DependencyConvergenceViolationAdapter> {
   @Setter
   private boolean uniqueVersions;
+  @Getter
+  @Setter
+  private DependencyConvergenceViolationAdapter violationAdapter;
 
   @Override
   public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
@@ -58,16 +61,20 @@ public class DependencyConvergenceAdapter extends DependencyConvergence {
       visitor.setUniqueVersions(uniqueVersions);
       node.accept(visitor);
 
-      List<CharSequence> errorMsgs = new ArrayList<CharSequence>();
-      errorMsgs.addAll(gettConvergenceErrorMsgs(visitor.getConflictedVersionNumbers()));
+      violationAdapter.setErrors(gettConvergenceErrorMsgs(visitor.getConflictedVersionNumbers()));
     } catch (Exception e) {
       throw new EnforcerRuleException(e.getLocalizedMessage(), e);
     }
   }
 
-  private Collection<? extends CharSequence> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
-    return method("getConvergenceErrorMsgs").withReturnType(new TypeRef<Collection<? extends CharSequence>>() {
-      }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
+  private Collection<String> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
+    return
+      method("getConvergenceErrorMsgs") //
+      .withReturnType(new TypeRef<Collection<String>>() {
+        }) //
+      .withParameterTypes(List.class) //
+      .in(this) //
+      .invoke(conflictedVersionNumbers);
   }
 
   /**
@@ -101,5 +108,15 @@ public class DependencyConvergenceAdapter extends DependencyConvergence {
     } catch (DependencyTreeBuilderException e) {
       throw new EnforcerRuleException("Could not build dependency tree " + e.getLocalizedMessage(), e);
     }
+  }
+
+  @Override
+  public void configure(final ConfigurableEnforceMavenPluginHandler handler) {
+    handler.setParameter("rules/DependencyConvergence", null);
+  }
+
+  @Override
+  public Class<DependencyConvergenceViolationAdapter> getViolationAdapterClass() {
+    return DependencyConvergenceViolationAdapter.class;
   }
 }

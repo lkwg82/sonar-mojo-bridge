@@ -22,7 +22,6 @@ package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
 import lombok.Data;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import java.util.List;
 
 

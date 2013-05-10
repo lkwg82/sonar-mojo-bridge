@@ -27,7 +27,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.enforcer.DefaultEnforcementRuleHelper;
 import org.apache.maven.plugins.enforcer.EnforceMojo;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
@@ -47,19 +46,14 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
   @Setter
   private RuleTransferHandler resultHandler;
 
-  /**
-   * Array of objects that implement the EnforcerRule
-   * interface to execute.
-   */
-  @Parameter(required = false)
-  private EnforcerRule[] rules = new EnforcerRule[] { new DependencyConvergenceAdapter() };
-
   @Override
   public void execute() throws MojoExecutionException {
     Log log = this.getLog();
 
 
     EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator(session, translator, project);
+
+    EnforcerRule[] rules = resultHandler.getRules().toArray(new EnforcerRule[resultHandler.getRules().size()]);
 
     // the entire execution can be easily skipped
     if (!skip) {

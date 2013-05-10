@@ -117,12 +117,17 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
     return false;
   }
 
-  private List<Rule> getAssociatedRules() {
+  protected List<Rule> getAssociatedRules() {
     List<Rule> rules = Lists.newArrayList();
     for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
       rules.add(createRuleFrom(ruleClass));
     }
     return rules;
+  }
+
+  protected static Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
+    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
+    return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
   }
 
   @Override
@@ -134,11 +139,6 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   @Override
   public String toString() {
     return getClass().getSimpleName();
-  }
-
-  protected static Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
-    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
-    return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
   }
 
   public abstract void analyse(final Project project, final SensorContext context);

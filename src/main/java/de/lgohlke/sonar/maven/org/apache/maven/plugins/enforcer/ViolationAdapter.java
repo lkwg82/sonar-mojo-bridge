@@ -19,22 +19,30 @@
  */
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
+import de.lgohlke.sonar.MavenPlugin;
 import de.lgohlke.sonar.maven.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.maven.project.MavenProject;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.Violation;
+import java.util.List;
 
 
 /**
- * User: lars
+ * User: lgohlke
  */
-@Rule(
-  description = DependencyConvergenceRule.DESCRIPTION, //
-  key = DependencyConvergenceRule.KEY, //
-  name = DependencyConvergenceRule.NAME, //
-  priority = Priority.MINOR
-)
-public interface DependencyConvergenceRule extends MavenRule {
-  String DESCRIPTION = "x";
-  String KEY = "DependencyConvergenceRule";
-  String NAME = "DependencyConvergenceRule";
+@RequiredArgsConstructor
+public abstract class ViolationAdapter<T extends MavenRule> {
+  @Getter(AccessLevel.PROTECTED)
+  private final MavenProject mavenProject;
+
+  public abstract List<Violation> getViolations();
+
+  // TODO allgemein machen
+  protected Rule getRule(Class<T> ruleClass) {
+    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
+    return Rule.create(MavenPlugin.REPOSITORY_KEY, key);
+  }
 }

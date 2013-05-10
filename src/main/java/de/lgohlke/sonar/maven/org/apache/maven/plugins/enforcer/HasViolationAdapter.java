@@ -19,22 +19,14 @@
  */
 package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
-import de.lgohlke.sonar.maven.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
-
 
 /**
- * User: lars
+ * User: lgohlke
  */
-@Rule(
-  description = DependencyConvergenceRule.DESCRIPTION, //
-  key = DependencyConvergenceRule.KEY, //
-  name = DependencyConvergenceRule.NAME, //
-  priority = Priority.MINOR
-)
-public interface DependencyConvergenceRule extends MavenRule {
-  String DESCRIPTION = "x";
-  String KEY = "DependencyConvergenceRule";
-  String NAME = "DependencyConvergenceRule";
+public interface HasViolationAdapter<T extends ViolationAdapter> {
+  void setViolationAdapter(T adapter);
+
+  T getViolationAdapter();
+
+  Class<T> getViolationAdapterClass();
 }
