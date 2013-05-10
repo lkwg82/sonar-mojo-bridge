@@ -19,17 +19,21 @@
  */
 package de.lgohlke.sonar;
 
-import de.lgohlke.sonar.maven.org.apache.enforcer.DependencyConvergenceRule;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
+import de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.DependencyConvergenceRule;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.IncompatibleMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.NoMinimumMavenVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.ParentPomVersion;
+import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.PluginVersion;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleRepository;
-
 import java.util.Arrays;
 import java.util.List;
 
-public class RulesRepository extends RuleRepository {
 
+public class RulesRepository extends RuleRepository {
   private final AnnotationRuleParser ruleParser;
 
   public RulesRepository(final AnnotationRuleParser ruleParser) {
@@ -46,7 +50,7 @@ public class RulesRepository extends RuleRepository {
   @SuppressWarnings("rawtypes")
   private static List<Class> getCheckedClasses() {
     return Arrays.asList((Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
-        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class, DependencyConvergenceRule.class);
+      IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class, DependencyConvergenceRule.class);
   }
 
 }

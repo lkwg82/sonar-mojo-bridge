@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
 import lombok.Setter;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -37,12 +37,11 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.fest.reflect.reference.TypeRef;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import static org.fest.reflect.core.Reflection.method;
+
 
 /**
  * User: lars
@@ -58,6 +57,7 @@ public class DependencyConvergenceAdapter extends DependencyConvergence {
       DependencyVersionMap visitor = new DependencyVersionMap(helper.getLog());
       visitor.setUniqueVersions(uniqueVersions);
       node.accept(visitor);
+
       List<CharSequence> errorMsgs = new ArrayList<CharSequence>();
       errorMsgs.addAll(gettConvergenceErrorMsgs(visitor.getConflictedVersionNumbers()));
     } catch (Exception e) {
@@ -67,7 +67,7 @@ public class DependencyConvergenceAdapter extends DependencyConvergence {
 
   private Collection<? extends CharSequence> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
     return method("getConvergenceErrorMsgs").withReturnType(new TypeRef<Collection<? extends CharSequence>>() {
-    }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
+      }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
   }
 
   /**
@@ -80,20 +80,19 @@ public class DependencyConvergenceAdapter extends DependencyConvergence {
    * @return a Dependency Node which is the root of the project's dependency tree
    * @throws EnforcerRuleException
    */
-  private DependencyNode getNode(EnforcerRuleHelper helper)
-      throws EnforcerRuleException {
+  private DependencyNode getNode(EnforcerRuleHelper helper) throws EnforcerRuleException {
     try {
       MavenProject project = (MavenProject) helper.evaluate("${project}");
       ArtifactFactory factory = (ArtifactFactory) helper.getComponent(ArtifactFactory.class);
       DefaultDependencyTreeBuilder dependencyTreeBuilder = new DefaultDependencyTreeBuilder();
       dependencyTreeBuilder.enableLogging(new SilentLog());
+
       ArtifactRepository repository = (ArtifactRepository) helper.evaluate("${localRepository}");
       ArtifactMetadataSource metadataSource = (ArtifactMetadataSource) helper.getComponent(ArtifactMetadataSource.class);
       ArtifactCollector collector = (ArtifactCollector) helper.getComponent(ArtifactCollector.class);
       ArtifactFilter filter = null; // we need to evaluate all scopes
-      DependencyNode node =
-          dependencyTreeBuilder.buildDependencyTree(project, repository, factory, metadataSource, filter,
-              collector);
+      DependencyNode node = dependencyTreeBuilder.buildDependencyTree(project, repository, factory, metadataSource, filter,
+        collector);
       return node;
     } catch (ExpressionEvaluationException e) {
       throw new EnforcerRuleException("Unable to lookup an expression " + e.getLocalizedMessage(), e);

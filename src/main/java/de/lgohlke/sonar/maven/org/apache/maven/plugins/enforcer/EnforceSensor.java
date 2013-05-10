@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
 import de.lgohlke.sonar.maven.MavenBaseSensor;
 import de.lgohlke.sonar.maven.Rules;
@@ -31,23 +31,13 @@ import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-
 import java.util.List;
+import static de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer.Configuration.BASE_IDENTIFIER;
 
-import static de.lgohlke.sonar.maven.org.apache.enforcer.Configuration.BASE_IDENTIFIER;
 
-@Rules(
-    values = {
-        DependencyConvergenceRule.class
-    }
-)
-@SensorConfiguration(
-    bridgeMojo = EnforceBridgeMojo.class,
-    resultTransferHandler = RuleTransferHandler.class,
-    mavenBaseIdentifier = BASE_IDENTIFIER
-)
+@Rules(values = { DependencyConvergenceRule.class })
+@SensorConfiguration(bridgeMojo = EnforceBridgeMojo.class, resultTransferHandler = RuleTransferHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER)
 public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
-
   public EnforceSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject) {
     super(rulesProfile, mavenPluginExecutor, mavenProject);
 
@@ -92,7 +82,7 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
 
       @Override
       public void configure(Project project, MavenPlugin plugin) {
-        plugin.setParameter("rules/DependencyConvergence",null);
+        plugin.setParameter("rules/DependencyConvergence", null);
       }
     };
   }

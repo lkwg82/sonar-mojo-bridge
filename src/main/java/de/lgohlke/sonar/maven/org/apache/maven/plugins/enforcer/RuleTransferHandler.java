@@ -17,23 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
-import de.lgohlke.sonar.maven.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import com.google.common.collect.Lists;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+import lombok.Data;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import java.util.List;
+
 
 /**
  * User: lars
  */
-@Rule(
-    description = DependencyConvergenceRule.DESCRIPTION,
-    key = DependencyConvergenceRule.KEY,
-    name = DependencyConvergenceRule.NAME,
-    priority = Priority.MINOR
-)
-public interface DependencyConvergenceRule extends MavenRule {
-  String DESCRIPTION = "x";
-  String KEY = "DependencyConvergenceRule";
-  String NAME = "DependencyConvergenceRule";
+@Data
+public class RuleTransferHandler implements ResultTransferHandler {
+  private List<EnforcerRule> rules = Lists.newArrayList();
 }

@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.org.apache.enforcer;
+package de.lgohlke.sonar.maven.org.apache.maven.plugins.enforcer;
 
 import de.lgohlke.sonar.maven.BridgeMojo;
 import de.lgohlke.sonar.maven.Goal;
@@ -33,12 +33,11 @@ import org.apache.maven.plugins.enforcer.EnforceMojo;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.fest.reflect.reference.TypeRef;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import static org.fest.reflect.core.Reflection.method;
+
 
 /**
  * User: lars
@@ -52,13 +51,12 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
    * Array of objects that implement the EnforcerRule
    * interface to execute.
    */
-  @Parameter( required = false )
-  private EnforcerRule[] rules = new EnforcerRule[]{new DependencyConvergenceAdapter()};
+  @Parameter(required = false)
+  private EnforcerRule[] rules = new EnforcerRule[] { new DependencyConvergenceAdapter() };
 
   @Override
   public void execute() throws MojoExecutionException {
     Log log = this.getLog();
-
 
 
     EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator(session, translator, project);
@@ -69,12 +67,13 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
       List<String> list = new ArrayList<String>();
 
       // make sure the rules exist
-      if (rules != null && rules.length > 0) {
+      if ((rules != null) && (rules.length > 0)) {
         String currentRule = "Unknown";
 
         // create my helper
         EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
-//        helper.getComponent()
+
+        //        helper.getComponent()
         // if we are only warning, then disable
         // failFast
         if (!fail) {
@@ -83,7 +82,6 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
 
         // go through each rule
         for (int i = 0; i < rules.length; i++) {
-
           // prevent against empty rules
           EnforcerRule rule = rules[i];
           if (rule != null) {
@@ -104,8 +102,8 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
               // because failfast will be
               // false if fail is false.
               if (failFast) {
-                throw new MojoExecutionException(currentRule + " failed with message:\n"
-                    + e.getMessage(), e);
+                throw new MojoExecutionException(currentRule + " failed with message:\n" +
+                  e.getMessage(), e);
               } else {
                 list.add("Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage());
                 log.debug("Adding failure due to exception", e);
@@ -122,12 +120,12 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
           }
           if (fail) {
             throw new MojoExecutionException(
-                "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
+              "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
           }
         }
       } else {
         throw new MojoExecutionException(
-            "No rules are configured. Use the skip flag if you want to disable execution.");
+          "No rules are configured. Use the skip flag if you want to disable execution.");
       }
     } else {
       log.info("Skipping Rule Enforcement.");
@@ -136,7 +134,7 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
 
   private Collection<? extends CharSequence> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
     return method("getConvergenceErrorMsgs").withReturnType(new TypeRef<Collection<? extends CharSequence>>() {
-    }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
+      }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
   }
 
   private DependencyNode gettNode(EnforcerRuleHelper helper) {
