@@ -39,12 +39,6 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.fest.reflect.reference.TypeRef;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.fest.reflect.core.Reflection.method;
 
 /**
  * User: lars
@@ -68,16 +62,6 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
     } catch (Exception e) {
       throw new EnforcerRuleException(e.getLocalizedMessage(), e);
     }
-  }
-
-  private Collection<String> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
-    return
-        method("getConvergenceErrorMsgs") //
-            .withReturnType(new TypeRef<Collection<String>>() {
-            }) //
-            .withParameterTypes(List.class) //
-            .in(this) //
-            .invoke(conflictedVersionNumbers);
   }
 
   /**
@@ -113,6 +97,11 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
     }
   }
 
+  /**
+   * we need to configure the rules via xml
+   *
+   * @param handler
+   */
   @Override
   public void configure(final ConfigurableEnforceMavenPluginHandler handler) {
     handler.setParameter("rules/DependencyConvergence", null);
