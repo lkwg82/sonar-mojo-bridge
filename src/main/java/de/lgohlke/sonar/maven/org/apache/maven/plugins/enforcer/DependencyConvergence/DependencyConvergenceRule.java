@@ -32,6 +32,7 @@ import org.sonar.check.Rule;
     name = DependencyConvergenceRule.NAME, //
     priority = Priority.MINOR
 )
+// TODO description
 public interface DependencyConvergenceRule extends MavenRule {
   String DESCRIPTION = "x";
   String KEY = "DependencyConvergenceRule";
