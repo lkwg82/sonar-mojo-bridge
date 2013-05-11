@@ -17,11 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer.DependencyConvergence;
+package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 
-import de.lgohlke.sonar.enforcer.ConfigurableEnforceMavenPluginHandler;
-import de.lgohlke.sonar.enforcer.EnforcerRule;
-import de.lgohlke.sonar.enforcer.SilentLog;
+import de.lgohlke.sonar.maven.enforcer.ConfigurableEnforceMavenPluginHandler;
+import de.lgohlke.sonar.maven.enforcer.EnforcerRule;
+import de.lgohlke.sonar.maven.enforcer.SilentLog;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.factory.ArtifactFactory;

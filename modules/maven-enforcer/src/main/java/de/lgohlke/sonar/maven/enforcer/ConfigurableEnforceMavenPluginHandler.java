@@ -17,24 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer;
-
-import de.lgohlke.sonar.maven.MavenRule;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.maven.project.MavenProject;
-import org.sonar.api.rules.Violation;
-
-import java.util.List;
+package de.lgohlke.sonar.maven.enforcer;
 
 /**
  * User: lgohlke
  */
-@RequiredArgsConstructor
-public abstract class ViolationAdapter<T extends MavenRule> {
-  @Getter(AccessLevel.PROTECTED)
-  private final MavenProject mavenProject;
-
-  public abstract List<Violation> getViolations();
+public interface ConfigurableEnforceMavenPluginHandler {
+  ConfigurableEnforceMavenPluginHandler setParameter(String key, String value);
 }

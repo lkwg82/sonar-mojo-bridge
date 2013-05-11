@@ -17,24 +17,22 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer.DependencyConvergence;
+package de.lgohlke.sonar.maven.enforcer;
 
 import de.lgohlke.sonar.maven.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceAdapter;
+import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceRule;
 
-/**
- * User: lars
- */
-@Rule(
-    description = DependencyConvergenceRule.DESCRIPTION, //
-    key = DependencyConvergenceRule.KEY, //
-    name = DependencyConvergenceRule.NAME, //
-    priority = Priority.MINOR
-)
-// TODO description
-public interface DependencyConvergenceRule extends MavenRule {
-  String DESCRIPTION = "x";
-  String KEY = "DependencyConvergenceRule";
-  String NAME = "DependencyConvergenceRule";
+import java.util.HashMap;
+import java.util.Map;
+
+public interface Configuration {
+  String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.2:";
+
+  Map<Class<? extends MavenRule>, Class<? extends EnforcerRule>> RULE_IMPLEMENTATION_REPOSITORY =
+      new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
+        {
+          put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
+        }
+      };
 }

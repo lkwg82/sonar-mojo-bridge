@@ -17,10 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer;
+package de.lgohlke.sonar.maven.enforcer;
 
-import de.lgohlke.sonar.enforcer.DependencyConvergence.DependencyConvergenceRule;
 import de.lgohlke.sonar.maven.*;
+import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceRule;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -33,7 +33,7 @@ import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
 
-import static de.lgohlke.sonar.enforcer.Configuration.BASE_IDENTIFIER;
+import static de.lgohlke.sonar.maven.enforcer.Configuration.BASE_IDENTIFIER;
 import static org.fest.reflect.core.Reflection.constructor;
 
 @Rules(values = {DependencyConvergenceRule.class})

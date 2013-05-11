@@ -17,12 +17,12 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer.DependencyConvergence;
+package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import de.lgohlke.sonar.enforcer.ViolationAdapter;
 import de.lgohlke.sonar.maven.RuleUtils;
+import de.lgohlke.sonar.maven.enforcer.ViolationAdapter;
 import lombok.Setter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;

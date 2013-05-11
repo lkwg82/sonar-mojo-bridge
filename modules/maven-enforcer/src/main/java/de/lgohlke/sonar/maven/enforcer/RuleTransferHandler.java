@@ -17,22 +17,18 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer;
+package de.lgohlke.sonar.maven.enforcer;
 
-import de.lgohlke.sonar.enforcer.DependencyConvergence.DependencyConvergenceAdapter;
-import de.lgohlke.sonar.enforcer.DependencyConvergence.DependencyConvergenceRule;
-import de.lgohlke.sonar.maven.MavenRule;
+import com.google.common.collect.Lists;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+import lombok.Data;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public interface Configuration {
-  String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.2:";
-
-  Map<Class<? extends MavenRule>, Class<? extends EnforcerRule>> RULE_IMPLEMENTATION_REPOSITORY =
-      new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
-        {
-          put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
-        }
-      };
+/**
+ * User: lars
+ */
+@Data
+public class RuleTransferHandler implements ResultTransferHandler {
+  private List<EnforcerRule> rules = Lists.newArrayList();
 }

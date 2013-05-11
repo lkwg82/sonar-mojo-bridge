@@ -17,15 +17,11 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.enforcer;
+package de.lgohlke.sonar.maven.enforcer;
 
 /**
  * User: lgohlke
  */
-public interface HasViolationAdapter<T extends ViolationAdapter> {
-  void setViolationAdapter(T adapter);
-
-  T getViolationAdapter();
-
-  Class<T> getViolationAdapterClass();
+public interface ConfiguringEnforceMavenPluginHandler {
+  void configure(ConfigurableEnforceMavenPluginHandler handler);
 }
