@@ -21,6 +21,7 @@ package de.lgohlke.sonar.enforcer.DependencyConvergence;
 
 import de.lgohlke.sonar.enforcer.ConfigurableEnforceMavenPluginHandler;
 import de.lgohlke.sonar.enforcer.EnforcerRule;
+import de.lgohlke.sonar.enforcer.SilentLog;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -30,7 +31,6 @@ import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.testing.SilentLog;
 import org.apache.maven.plugins.enforcer.DependencyConvergence;
 import org.apache.maven.plugins.enforcer.utils.DependencyVersionMap;
 import org.apache.maven.project.MavenProject;
