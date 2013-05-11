@@ -24,7 +24,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.project.MavenProject;
-import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 
 import java.util.List;
@@ -38,10 +37,4 @@ public abstract class ViolationAdapter<T extends MavenRule> {
   private final MavenProject mavenProject;
 
   public abstract List<Violation> getViolations();
-
-  // TODO allgemein machen
-  protected Rule getRule(Class<T> ruleClass) {
-    String key = ruleClass.getAnnotation(org.sonar.check.Rule.class).key();
-    return Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, key);
-  }
 }

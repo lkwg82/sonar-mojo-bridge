@@ -22,6 +22,7 @@ package de.lgohlke.sonar.enforcer.DependencyConvergence;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import de.lgohlke.sonar.enforcer.ViolationAdapter;
+import de.lgohlke.sonar.maven.RuleUtils;
 import lombok.Setter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -52,7 +53,7 @@ public class DependencyConvergenceViolationAdapter extends ViolationAdapter<Depe
     File file = new File("", getMavenProject().getFile().getName());
     file.setLanguage(Xml.INSTANCE);
 
-    Rule rule = getRule(DependencyConvergenceRule.class);
+    Rule rule = RuleUtils.createRuleFrom(DependencyConvergenceRule.class);
 
     for (List<DependencyNode> error : errors) {
       Violation violation = Violation.create(rule, file);
