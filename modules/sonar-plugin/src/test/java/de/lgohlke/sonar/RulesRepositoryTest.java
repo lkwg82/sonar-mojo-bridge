@@ -35,6 +35,7 @@ public class RulesRepositoryTest {
     AnnotationRuleParser ruleParser = new AnnotationRuleParser();
     RulesRepository rulesRepository = new RulesRepository(ruleParser);
 
-    assertThat(rulesRepository.createRules()).hasSize(7);
+    final int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
+    assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount);
   }
 }

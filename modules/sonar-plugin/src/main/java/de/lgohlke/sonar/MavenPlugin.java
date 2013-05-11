@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar;
 
-import de.lgohlke.sonar.enforcer.EnforceSensor;
+import de.lgohlke.sonar.maven.enforcer.EnforceSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.DisplayPluginUpdatesSensor;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.UpdateParentPomSensor;
