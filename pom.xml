@@ -65,6 +65,7 @@
     <mavenVersion>3.0.4</mavenVersion>
     <sonar.version>3.5</sonar.version>
     <sonar-plugin-api.version>3.5</sonar-plugin-api.version>
+    <sonar-xml-plugin.version>1.0</sonar-xml-plugin.version>
 
     <!-- this code has a lot of violations, by design -->
     <sonar.exclusions>**/*BridgeMojo.java</sonar.exclusions>

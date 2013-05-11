@@ -27,6 +27,12 @@
       <version>${sonar.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-xml-plugin</artifactId>
+      <version>${sonar-xml-plugin.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
