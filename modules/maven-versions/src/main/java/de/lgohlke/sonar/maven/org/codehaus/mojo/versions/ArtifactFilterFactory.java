@@ -32,7 +32,7 @@ import java.util.Set;
  * User: lars
  */
 @Slf4j
-public class ArtifactFilterFactory {
+public final class ArtifactFilterFactory {
   private static final XStream XSTREAM = new XStream();
 
   static {
