@@ -32,9 +32,11 @@ import org.sonar.check.Rule;
     name = DependencyConvergenceRule.NAME, //
     priority = Priority.MINOR
 )
-// TODO description
+/**
+ * @see http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html
+ */
 public interface DependencyConvergenceRule extends MavenRule {
-  String DESCRIPTION = "x";
+  String DESCRIPTION = "This rule requires that dependency version numbers converge. If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C then the version of C depended on by B.";
   String KEY = "DependencyConvergenceRule";
   String NAME = "DependencyConvergenceRule";
 }
