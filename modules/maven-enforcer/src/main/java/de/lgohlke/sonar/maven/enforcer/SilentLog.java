@@ -32,12 +32,15 @@ public class SilentLog implements Log, Logger {
   }
 
   public void debug(CharSequence content) {
+    // nop
   }
 
   public void debug(CharSequence content, Throwable error) {
+    // nop
   }
 
   public void debug(Throwable error) {
+    // nop
   }
 
   public boolean isInfoEnabled() {
@@ -45,12 +48,15 @@ public class SilentLog implements Log, Logger {
   }
 
   public void info(CharSequence content) {
+    // nop
   }
 
   public void info(CharSequence content, Throwable error) {
+    // nop
   }
 
   public void info(Throwable error) {
+    // nop
   }
 
   public boolean isWarnEnabled() {
@@ -58,12 +64,15 @@ public class SilentLog implements Log, Logger {
   }
 
   public void warn(CharSequence content) {
+    // nop
   }
 
   public void warn(CharSequence content, Throwable error) {
+    // nop
   }
 
   public void warn(Throwable error) {
+    // nop
   }
 
   public boolean isErrorEnabled() {
@@ -71,51 +80,64 @@ public class SilentLog implements Log, Logger {
   }
 
   public void error(CharSequence content) {
+    // nop
   }
 
   public void error(CharSequence content, Throwable error) {
+    // nop
   }
 
   public void error(Throwable error) {
+    // nop
   }
 
   public void debug(String message) {
+    // nop
 
   }
 
   public void debug(String message, Throwable throwable) {
+    // nop
 
   }
 
   public void info(String message) {
+    // nop
 
   }
 
   public void info(String message, Throwable throwable) {
+    // nop
 
   }
 
   public void warn(String message) {
+    // nop
 
   }
 
   public void warn(String message, Throwable throwable) {
+    // nop
 
   }
 
   public void error(String message) {
+    // nop
 
   }
 
   public void error(String message, Throwable throwable) {
+    // nop
 
   }
 
   public void fatalError(String message) {
+    // nop
 
   }
 
   public void fatalError(String message, Throwable throwable) {
+    // nop
 
   }
 
@@ -139,6 +161,6 @@ public class SilentLog implements Log, Logger {
    * @see org.codehaus.plexus.logging.Logger#setThreshold(int)
    */
   public void setThreshold(int theThreshold) {
-
+    // nop
   }
 }
