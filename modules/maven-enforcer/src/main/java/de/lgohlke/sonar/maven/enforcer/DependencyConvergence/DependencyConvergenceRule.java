@@ -30,7 +30,7 @@ import org.sonar.check.Rule;
     description = DependencyConvergenceRule.DESCRIPTION, //
     key = DependencyConvergenceRule.KEY, //
     name = DependencyConvergenceRule.NAME, //
-    priority = Priority.MINOR
+    priority = Priority.CRITICAL
 )
 /**
  * @see http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html
