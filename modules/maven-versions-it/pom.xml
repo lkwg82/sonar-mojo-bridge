@@ -9,15 +9,18 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-maven-checks</artifactId>
-  <version>${project.internal_version}</version>
-  <packaging>sonar-plugin</packaging>
-  <name>Sonar maven checks plugin</name>
-  <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
-  <inceptionYear>2012</inceptionYear>
+  <artifactId>sonar-maven-checks-maven-versions-integration</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
 
   <dependencies>
     <!-- internal dependencies //-->
+    <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-maven-checks</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-maven-checks-maven-versions</artifactId>
@@ -25,14 +28,33 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-enforcer</artifactId>
+      <artifactId>sonar-maven-checks-testing</artifactId>
       <version>0.1-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>hudson-maven-embedder</artifactId>
+      <version>3.2</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-xml-plugin</artifactId>
+      <version>${sonar-xml-plugin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-testing-harness</artifactId>
+      <version>${sonar.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -41,14 +63,40 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-batch</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-xml-plugin</artifactId>
-      <version>${sonar-xml-plugin.version}</version>
-      <!--<scope>provided</scope>-->
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-maven3-plugin</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-ws-client</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.2.2</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>animal-sniffer-annotations</artifactId>
+      <version>1.9</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
@@ -273,17 +321,44 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.sonar</groupId>
-        <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <pluginClass>de.lgohlke.sonar.MavenPlugin</pluginClass>
-          <!--<requirePlugins>xml:1.0</requirePlugins>-->
-        </configuration>
+        <artifactId>sonar-dev-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>start-server</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <runtimeVersion>${sonar.version}</runtimeVersion>
+              <background>true</background>
+              <database>${test.database}</database>
+              <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
+              <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
+              <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
+              <pluginArtifact>../sonar-plugin/target/sonar-maven-checks-${project.internal_version}.jar</pluginArtifact>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-server</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <runtimeVersion>${sonar.version}</runtimeVersion>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

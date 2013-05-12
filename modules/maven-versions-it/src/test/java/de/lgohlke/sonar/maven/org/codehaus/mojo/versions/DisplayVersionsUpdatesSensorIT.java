@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-maven-checks-maven-versions-integration
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -92,7 +92,7 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
     assertThat(violations).are(onlyForFile(pomXml.getName()));
   }
 
-  @Test(dependsOnMethods = "shouldHaveSomeViolations", enabled = false)
+  @Test(enabled = false)
   public void shouldHaveImportedPom() throws Exception {
     skipTestIfNotMaven3();
 
