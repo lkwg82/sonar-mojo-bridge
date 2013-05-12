@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sonar-config>
+  <version><![CDATA[335]]></version>
+  <date><![CDATA[2012-11-24]]></date>
+  <metrics/>
+  <properties>
+    <property>
+      <key><![CDATA[sonar.profile.java]]></key>
+      <value><![CDATA[mine]]></value>
+    </property>
+    <property>
+      <key><![CDATA[sonar.role.codeviewer.TRK.defaultGroups]]></key>
+      <value><![CDATA[sonar-users,Anyone]]></value>
+    </property>
+    <property>
+      <key><![CDATA[sonar.role.user.TRK.defaultGroups]]></key>
+      <value><![CDATA[sonar-users,Anyone]]></value>
+    </property>
+  </properties>
+  <profiles>
+    <profile>
+      <name><![CDATA[mine]]></name>
+      <version><![CDATA[1]]></version>
+      <default-profile><![CDATA[true]]></default-profile>
+      <provided><![CDATA[false]]></provided>
+      <enabled><![CDATA[true]]></enabled>
+      <used><![CDATA[false]]></used>
+      <language><![CDATA[java]]></language>
+      <active-rules>
+        <active-rule>
+          <key><![CDATA[Missing Plugin Version]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+        <active-rule>
+          <key><![CDATA[Old Dependency]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+        <active-rule>
+          <key><![CDATA[Old Plugin]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[BLOCKER]]></level>
+        </active-rule>
+        <active-rule>
+          <key><![CDATA[INCOMPATIBLE MAVEN VERSION]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MAJOR]]></level>
+        </active-rule>
+        <active-rule>
+          <key><![CDATA[NO MINIMUM MAVEN VERSION]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MAJOR]]></level>
+        </active-rule>
+        <active-rule>
+          <key><![CDATA[Old Parent Pom]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+      </active-rules>
+      <alerts/>
+    </profile>
+  </profiles>
+  <rules/>
+</sonar-config>
