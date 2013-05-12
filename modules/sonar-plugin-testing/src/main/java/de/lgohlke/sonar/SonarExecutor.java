@@ -33,7 +33,7 @@ import static org.fest.assertions.api.Assertions.fail;
 
 @RequiredArgsConstructor
 @Slf4j
-public final class SonarExecutor {
+public final class SonarExecutor implements Cloneable {
   private final String jdbcDriver;
   private final String jdbcUrl;
   private boolean skipTests;
@@ -105,8 +105,8 @@ public final class SonarExecutor {
   }
 
   @Override
-  public SonarExecutor clone() {
-    return new SonarExecutor(jdbcDriver, jdbcUrl).activateMavenDebug(activateMavenDebug)
+  public SonarExecutor clone() throws CloneNotSupportedException {
+    return ((SonarExecutor) super.clone()).activateMavenDebug(activateMavenDebug)
         .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
         .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
         .skipDesign(skipDesign)
@@ -118,7 +118,7 @@ public final class SonarExecutor {
     final String command = configureExecutionCommand();
 
     try {
-      SonarExecutor.log.info("calling : {}", command);
+      log.info("calling : {}", command);
 
       Process proc = Runtime.getRuntime().exec(command);
       BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -144,7 +144,7 @@ public final class SonarExecutor {
         fail("sonar test run failed");
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
     }
   }
 
