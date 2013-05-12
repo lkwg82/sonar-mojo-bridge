@@ -50,6 +50,7 @@ public class DependencyConvergenceViolationAdapterTest {
     final String v3 = "2.2.3";
     nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v1, "compile", "jar", classifier, null)));
     nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v2, "compile", "jar", classifier, null)));
+    nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v2, "compile", "jar", classifier, null)));
     nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v3, "provided", "jar", classifier, null)));
 
     DependencyConvergenceViolationAdapter violationAdapter = getViolationAdapter();
@@ -57,7 +58,7 @@ public class DependencyConvergenceViolationAdapterTest {
     final List<Violation> violations = violationAdapter.getViolations();
 
     assertThat(violations).hasSize(1);
-    assertThat(violations.get(0).getMessage()).startsWith("found multiple version for " + groupId + ":" + artifactId + " (" + Joiner.on(",").join(v1, v2, v3));
+    assertThat(violations.get(0).getMessage()).isEqualTo("found multiple version for " + groupId + ":" + artifactId + " (" + Joiner.on(",").join(v2, v3, v1) + ")");
   }
 
   private DependencyConvergenceViolationAdapter getViolationAdapter() {

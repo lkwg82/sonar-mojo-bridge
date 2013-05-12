@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.enforcer.ViolationAdapter;
 import lombok.Setter;
@@ -34,6 +34,7 @@ import org.sonar.plugins.xml.language.Xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: lgohlke
@@ -67,7 +68,7 @@ public class DependencyConvergenceViolationAdapter extends ViolationAdapter<Depe
   private String createMessage(List<DependencyNode> nodeList) {
     final DependencyNode dependencyNode = nodeList.get(0);
     final Artifact artifact = dependencyNode.getArtifact();
-    List<String> versions = Lists.newArrayList();
+    Set<String> versions = Sets.newTreeSet();
     for (DependencyNode node : nodeList) {
       versions.add(node.getArtifact().getVersion());
     }
