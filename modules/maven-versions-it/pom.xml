@@ -18,11 +18,6 @@
     <!-- internal dependencies //-->
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-mojo-bridge</artifactId>
-      <version>${project.internal_version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-mojo-bridge-maven-versions</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
