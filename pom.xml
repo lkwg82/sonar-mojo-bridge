@@ -29,9 +29,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:git:https://github.com/SonarCommunity/sonar-maven-checks</connection>
-    <developerConnection>scm:git:https://github.com/SonarCommunity/sonar-maven-checks</developerConnection>
-    <url>https://github.com/SonarCommunity/sonar-maven-checks</url>
+    <connection>scm:git:https://github.com/SonarCommunity/sonar-mojo-bridge</connection>
+    <developerConnection>scm:git:https://github.com/SonarCommunity/sonar-mojo-bridge</developerConnection>
+    <url>https://github.com/SonarCommunity/sonar-mojo-bridge</url>
   </scm>
 
   <ciManagement>
