@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-testing
+ * sonar-mojo-bridge-testing
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,13 +23,12 @@ import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import static org.fest.assertions.api.Assertions.fail;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -107,11 +106,11 @@ public final class SonarExecutor implements Cloneable {
   @Override
   public SonarExecutor clone() throws CloneNotSupportedException {
     return ((SonarExecutor) super.clone()).activateMavenDebug(activateMavenDebug)
-        .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
-        .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
-        .skipDesign(skipDesign)
-        .skipDynamicAnalysis(skipDynamicAnalysis)
-        .skipTests(skipTests);
+      .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
+      .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
+      .skipDesign(skipDesign)
+      .skipDynamicAnalysis(skipDynamicAnalysis)
+      .skipTests(skipTests);
   }
 
   public void execute() throws MavenEmbedderException {

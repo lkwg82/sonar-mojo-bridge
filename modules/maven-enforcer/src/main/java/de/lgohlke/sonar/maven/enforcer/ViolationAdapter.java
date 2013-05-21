@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -25,8 +25,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.rules.Violation;
-
 import java.util.List;
+
 
 /**
  * User: lgohlke

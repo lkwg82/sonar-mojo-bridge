@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -25,24 +25,20 @@ import org.sonar.api.Property;
 import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.api.config.Settings;
 import org.testng.annotations.Test;
-
 import java.util.Map;
-
 import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * User: lars
  */
 public class ArtifactFilterFactoryTest {
-  @Properties({
-      @Property(key = "b", defaultValue = "", name = "")
-  })
+  @Properties({ @Property(key = "b", defaultValue = "", name = "") })
   class Component {
   }
 
   @Test
   public void testCreateFilterFromSettingsWithDefaultBlacklist() throws Exception {
-
     PropertyDefinitions propertyDefinitions = new PropertyDefinitions(new Component());
     Settings settings = new Settings(propertyDefinitions);
 
@@ -57,7 +53,6 @@ public class ArtifactFilterFactoryTest {
 
   @Test
   public void testCreateFilterFromSettingsWithBlacklist() throws Exception {
-
     PropertyDefinitions propertyDefinitions = new PropertyDefinitions(new Component());
     Settings settings = new Settings(propertyDefinitions);
 

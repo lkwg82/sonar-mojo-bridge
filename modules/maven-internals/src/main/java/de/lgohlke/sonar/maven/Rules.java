@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,6 +23,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 
 /**
  * User: lars

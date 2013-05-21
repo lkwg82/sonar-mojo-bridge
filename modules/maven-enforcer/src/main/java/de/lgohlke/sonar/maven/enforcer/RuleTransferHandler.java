@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,8 +22,8 @@ package de.lgohlke.sonar.maven.enforcer;
 import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.ResultTransferHandler;
 import lombok.Data;
-
 import java.util.List;
+
 
 /**
  * User: lars

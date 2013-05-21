@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -20,8 +20,8 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import org.testng.annotations.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * User: lars
@@ -65,9 +65,7 @@ public class ArtifactFilterTest {
   @Test
   public void testBlacklistGroup() {
     ArtifactFilter filter = new ArtifactFilter(".*");
-    filter.
-        addBlacklistRegex("[^:]+spring[^:]+:.*").         // spring as pattern for groupId
-        addBlacklistRegex("[^:]+:[^:]*spring[^:]*:.*");   // spring as pattern for artifactId
+    filter.addBlacklistRegex("[^:]+spring[^:]+:.*").addBlacklistRegex("[^:]+:[^:]*spring[^:]*:.*"); // spring as pattern for artifactId
 
     assertThat(filter.acceptArtifact("org.spring.test:spring:3.0.0.RC1")).isFalse();
     assertThat(filter.acceptArtifact("org.spring.test:test:3.0.0.RC1")).isFalse();

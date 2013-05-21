@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven;
 import lombok.Data;
 import org.testng.annotations.Test;
 
+
 /**
  * User: lars
  */
@@ -39,7 +40,6 @@ public class BridgeMojoMapperTest {
   }
 
   public static class MyResultTransferHandler implements ResultTransferHandler {
-
   }
 
   @Test(expectedExceptions = BridgeMojoMapperException.class)

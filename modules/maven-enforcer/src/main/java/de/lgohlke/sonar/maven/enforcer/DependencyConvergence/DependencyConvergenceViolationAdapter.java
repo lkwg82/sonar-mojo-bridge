@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -31,10 +31,10 @@ import org.sonar.api.resources.File;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.plugins.xml.language.Xml;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 
 /**
  * User: lgohlke

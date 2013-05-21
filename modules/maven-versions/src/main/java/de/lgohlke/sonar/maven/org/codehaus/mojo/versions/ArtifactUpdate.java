@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
+
 
 @RequiredArgsConstructor
 public class ArtifactUpdate {

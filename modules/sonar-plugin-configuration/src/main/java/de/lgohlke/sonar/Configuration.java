@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-configuration
+ * sonar-mojo-bridge-configuration
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *

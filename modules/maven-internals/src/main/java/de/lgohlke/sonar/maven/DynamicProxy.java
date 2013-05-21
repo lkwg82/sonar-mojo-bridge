@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import java.lang.reflect.InvocationHandler;
+
 
 public abstract class DynamicProxy<T> implements InvocationHandler {
   private final T underlying;

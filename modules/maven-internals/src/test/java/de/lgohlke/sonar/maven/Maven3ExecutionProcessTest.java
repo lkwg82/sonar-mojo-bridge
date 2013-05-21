@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,11 +24,10 @@ import lombok.Setter;
 import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.Test;
-
 import java.io.File;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
+
 
 public class Maven3ExecutionProcessTest {
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven;
 
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
+
 
 public final class MavenPluginExecutorProxyInjection {
   private MavenPluginExecutorProxyInjection() {

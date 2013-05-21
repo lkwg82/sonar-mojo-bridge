@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,14 +23,13 @@ import com.google.common.base.Joiner;
 import org.apache.maven.model.Dependency;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 import org.fest.util.Preconditions;
-
 import java.util.Arrays;
+
 
 /**
  * User: lars
  */
 public final class PomUtils {
-
   public enum TYPE {
     plugin {
       @Override
@@ -55,16 +54,17 @@ public final class PomUtils {
   public static int getLine(String source, Dependency dependency, TYPE type) {
     Preconditions.checkNotNull(source);
     Preconditions.checkNotNull(dependency);
+
     String[] lines = source.split("\\r?\\n");
 
     String groupd = "<groupId>" + dependency.getGroupId() + "</groupId>";
     String artifact = "<artifactId>" + dependency.getArtifactId() + "</artifactId>";
     String version = "";
-    if (dependency.getVersion() != null && dependency.getVersion().length() > 0) {
+    if ((dependency.getVersion() != null) && (dependency.getVersion().length() > 0)) {
       version = "<version>" + dependency.getVersion() + "</version>";
     }
 
-    String token = version.length() > 0 ? version : artifact;
+    String token = (version.length() > 0) ? version : artifact;
 
     for (int i = 0; i < lines.length; i++) {
       if (lines[i].contains(token)) {
@@ -78,7 +78,6 @@ public final class PomUtils {
 
   @IgnoreJRERequirement
   private static boolean containsEntry(String[] lines, int currentPosition, TYPE type, String group, String artifact, String version) {
-
     int start = findStartOrEndOfBlock(lines, currentPosition, -1, type);
     int end = findStartOrEndOfBlock(lines, currentPosition, +1, type);
 
@@ -91,7 +90,7 @@ public final class PomUtils {
   private static int findStartOrEndOfBlock(String[] lines, int currentPosition, int step, TYPE type) {
     int i = currentPosition;
     int limitToSearch = lines.length;
-    while (i > 0 && Math.abs(currentPosition - i) <= limitToSearch) {
+    while ((i > 0) && (Math.abs(currentPosition - i) <= limitToSearch)) {
       if (lines[i].contains(type.getStart()) || lines[i].contains(type.getEnd())) {
         return i;
       } else {

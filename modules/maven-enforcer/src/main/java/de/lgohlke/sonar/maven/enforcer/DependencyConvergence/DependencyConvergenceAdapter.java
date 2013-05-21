@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -39,6 +39,7 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 
 /**
  * User: lars
@@ -86,7 +87,7 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
       ArtifactCollector collector = (ArtifactCollector) helper.getComponent(ArtifactCollector.class);
       ArtifactFilter filter = null; // we need to evaluate all scopes
       DependencyNode node = dependencyTreeBuilder.buildDependencyTree(project, repository, factory, metadataSource, filter,
-          collector);
+        collector);
       return node;
     } catch (ExpressionEvaluationException e) {
       throw new EnforcerRuleException("Unable to lookup an expression " + e.getLocalizedMessage(), e);

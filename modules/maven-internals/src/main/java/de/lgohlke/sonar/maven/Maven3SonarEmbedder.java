@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -28,14 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.google.common.base.Preconditions.*;
+
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -114,7 +113,7 @@ public class Maven3SonarEmbedder {
       return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());
@@ -129,7 +128,7 @@ public class Maven3SonarEmbedder {
 
         checkNotNull(mavenHome, "we did not find the maven directory");
         checkArgument(mavenHome.isDirectory(),
-            "maveHome is " + mavenHome + ", but a directory is needed");
+          "maveHome is " + mavenHome + ", but a directory is needed");
       }
     }
 

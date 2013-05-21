@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions-integration
+ * sonar-mojo-bridge-maven-versions-integration
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -26,11 +26,10 @@ import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.ParentPomVersion;
 import org.sonar.wsclient.services.Violation;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
 import java.io.File;
 import java.util.List;
-
 import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,7 +38,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Time: 12:35
  */
 public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
-
   @BeforeTest(alwaysRun = true)
   public void beforeEachTest() {
     initAPI();
@@ -86,7 +84,7 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
 
     List<Violation> violations = getViolationsFor("MavenInvoker:MavenInvoker", ruleKey);
 
-//    api.showQueryAndResult(violations);
+    //    api.showQueryAndResult(violations);
 
     assertThat(violations).isNotEmpty();
     assertThat(violations).are(onlyForFile(pomXml.getName()));
@@ -98,6 +96,6 @@ public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
 
     // test this http://localhost:9000/api/resources?depth=-1&scope=FIL&resource=1981&qualifier=FIL
     // not yet running
-//    Resource project = api.getProjectWithKey(projectKey);
+    //    Resource project = api.getProjectWithKey(projectKey);
   }
 }

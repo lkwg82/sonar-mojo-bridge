@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -26,11 +26,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.sonar.api.rules.Violation;
 import org.testng.annotations.Test;
-
 import java.io.File;
 import java.util.List;
-
 import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * User: lars
@@ -55,10 +54,12 @@ public class DependencyConvergenceViolationAdapterTest {
 
     DependencyConvergenceViolationAdapter violationAdapter = getViolationAdapter();
     violationAdapter.setErrors(errors);
+
     final List<Violation> violations = violationAdapter.getViolations();
 
     assertThat(violations).hasSize(1);
-    assertThat(violations.get(0).getMessage()).isEqualTo("found multiple version for " + groupId + ":" + artifactId + " (" + Joiner.on(",").join(v2, v3, v1) + ")");
+    assertThat(violations.get(0).getMessage()).isEqualTo("found multiple version for " + groupId + ":" + artifactId + " (" +
+      Joiner.on(",").join(v2, v3, v1) + ")");
   }
 
   private DependencyConvergenceViolationAdapter getViolationAdapter() {

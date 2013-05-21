@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,10 +21,10 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import org.apache.maven.project.MavenProject;
 import org.testng.annotations.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
 import static org.mockito.Mockito.mock;
+
 
 /**
  * User: lgohlke
@@ -36,7 +36,8 @@ public class DisplayDependencyUpdatesBridgeMojoTest {
     MavenProject mavenProject = mock(MavenProject.class);
     field("project").ofType(MavenProject.class).in(mojo).set(mavenProject);
 
-    DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler handler = new DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler();
+    DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler handler =
+      new DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler();
     mojo.setResultHandler(handler);
     mojo.execute();
 

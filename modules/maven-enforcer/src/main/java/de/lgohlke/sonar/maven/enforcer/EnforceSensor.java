@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -30,17 +30,16 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-
 import java.util.List;
-
 import static de.lgohlke.sonar.maven.enforcer.Configuration.BASE_IDENTIFIER;
 import static org.fest.reflect.core.Reflection.constructor;
 
-@Rules(values = {DependencyConvergenceRule.class})
+
+@Rules(values = { DependencyConvergenceRule.class })
 @SensorConfiguration(
-    bridgeMojo = EnforceBridgeMojo.class, //
-    resultTransferHandler = RuleTransferHandler.class, //
-    mavenBaseIdentifier = BASE_IDENTIFIER
+  bridgeMojo = EnforceBridgeMojo.class, //
+  resultTransferHandler = RuleTransferHandler.class, //
+  mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
   private final EnforceMavenPluginHandler mavenPluginHandler;

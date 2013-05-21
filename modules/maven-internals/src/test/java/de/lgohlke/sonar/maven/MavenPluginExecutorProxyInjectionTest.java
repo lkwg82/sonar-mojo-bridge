@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,9 +22,9 @@ package de.lgohlke.sonar.maven;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+
 
 /**
  * User: lars

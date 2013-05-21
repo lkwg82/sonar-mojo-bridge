@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,12 +23,11 @@ import com.google.common.collect.Sets;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
 import org.fest.reflect.exception.ReflectionError;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
-
 import static org.fest.reflect.core.Reflection.field;
+
 
 public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
   private Set<MojoInjection> injections = Sets.newHashSet();
@@ -50,6 +49,7 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
       MojoDescriptor descriptor = (MojoDescriptor) args[0];
       checkGoal(descriptor);
     }
+
     Object result;
     try {
       result = method.invoke(getUnderLying(), args);

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,11 +23,10 @@ import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.codehaus.plexus.PlexusContainer;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-
 import static org.fest.reflect.core.Reflection.field;
+
 
 public final class Maven3ExecutionProcess {
   private Maven3ExecutionProcess() {
@@ -75,6 +74,6 @@ public final class Maven3ExecutionProcess {
 
   @SuppressWarnings("unchecked")
   private static <T> T newInstance(final Object obj, final Class<T> interfaze, final DynamicProxy<?> proxy) {
-    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[]{interfaze}, proxy);
+    return (T) Proxy.newProxyInstance(obj.getClass().getClassLoader(), new Class<?>[] { interfaze }, proxy);
   }
 }

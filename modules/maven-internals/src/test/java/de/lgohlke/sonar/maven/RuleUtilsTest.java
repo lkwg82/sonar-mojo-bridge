@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,8 +21,8 @@ package de.lgohlke.sonar.maven;
 
 import org.sonar.check.Rule;
 import org.testng.annotations.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * User: lars
@@ -31,7 +31,7 @@ public class RuleUtilsTest {
   private static class MavenTestRule implements MavenRule {
   }
 
-  @Rule()
+  @Rule
   private static class MavenTestRule2 implements MavenRule {
   }
 

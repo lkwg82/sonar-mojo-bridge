@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -32,16 +32,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.versions.UpdateParentMojo;
 import org.codehaus.mojo.versions.rewriting.ModifiedPomXMLEventReader;
 
+
 @Goal("update-parent")
 @SuppressWarnings("deprecation")
 public class UpdateParentBridgeMojo extends UpdateParentMojo implements BridgeMojo<UpdateParentPomSensor.ResultHandler> {
-
   @Setter
   private UpdateParentPomSensor.ResultHandler resultHandler;
 
   @Override
   protected void update(ModifiedPomXMLEventReader pom) throws MojoExecutionException, MojoFailureException {
-
     if (hasParentPom() && !isPartOfReactorProject()) {
       String currentVersion = getProject().getParent().getVersion();
       String version = currentVersion;
@@ -58,8 +57,8 @@ public class UpdateParentBridgeMojo extends UpdateParentMojo implements BridgeMo
       }
 
       Artifact artifact = artifactFactory.createDependencyArtifact(getProject().getParent().getGroupId(),
-          getProject().getParent().getArtifactId(),
-          versionRange, "pom", null, null);
+        getProject().getParent().getArtifactId(),
+        versionRange, "pom", null, null);
 
       ArtifactVersion artifactVersion;
       try {

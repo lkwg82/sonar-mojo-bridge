@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -41,15 +41,13 @@ import org.sonar.check.Rule;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.sonatype.aether.RepositorySystemSession;
 import org.testng.annotations.Test;
-
 import java.util.ArrayList;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MavenBaseSensorTest {
 
+public class MavenBaseSensorTest {
   private final MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);
 
   private final MavenProject mavenProject = mock(MavenProject.class);
@@ -75,9 +73,8 @@ public class MavenBaseSensorTest {
 
   @Rules(values = MyRule.class)
   @SensorConfiguration(
-      bridgeMojo = MyBridgeMojo.class,
-      resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class,
-      mavenBaseIdentifier = "a:b:c:")
+    bridgeMojo = MyBridgeMojo.class, resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class, mavenBaseIdentifier = "a:b:c:"
+  )
   public static class MyMavenVersionSensor extends MavenBaseSensor<MyMavenVersionSensor.MyResultTransferHandler> {
     @Getter
     @Setter
@@ -112,11 +109,9 @@ public class MavenBaseSensorTest {
 
   @Rules(values = MyRule.class)
   @SensorConfiguration(
-      bridgeMojo = MyBridgeMojo.class,
-      resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class,
-      mavenBaseIdentifier = "a")
+    bridgeMojo = MyBridgeMojo.class, resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class, mavenBaseIdentifier = "a"
+  )
   public static class MyBrokenMavenVersionSensor extends MyMavenVersionSensor {
-
     public MyBrokenMavenVersionSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject) {
       super(rulesProfile, mavenPluginExecutor, mavenProject);
     }

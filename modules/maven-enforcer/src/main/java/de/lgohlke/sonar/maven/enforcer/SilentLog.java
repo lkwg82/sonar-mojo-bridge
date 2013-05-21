@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,11 +22,11 @@ package de.lgohlke.sonar.maven.enforcer;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.logging.Logger;
 
+
 /**
  * User: lars
  */
 public class SilentLog implements Log, Logger {
-
   public boolean isDebugEnabled() {
     return false;
   }

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-testing
+ * sonar-mojo-bridge-testing
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -26,8 +26,8 @@ import org.sonar.wsclient.Host;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.connectors.HttpClient4Connector;
 import org.sonar.wsclient.services.*;
-
 import java.util.List;
+
 
 /**
  * lightweight sonar api wrapper
@@ -36,7 +36,6 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class SonarAPIWrapper {
-
   public interface Description {
     String getDescription();
   }

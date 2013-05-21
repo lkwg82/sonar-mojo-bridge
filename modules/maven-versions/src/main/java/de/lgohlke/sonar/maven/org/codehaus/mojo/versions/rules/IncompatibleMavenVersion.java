@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,17 +23,16 @@ import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
+
 /**
  * User: lars
  */
 @Rule(
-    description = IncompatibleMavenVersion.DESCRIPTION,
-    key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR,
-    name = IncompatibleMavenVersion.NAME
+  description = IncompatibleMavenVersion.DESCRIPTION, key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR,
+  name = IncompatibleMavenVersion.NAME
 )
 public interface IncompatibleMavenVersion extends MavenRule {
   String KEY = "INCOMPATIBLE MAVEN VERSION";
   String NAME = "[POM] found incompatible maven version";
-  String DESCRIPTION =
-      "the parent pom and the project pom define a pair of incompatible minimum versions";
+  String DESCRIPTION = "the parent pom and the project pom define a pair of incompatible minimum versions";
 }

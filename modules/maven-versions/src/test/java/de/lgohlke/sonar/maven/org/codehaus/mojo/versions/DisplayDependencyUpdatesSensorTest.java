@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -38,14 +38,13 @@ import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.testng.annotations.Test;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 
 /**
  * User: lgohlke
@@ -63,6 +62,7 @@ public class DisplayDependencyUpdatesSensorTest {
 
     String artifactQualifier = "group:artifact:version:goal";
     when(artifactUpdate.getDependency()).thenReturn(mockDependency);
+
     ArtifactVersion mockArtifactVersion = mock(ArtifactVersion.class);
     when(mockArtifactVersion.toString()).thenReturn(artifactQualifier);
     when(artifactUpdate.getArtifactVersion()).thenReturn(mockArtifactVersion);
@@ -80,11 +80,11 @@ public class DisplayDependencyUpdatesSensorTest {
   }
 
   private DisplayDependencyUpdatesSensor getDisplayDependencyUpdatesSensor() {
-
     final RulesProfile rulesProfile = RulesProfile.create("mine", "java");
     final Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, DependencyVersion.KEY, DependencyVersion.NAME);
     rule.createParameter(DependencyVersion.RULE_PROPERTY_WHITELIST);
     rule.createParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST);
+
     final ActiveRule activeRule = rulesProfile.activateRule(rule, RulePriority.MAJOR);
     activeRule.setParameter(DependencyVersion.RULE_PROPERTY_WHITELIST, ".*");
     activeRule.setParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST, "");

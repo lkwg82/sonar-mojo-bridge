@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
-    <artifactId>sonar-maven-checks-parent</artifactId>
+    <artifactId>sonar-mojo-bridge-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-maven-checks-maven-versions-integration</artifactId>
+  <artifactId>sonar-mojo-bridge-maven-versions-integration</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
@@ -18,17 +18,17 @@
     <!-- internal dependencies //-->
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks</artifactId>
-      <version>${project.version}</version>
+      <artifactId>sonar-mojo-bridge</artifactId>
+      <version>${project.internal_version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-versions</artifactId>
+      <artifactId>sonar-mojo-bridge-maven-versions</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-testing</artifactId>
+      <artifactId>sonar-mojo-bridge-testing</artifactId>
       <version>0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -116,7 +116,7 @@
               <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
               <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
               <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
-              <pluginArtifact>../sonar-plugin/target/sonar-maven-checks-${project.internal_version}.jar</pluginArtifact>
+              <pluginArtifact>../sonar-plugin/target/sonar-mojo-bridge-${project.internal_version}.jar</pluginArtifact>
             </configuration>
           </execution>
           <execution>

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-utils
+ * sonar-mojo-bridge-utils
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -29,9 +29,9 @@ import org.sonar.api.batch.SupportedEnvironment;
 import org.sonar.api.resources.Java;
 import org.sonar.api.resources.ProjectFileSystem;
 import org.sonar.plugins.xml.language.Xml;
-
 import java.io.File;
 import java.util.List;
+
 
 @SupportedEnvironment("maven")
 public class PomSourceImporter extends AbstractSourceImporter implements BatchComponent {

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,9 +21,9 @@ package de.lgohlke.sonar.maven;
 
 import org.apache.maven.plugin.MavenPluginManager;
 import org.fest.reflect.exception.ReflectionError;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 
 public class MavenPluginManagerProxy<T extends MavenPluginManager> extends DynamicProxy<T> {
   private final ClassLoader classloader;

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-testing
+ * sonar-mojo-bridge-testing
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import java.io.File;
+
 
 /**
  * User: lars

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,8 +24,8 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.fest.util.Preconditions;
-
 import java.util.List;
+
 
 /**
  * User: lars
@@ -76,7 +76,7 @@ public class ArtifactFilter {
   }
 
   private String buildRegex(List<String> regexList) {
-    return regexList.isEmpty() ? "" : "(" + Joiner.on(")|(").join(regexList) + ")";
+    return regexList.isEmpty() ? "" : ("(" + Joiner.on(")|(").join(regexList) + ")");
   }
 
   public final ArtifactFilter addWhitelistRegex(String regex) {
@@ -97,11 +97,17 @@ public class ArtifactFilter {
 
   public String toString() {
     buildRegexIfNeeded();
+
     StringBuilder builder = new StringBuilder();
 
-    builder.append(getClass().getSimpleName()).append("{\n")
-        .append("\t whitelist : ").append(whitelistRegex).append("\n")
-        .append("\t blacklist : ").append(blacklistRegex).append("\n}");
+    builder.append(getClass().getSimpleName())
+    .append("{\n")
+    .append("\t whitelist : ")
+    .append(whitelistRegex)
+    .append("\n")
+    .append("\t blacklist : ")
+    .append(blacklistRegex)
+    .append("\n}");
     return builder.toString();
   }
 }

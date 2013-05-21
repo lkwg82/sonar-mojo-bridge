@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,9 +21,9 @@ package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.Configuration;
 import org.sonar.api.rules.Rule;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * User: lars

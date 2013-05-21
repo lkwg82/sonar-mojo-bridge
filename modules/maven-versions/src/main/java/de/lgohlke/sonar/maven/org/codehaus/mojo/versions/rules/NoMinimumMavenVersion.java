@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,20 +23,16 @@ import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
+
 /**
  * User: lars
  */
-@Rule(
-    description = NoMinimumMavenVersion.DESCRIPTION,
-    key = NoMinimumMavenVersion.KEY,
-    name = NoMinimumMavenVersion.NAME,
-    priority = Priority.MAJOR
-)
+@Rule(description = NoMinimumMavenVersion.DESCRIPTION, key = NoMinimumMavenVersion.KEY, name = NoMinimumMavenVersion.NAME, priority = Priority.MAJOR)
 public interface NoMinimumMavenVersion extends MavenRule {
   String KEY = "NO MINIMUM MAVEN VERSION";
   String NAME = "[POM] found no minimum maven version";
   String DESCRIPTION = "Update the pom.xml to contain <br>" +
-      "&lt;prerequisites&gt;<br>" +
-      "&nbsp;&nbsp;&lt;maven&gt;&lt;!-- minimum version of Maven that the plugin works with --&gt;&lt;/maven&gt;<br>" +
-      "&lt;/prerequisites&gt;";
+    "&lt;prerequisites&gt;<br>" +
+    "&nbsp;&nbsp;&lt;maven&gt;&lt;!-- minimum version of Maven that the plugin works with --&gt;&lt;/maven&gt;<br>" +
+    "&lt;/prerequisites&gt;";
 }

@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,9 +21,9 @@ package de.lgohlke.sonar.maven;
 
 import lombok.Getter;
 import lombok.NonNull;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 
 public class BridgeMojoMapper<T extends ResultTransferHandler> {
   @Getter
@@ -71,7 +71,7 @@ public class BridgeMojoMapper<T extends ResultTransferHandler> {
 
     BridgeMojoMapper that = (BridgeMojoMapper) o;
 
-    return bridgeMojoClass == null ? (that.bridgeMojoClass == null) : bridgeMojoClass.equals(that.bridgeMojoClass);
+    return (bridgeMojoClass == null) ? (that.bridgeMojoClass == null) : bridgeMojoClass.equals(that.bridgeMojoClass);
   }
 
   @Override

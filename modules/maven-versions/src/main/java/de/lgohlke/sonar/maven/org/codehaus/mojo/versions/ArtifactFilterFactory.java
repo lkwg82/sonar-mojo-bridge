@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,10 +23,10 @@ import com.google.common.base.Preconditions;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
 import org.sonar.api.config.Settings;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * User: lars
@@ -48,12 +48,12 @@ public final class ArtifactFilterFactory {
     ArtifactFilter filter = new ArtifactFilter();
 
     String whiteListRegex = settings.getString(whitelistKey);
-    if (whiteListRegex != null && whiteListRegex.length() > 0) {
+    if ((whiteListRegex != null) && (whiteListRegex.length() > 0)) {
       filter.addWhitelistRegex(whiteListRegex);
     }
 
     String blackListRegex = settings.getString(blacklistKey);
-    if (blackListRegex != null && blackListRegex.length() > 0) {
+    if ((blackListRegex != null) && (blackListRegex.length() > 0)) {
       filter.addBlacklistRegex(blackListRegex);
     }
 
@@ -94,7 +94,6 @@ public final class ArtifactFilterFactory {
     Set<String> blackListRegexSet = new HashSet<String>();
 
     for (ArtifactFilter f : filters) {
-
       ArtifactFilterFactory.log.debug("use filter for merge : {}", f);
 
       whiteListRegexSet.addAll(f.getWhitelistRegexList());

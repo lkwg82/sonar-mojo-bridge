@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -33,18 +33,16 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
-
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-@Rules(values = {ParentPomVersion.class})
+
+@Rules(values = { ParentPomVersion.class })
 @SensorConfiguration(
-    bridgeMojo = UpdateParentBridgeMojo.class,
-    resultTransferHandler = UpdateParentPomSensor.ResultHandler.class,
-    mavenBaseIdentifier = BASE_IDENTIFIER
+  bridgeMojo = UpdateParentBridgeMojo.class, resultTransferHandler = UpdateParentPomSensor.ResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor.ResultHandler> {
-  @Setter
   @Getter
+  @Setter
   public static class ResultHandler implements ResultTransferHandler {
     private String currentVersion;
     private ArtifactVersion newerVersion;
@@ -67,7 +65,8 @@ public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor
       Violation violation = Violation.create(rule, file);
       violation.setLineId(1);
 
-      violation.setMessage(ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " + resultHandler.getNewerVersion() + " is available");
+      violation.setMessage(ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " +
+        resultHandler.getNewerVersion() + " is available");
       context.saveViolation(violation);
     }
   }

@@ -4,15 +4,15 @@
 
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
-    <artifactId>sonar-maven-checks-parent</artifactId>
+    <artifactId>sonar-mojo-bridge-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-maven-checks</artifactId>
+  <artifactId>sonar-mojo-bridge</artifactId>
   <version>${project.internal_version}</version>
   <packaging>sonar-plugin</packaging>
-  <name>Sonar maven checks plugin</name>
+  <name>Sonar mojo bridge plugin</name>
   <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
   <inceptionYear>2012</inceptionYear>
 
@@ -20,12 +20,12 @@
     <!-- internal dependencies //-->
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-versions</artifactId>
+      <artifactId>sonar-mojo-bridge-maven-versions</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-enforcer</artifactId>
+      <artifactId>sonar-mojo-bridge-maven-enforcer</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
 

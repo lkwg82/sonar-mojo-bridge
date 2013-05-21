@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven;
 import lombok.RequiredArgsConstructor;
 import org.codehaus.plexus.logging.Logger;
 
+
 /**
  * need for setting log level of maven-subsystem
  *
@@ -29,7 +30,6 @@ import org.codehaus.plexus.logging.Logger;
  */
 @RequiredArgsConstructor
 public class PlexusSlf4JLogger implements Logger {
-
   private final org.slf4j.Logger log;
 
   @Override

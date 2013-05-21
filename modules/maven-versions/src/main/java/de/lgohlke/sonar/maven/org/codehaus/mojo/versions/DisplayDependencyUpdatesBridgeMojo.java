@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -34,15 +34,15 @@ import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.codehaus.mojo.versions.api.UpdateScope;
 import org.codehaus.mojo.versions.utils.DependencyComparator;
 import org.fest.reflect.reference.TypeRef;
-
 import java.util.*;
 import java.util.Map.Entry;
-
 import static org.fest.reflect.core.Reflection.staticMethod;
+
 
 @Goal("display-dependency-updates")
 @SuppressWarnings("deprecation")
-public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo implements BridgeMojo<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
+public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo
+  implements BridgeMojo<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
   public static final String DEPENDENCIES = "Dependencies";
   private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
@@ -86,10 +86,10 @@ public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdates
    * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment(java.util.Set, java.util.Set)}
    */
   private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
-    final Object[] args = new Object[]{dependencies, dependencyManagement};
-    final Class<?>[] parameterTypes = new Class<?>[]{Set.class, Set.class};
+    final Object[] args = new Object[] { dependencies, dependencyManagement };
+    final Class<?>[] parameterTypes = new Class<?>[] { Set.class, Set.class };
     return staticMethod("removeDependencyManagment").withReturnType(new TypeRef<Set<Dependency>>() {
-    }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
+      }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
   }
 
   private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section) {

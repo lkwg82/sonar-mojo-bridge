@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,12 +23,8 @@ import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-@Rule(
-    description = ParentPomVersion.DESCRIPTION,
-    key = ParentPomVersion.KEY,
-    name = ParentPomVersion.NAME,
-    priority = Priority.MINOR
-)
+
+@Rule(description = ParentPomVersion.DESCRIPTION, key = ParentPomVersion.KEY, name = ParentPomVersion.NAME, priority = Priority.MINOR)
 public interface ParentPomVersion extends MavenRule {
   String KEY = "Old Parent Pom";
   String NAME = "[POM] found an newer version for the parent pom";

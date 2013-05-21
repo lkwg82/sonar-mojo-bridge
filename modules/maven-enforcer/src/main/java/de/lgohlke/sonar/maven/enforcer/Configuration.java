@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,17 +22,17 @@ package de.lgohlke.sonar.maven.enforcer;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceAdapter;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceRule;
-
 import java.util.HashMap;
 import java.util.Map;
+
 
 public interface Configuration {
   String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.2:";
 
   Map<Class<? extends MavenRule>, Class<? extends EnforcerRule>> RULE_IMPLEMENTATION_REPOSITORY =
-      new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
-        {
-          put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
-        }
-      };
+    new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
+      {
+        put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
+      }
+    };
 }

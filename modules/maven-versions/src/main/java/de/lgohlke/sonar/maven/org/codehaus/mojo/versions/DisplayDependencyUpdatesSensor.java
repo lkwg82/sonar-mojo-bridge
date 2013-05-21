@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -36,47 +36,32 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-
 import java.util.List;
 import java.util.Map;
-
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-@Rules(
-    values = {
-        DependencyVersion.class
-    }
-)
-@SensorConfiguration(
-    bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
-    resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class,
-    mavenBaseIdentifier = BASE_IDENTIFIER
-)
+
 @Properties(
-    {
-        @Property(
-            key = DisplayDependencyUpdatesSensor.WHITELIST_KEY,
-            name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
-            description = "this regex controls whitelisting <br>" +
-                "<i>examples:</i><br/>" +
-                "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>",
-            defaultValue = ".*",
-            global = false,
-            project = true,
-            type = PropertyType.STRING
-        ),
-        @Property(
-            key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
-            name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
-            description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
-                "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
-            defaultValue = "",
-            global = false,
-            project = true,
-            type = PropertyType.STRING
-        )
-    }
+  {
+    @Property(
+      key = DisplayDependencyUpdatesSensor.WHITELIST_KEY, name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
+      description = "this regex controls whitelisting <br>" +
+        "<i>examples:</i><br/>" +
+        "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
+        "wildcard <tt>org.apache..*?:spring:.*</tt><br/>", defaultValue = ".*", global = false, project = true, type = PropertyType.STRING
+    ),
+    @Property(
+      key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
+      name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
+      description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
+        "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>", defaultValue = "", global = false, project = true, type = PropertyType.STRING
+    )
+  }
+)
+@Rules(values = { DependencyVersion.class })
+@SensorConfiguration(
+  bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
+  resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
   static final String SENSOR_KEY = de.lgohlke.sonar.Configuration.PLUGIN_KEY + ".dependencyUpdates";
@@ -116,7 +101,6 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
       List<ArtifactUpdate> updates = entry.getValue();
       for (ArtifactUpdate update : updates) {
         if (filter.acceptArtifact(update.toString())) {
-
           Violation violation = Violation.create(rule, file);
           int line = update.getDependency().getLocation("version").getLineNumber();
           violation.setLineId(line);
@@ -129,7 +113,8 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
 
   private ArtifactFilter createFilter(Settings settings) {
     Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(DependencyVersion.class);
-    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST, DependencyVersion.RULE_PROPERTY_BLACKLIST);
+    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST,
+      DependencyVersion.RULE_PROPERTY_BLACKLIST);
     ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
 
     return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);

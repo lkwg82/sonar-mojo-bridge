@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -25,11 +25,10 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
+
 @Rule(
-    description = DependencyVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION,
-    key = DependencyVersion.KEY,
-    name = DependencyVersion.NAME,
-    priority = Priority.MINOR
+  description = DependencyVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION, key = DependencyVersion.KEY,
+  name = DependencyVersion.NAME, priority = Priority.MINOR
 )
 public interface DependencyVersion extends MavenRule {
   String KEY = "Old Dependency";
@@ -37,18 +36,10 @@ public interface DependencyVersion extends MavenRule {
   String DESCRIPTION = "this dependency has a newer version available";
 
   String RULE_PROPERTY_WHITELIST = "whitelist";
-  @RuleProperty(
-      key = RULE_PROPERTY_WHITELIST,
-      defaultValue = ".*",
-      type = "TEXT",
-      description = "this regex controls whitelisting")
+  @RuleProperty(key = RULE_PROPERTY_WHITELIST, defaultValue = ".*", type = "TEXT", description = "this regex controls whitelisting")
   String whiteList = null;
 
   String RULE_PROPERTY_BLACKLIST = "blacklist";
-  @RuleProperty(
-      key = RULE_PROPERTY_BLACKLIST,
-      defaultValue = "",
-      type = "TEXT",
-      description = "this regex controls blacklisting")
+  @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "", type = "TEXT", description = "this regex controls blacklisting")
   String blackList = null;
 }

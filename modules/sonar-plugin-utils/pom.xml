@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
-    <artifactId>sonar-maven-checks-parent</artifactId>
+    <artifactId>sonar-mojo-bridge-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-maven-checks-utils</artifactId>
+  <artifactId>sonar-mojo-bridge-utils</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>

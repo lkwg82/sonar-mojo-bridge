@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,12 +21,12 @@ package de.lgohlke.sonar.maven;
 
 import lombok.RequiredArgsConstructor;
 
+
 /**
  * User: lars
  */
 @RequiredArgsConstructor
 public class MojoInjection {
-
   private final BridgeMojoMapper bridgeMojoMapper;
 
   public String getGoal() {

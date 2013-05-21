@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -22,13 +22,11 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Dependency;
 import org.testng.annotations.Test;
-
 import java.io.File;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class PomUtilsTest {
 
+public class PomUtilsTest {
   @Test
   public void testFindLineForDependencyUpdate() throws Exception {
     String pom = "src/test/resources/pom_missing_maven_version.xml";
@@ -45,15 +43,15 @@ public class PomUtilsTest {
   @Test
   public void testFindLineForArtifactWithoutAnyVersion() throws Exception {
     String source = "<project>\n" +
-        "<build>\n" +
-        "  <plugins>\n" +
-        "    <plugin>\n" +
-        "       <groupId>a</groupId>\n" +
-        "       <artifactId>a</artifactId>\n" +
-        "    </plugin>\n" +
-        "  </plugins>\n" +
-        "</build>\n" +
-        "</project>";
+      "<build>\n" +
+      "  <plugins>\n" +
+      "    <plugin>\n" +
+      "       <groupId>a</groupId>\n" +
+      "       <artifactId>a</artifactId>\n" +
+      "    </plugin>\n" +
+      "  </plugins>\n" +
+      "</build>\n" +
+      "</project>";
 
     Dependency dependency = new Dependency();
     dependency.setGroupId("a");

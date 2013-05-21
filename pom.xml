@@ -8,7 +8,7 @@
     <version>17</version>
   </parent>
 
-  <artifactId>sonar-maven-checks-parent</artifactId>
+  <artifactId>sonar-mojo-bridge-parent</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>

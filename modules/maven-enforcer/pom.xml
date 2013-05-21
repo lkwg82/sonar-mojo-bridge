@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
-    <artifactId>sonar-maven-checks-parent</artifactId>
+    <artifactId>sonar-mojo-bridge-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-maven-checks-maven-enforcer</artifactId>
+  <artifactId>sonar-mojo-bridge-maven-enforcer</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
@@ -19,7 +19,7 @@
     <!-- internal dependencies //-->
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-maven-checks-maven-internals</artifactId>
+      <artifactId>sonar-mojo-bridge-maven-internals</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
     <dependency>

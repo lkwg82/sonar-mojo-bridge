@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-testing
+ * sonar-mojo-bridge-testing
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -28,9 +28,9 @@ import org.sonar.wsclient.services.Resource;
 import org.sonar.wsclient.services.Violation;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-
 import java.io.IOException;
 import java.util.List;
+
 
 public abstract class MavenITAbstract {
   private static final String SONAR_HOST = "http://localhost:9000";
@@ -43,15 +43,14 @@ public abstract class MavenITAbstract {
     String jdbcUrl = System.getProperty("jdbcUrl");
 
     executor =
-        new SonarExecutor(jdbcDriver, jdbcUrl) //
-            .skipDesign() //
-            .skipDynamicAnalysis() //
-            .skipTests() //
-            .showMavenErrorWhileAnalysis() //
-            .showMavenOutputWhileAnalysis();
+      new SonarExecutor(jdbcDriver, jdbcUrl) //
+      .skipDesign() //
+      .skipDynamicAnalysis() //
+      .skipTests() //
+      .showMavenErrorWhileAnalysis() //
+      .showMavenOutputWhileAnalysis();
 
-    System.getProperties()
-        .put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTestConfiguration.MAVEN_HOME);
+    System.getProperties().put(Maven3SonarEmbedder.MavenSonarEmbedderBuilder.M2_HOME, Maven3SonarEmbedderTestConfiguration.MAVEN_HOME);
   }
 
   public void initAPI() {

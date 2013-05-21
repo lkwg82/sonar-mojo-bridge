@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -40,14 +40,13 @@ import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.check.Rule;
 import org.testng.annotations.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 
 /**
  * User: lgohlke
@@ -70,7 +69,8 @@ public class DisplayPluginUpdatesSensorTest {
 
   private DisplayPluginUpdatesSensor getPluginUpdatesSensor() {
     final RulesProfile rulesProfile = RulesProfile.create("mine", "java");
-    final org.sonar.api.rules.Rule rule = org.sonar.api.rules.Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, PluginVersion.KEY, PluginVersion.NAME);
+    final org.sonar.api.rules.Rule rule = org.sonar.api.rules.Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, PluginVersion.KEY,
+      PluginVersion.NAME);
     rule.createParameter(PluginVersion.RULE_PROPERTY_WHITELIST).setDefaultValue(".*");
     rule.createParameter(PluginVersion.RULE_PROPERTY_BLACKLIST).setDefaultValue("");
     rulesProfile.activateRule(rule, RulePriority.MAJOR);
@@ -126,7 +126,9 @@ public class DisplayPluginUpdatesSensorTest {
   @Test
   public void shouldHaveIncompatibleVersion() throws Exception {
     init();
-    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleVersion = mock(DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion.class);
+
+    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleVersion = mock(
+      DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion.class);
     resultTransferHandler.setIncompatibleParentAndProjectMavenVersion(incompatibleVersion);
 
     sensor.analyse(mock(Project.class), context);
@@ -138,8 +140,10 @@ public class DisplayPluginUpdatesSensorTest {
   @Test
   public void shouldHaveSomePluginsMissingTheirVersions() throws Exception {
     init();
+
     Dependency mockDependency = mock(Dependency.class);
     when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1, 1));
+
     List<Dependency> missingVersionPlugins = Lists.newArrayList(mockDependency);
     resultTransferHandler.setMissingVersionPlugins(missingVersionPlugins);
 

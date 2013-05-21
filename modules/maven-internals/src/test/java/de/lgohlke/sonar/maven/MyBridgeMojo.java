@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-internals
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -23,6 +23,7 @@ import de.lgohlke.sonar.maven.Maven3ExecutionProcessTest.MyResultTransferHandler
 import lombok.Setter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.mojo.versions.HelpMojo;
+
 
 @Goal("help")
 public class MyBridgeMojo extends HelpMojo implements BridgeMojo<MyResultTransferHandler> {

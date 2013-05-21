@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,14 +21,13 @@ package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 public interface Configuration {
   String BASE_IDENTIFIER = "org.codehaus.mojo:versions-maven-plugin:1.3.1:";
-  String REGEX_DESCRIPTION =
-      "<i>examples:</i><br/>" +
-          "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-          "wildcard <tt>org.apache..*?:spring:.*</tt><br/>" +
-          "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>";
+  String REGEX_DESCRIPTION = "<i>examples:</i><br/>" +
+    "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
+    "wildcard <tt>org.apache..*?:spring:.*</tt><br/>" +
+    "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>";
 
   String MULTILINE_CONFIGURATION = "<p>(regex are separated by a newline and will be concatentated with logical OR, e.g. <br/>" +
-      "<pre>org.apache.*\norg.codehaus.*</pre>" +
-      " will be combined as ((org.apache.*)|(org.codehaus.*)) </p>";
+    "<pre>org.apache.*\norg.codehaus.*</pre>" +
+    " will be combined as ((org.apache.*)|(org.codehaus.*)) </p>";
 
 }

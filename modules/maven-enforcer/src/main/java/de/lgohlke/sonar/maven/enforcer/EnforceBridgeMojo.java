@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-enforcer
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -32,12 +32,11 @@ import org.apache.maven.plugins.enforcer.EnforceMojo;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.fest.reflect.reference.TypeRef;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import static org.fest.reflect.core.Reflection.method;
+
 
 /**
  * User: lars
@@ -97,7 +96,7 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
               // false if fail is false.
               if (failFast) {
                 throw new MojoExecutionException(currentRule + " failed with message:\n" +
-                    e.getMessage(), e);
+                  e.getMessage(), e);
               } else {
                 list.add("Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage());
                 log.debug("Adding failure due to exception", e);
@@ -114,12 +113,12 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
           }
           if (fail) {
             throw new MojoExecutionException(
-                "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
+              "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
           }
         }
       } else {
         throw new MojoExecutionException(
-            "No rules are configured. Use the skip flag if you want to disable execution.");
+          "No rules are configured. Use the skip flag if you want to disable execution.");
       }
     } else {
       log.info("Skipping Rule Enforcement.");
@@ -128,7 +127,7 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
 
   private Collection<? extends CharSequence> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
     return method("getConvergenceErrorMsgs").withReturnType(new TypeRef<Collection<? extends CharSequence>>() {
-    }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
+      }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
   }
 
   private DependencyNode gettNode(EnforcerRuleHelper helper) {

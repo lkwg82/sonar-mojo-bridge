@@ -1,5 +1,5 @@
 /*
- * sonar-maven-checks-maven-versions
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -48,19 +48,17 @@ import org.apache.maven.project.interpolation.ModelInterpolator;
 import org.codehaus.mojo.versions.DisplayPluginUpdatesMojo;
 import org.codehaus.mojo.versions.api.ArtifactVersions;
 import org.codehaus.mojo.versions.ordering.MavenVersionComparator;
-
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
-
 import static org.fest.reflect.core.Reflection.field;
 import static org.fest.reflect.core.Reflection.method;
 
+
 @Goal("display-plugin-updates")
 @SuppressWarnings("deprecation")
-public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
-    implements BridgeMojo<DisplayPluginUpdatesSensor.ResultTransferHandler> {
+public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo implements BridgeMojo<DisplayPluginUpdatesSensor.ResultTransferHandler> {
   @Data
   @RequiredArgsConstructor
   public static class IncompatibleParentAndProjectMavenVersion {
@@ -119,8 +117,8 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
         Model originalModel = parentProject.getOriginalModel();
         if (originalModel == null) {
           getLog().warn("project.getOriginalModel()==null for  " + parentProject.getGroupId() + ":" +
-              parentProject.getArtifactId() + ":" + parentProject.getVersion() +
-              " is null, substituting project.getModel()");
+            parentProject.getArtifactId() + ":" + parentProject.getVersion() +
+            " is null, substituting project.getModel()");
           originalModel = parentProject.getModel();
         }
         try {
@@ -161,7 +159,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
     }
 
     Set plugins = oGetProjectPlugins(superPomPluginManagement, parentPluginManagement, parentBuildPlugins,
-        parentReportPlugins, pluginsWithVersionsSpecified);
+      parentReportPlugins, pluginsWithVersionsSpecified);
 
     //    List updates = new ArrayList();
     //    List lockdown = new ArrayList();
@@ -191,8 +189,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
       VersionRange versionRange;
       boolean unspecified = version == null;
       try {
-        versionRange = unspecified ? VersionRange.createFromVersionSpec("[0,)")
-            : VersionRange.createFromVersionSpec(version);
+        versionRange = unspecified ? VersionRange.createFromVersionSpec("[0,)") : VersionRange.createFromVersionSpec(version);
       } catch (InvalidVersionSpecificationException e) {
         throw new MojoExecutionException("Invalid version range specification: " + version, e);
       }
@@ -207,12 +204,12 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
         ArtifactVersion minRequires = null;
         for (int j = newerVersions.length - 1; j >= 0; j--) {
           Artifact probe = artifactFactory.createDependencyArtifact(groupId, artifactId,
-              VersionRange.createFromVersion(newerVersions[j].toString()), "pom", null, "runtime");
+            VersionRange.createFromVersion(newerVersions[j].toString()), "pom", null, "runtime");
           try {
             getHelper().resolveArtifact(probe, true);
 
             MavenProject mavenProject = projectBuilder.buildFromRepository(probe, remotePluginRepositories,
-                localRepository);
+              localRepository);
             ArtifactVersion requires = new DefaultArtifactVersion(oGetRequiredMavenVersion(mavenProject, "2.0"));
             if ((specMavenVersion.compareTo(requires) >= 0) && (artifactVersion == null)) {
               artifactVersion = newerVersions[j];
@@ -248,13 +245,13 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
         if (effectiveVersion != null) {
           VersionRange currentVersionRange = VersionRange.createFromVersion(effectiveVersion);
           Artifact probe = artifactFactory.createDependencyArtifact(groupId, artifactId, currentVersionRange, "pom",
-              null,
-              "runtime");
+            null,
+            "runtime");
           try {
             getHelper().resolveArtifact(probe, true);
 
             MavenProject mavenProject = projectBuilder.buildFromRepository(probe, remotePluginRepositories,
-                localRepository);
+              localRepository);
             ArtifactVersion requires = new DefaultArtifactVersion(oGetRequiredMavenVersion(mavenProject, "2.0"));
             if ((minMavenVersion == null) || (minMavenVersion.compareTo(requires) < 0)) {
               minMavenVersion = requires;
@@ -292,9 +289,8 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
         version = (String) superPomPluginManagement.get(ArtifactUtils.versionlessKey(artifact));
         //        System.out.println("[" + coords + "].superPom.version=" + version);
 
-        newVersion = (artifactVersion != null)
-            ? artifactVersion.toString()
-            : ((version != null) ? version : ((effectiveVersion != null) ? effectiveVersion : "(unknown)"));
+        newVersion = (artifactVersion != null) ? artifactVersion.toString()
+                                               : ((version != null) ? version : ((effectiveVersion != null) ? effectiveVersion : "(unknown)"));
 
         //        StringBuffer buf = new StringBuffer(oCompactKey(groupId, artifactId));
         //        buf.append(' ');
@@ -324,7 +320,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
 
     boolean noMavenMinVersion = oGetRequiredMavenVersion(getProject(), null) == null;
     boolean noExplicitMavenMinVersion = (getProject().getPrerequisites() == null) ||
-        (getProject().getPrerequisites().getMaven() == null);
+      (getProject().getPrerequisites().getMaven() == null);
     if (noMavenMinVersion) {
       warninNoMinimumVersion = true;
     } else if (noExplicitMavenMinVersion) {
@@ -333,7 +329,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
       ArtifactVersion explicitMavenVersion = new DefaultArtifactVersion(getProject().getPrerequisites().getMaven());
       if (explicitMavenVersion.compareTo(specMavenVersion) < 0) {
         incompatibleParentAndProjectMavenVersion = new IncompatibleParentAndProjectMavenVersion(specMavenVersion,
-            explicitMavenVersion);
+          explicitMavenVersion);
       }
     }
 
@@ -370,7 +366,7 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
         //        getLog(*/).error("    </prerequisites>");
       } else if ((minMavenVersion != null) && (specMavenVersion.compareTo(minMavenVersion) < 0)) {
         incompatibleParentAndProjectMavenVersion = new IncompatibleParentAndProjectMavenVersion(specMavenVersion,
-            minMavenVersion);
+          minMavenVersion);
         //        getLog().error("Project requires an incorrect minimum version of Maven.");
         //        getLog().error("Either change plugin versions to those compatible with " + specMavenVersion);
         //        getLog().error("or update the pom.xml to contain");
@@ -433,38 +429,26 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
   }
 
   private String oCompactKey(String groupId, String artifactId) {
-    return method("compactKey").withReturnType(String.class)
-        .withParameterTypes(String.class, String.class)
-        .in(this)
-        .invoke(groupId, artifactId);
+    return method("compactKey").withReturnType(String.class).withParameterTypes(String.class, String.class).in(this).invoke(groupId, artifactId);
   }
 
   private String oGetRequiredMavenVersion(MavenProject mavenProject, String defaultValue) {
     return method("getRequiredMavenVersion").withReturnType(String.class)
-        .withParameterTypes(MavenProject.class, String.class)
-        .in(this)
-        .invoke(mavenProject, defaultValue);
+      .withParameterTypes(MavenProject.class, String.class)
+      .in(this)
+      .invoke(mavenProject, defaultValue);
   }
 
   private Set oFindPluginsWithVersionsSpecified(MavenProject project) throws IOException, XMLStreamException {
-    return method("findPluginsWithVersionsSpecified").withReturnType(Set.class)
-        .withParameterTypes(MavenProject.class)
-        .in(this)
-        .invoke(project);
+    return method("findPluginsWithVersionsSpecified").withReturnType(Set.class).withParameterTypes(MavenProject.class).in(this).invoke(project);
   }
 
   private Set oFindPluginsWithVersionsSpecified(StringBuffer pomContents) throws IOException, XMLStreamException {
-    return method("findPluginsWithVersionsSpecified").withReturnType(Set.class)
-        .withParameterTypes(StringBuffer.class)
-        .in(this)
-        .invoke(pomContents);
+    return method("findPluginsWithVersionsSpecified").withReturnType(Set.class).withParameterTypes(StringBuffer.class).in(this).invoke(pomContents);
   }
 
   private List oGetParentProjects(MavenProject project) throws MojoExecutionException {
-    return method("getParentProjects").withReturnType(List.class)
-        .withParameterTypes(MavenProject.class)
-        .in(this)
-        .invoke(project);
+    return method("getParentProjects").withReturnType(List.class).withParameterTypes(MavenProject.class).in(this).invoke(project);
   }
 
   private Map oGetSuperPomPluginManagement() throws MojoExecutionException {
@@ -472,55 +456,45 @@ public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo
   }
 
   private Map oGetPluginManagement(Model model) {
-    return method("getPluginManagement").withReturnType(Map.class)
-        .withParameterTypes(Model.class)
-        .in(this)
-        .invoke(model);
+    return method("getPluginManagement").withReturnType(Map.class).withParameterTypes(Model.class).in(this).invoke(model);
   }
 
   private Map oGetBuildPlugins(Model model, boolean onlyIncludeInherited) {
     return method("getBuildPlugins").withReturnType(Map.class)
-        .withParameterTypes(Model.class, boolean.class)
-        .in(this)
-        .invoke(model, onlyIncludeInherited);
+      .withParameterTypes(Model.class, boolean.class)
+      .in(this)
+      .invoke(model, onlyIncludeInherited);
 
   }
 
   private Map oGetReportPlugins(Model model, boolean onlyIncludeInherited) {
     return method("getReportPlugins").withReturnType(Map.class)
-        .withParameterTypes(Model.class, boolean.class)
-        .in(this)
-        .invoke(model, onlyIncludeInherited);
+      .withParameterTypes(Model.class, boolean.class)
+      .in(this)
+      .invoke(model, onlyIncludeInherited);
   }
 
   private Set oGetProjectPlugins(Map superPomPluginManagement, Map parentPluginManagement, Map parentBuildPlugins,
-                                 Map parentReportPlugins, Set pluginsWithVersionsSpecified)
-      throws MojoExecutionException {
+                                 Map parentReportPlugins, Set pluginsWithVersionsSpecified) throws MojoExecutionException {
     return method("getProjectPlugins").withReturnType(Set.class)
-        .withParameterTypes(Map.class, Map.class, Map.class, Map.class, Set.class)
-        .in(this)
-        .invoke(superPomPluginManagement, parentPluginManagement, parentBuildPlugins, parentReportPlugins,
-            pluginsWithVersionsSpecified);
+      .withParameterTypes(Map.class, Map.class, Map.class, Map.class, Set.class)
+      .in(this)
+      .invoke(superPomPluginManagement, parentPluginManagement, parentBuildPlugins, parentReportPlugins,
+        pluginsWithVersionsSpecified);
   }
 
   private static String oGetPluginArtifactId(Object plugin) {
     return method("getPluginArtifactId").withReturnType(String.class)
-        .withParameterTypes(Object.class)
-        .in(DisplayPluginUpdatesMojo.class)
-        .invoke(plugin);
+      .withParameterTypes(Object.class)
+      .in(DisplayPluginUpdatesMojo.class)
+      .invoke(plugin);
   }
 
   private static String oGetPluginGroupId(Object plugin) {
-    return method("getPluginGroupId").withReturnType(String.class)
-        .withParameterTypes(Object.class)
-        .in(DisplayPluginUpdatesMojo.class)
-        .invoke(plugin);
+    return method("getPluginGroupId").withReturnType(String.class).withParameterTypes(Object.class).in(DisplayPluginUpdatesMojo.class).invoke(plugin);
   }
 
   private static String oGetPluginVersion(Object plugin) {
-    return method("getPluginVersion").withReturnType(String.class)
-        .withParameterTypes(Object.class)
-        .in(DisplayPluginUpdatesMojo.class)
-        .invoke(plugin);
+    return method("getPluginVersion").withReturnType(String.class).withParameterTypes(Object.class).in(DisplayPluginUpdatesMojo.class).invoke(plugin);
   }
 }
