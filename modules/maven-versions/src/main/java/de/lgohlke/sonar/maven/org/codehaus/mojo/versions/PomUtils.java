@@ -23,8 +23,8 @@ import com.google.common.base.Joiner;
 import org.apache.maven.model.Dependency;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 import org.fest.util.Preconditions;
-import java.util.Arrays;
 
+import java.util.Arrays;
 
 /**
  * User: lars
@@ -60,6 +60,7 @@ public final class PomUtils {
     String groupd = "<groupId>" + dependency.getGroupId() + "</groupId>";
     String artifact = "<artifactId>" + dependency.getArtifactId() + "</artifactId>";
     String version = "";
+
     if ((dependency.getVersion() != null) && (dependency.getVersion().length() > 0)) {
       version = "<version>" + dependency.getVersion() + "</version>";
     }
@@ -67,10 +68,8 @@ public final class PomUtils {
     String token = (version.length() > 0) ? version : artifact;
 
     for (int i = 0; i < lines.length; i++) {
-      if (lines[i].contains(token)) {
-        if (containsEntry(lines, i, type, groupd, artifact, version)) {
-          return i + 1;
-        }
+      if (lines[i].contains(token) && containsEntry(lines, i, type, groupd, artifact, version)) {
+        return i + 1;
       }
     }
     return 0;
