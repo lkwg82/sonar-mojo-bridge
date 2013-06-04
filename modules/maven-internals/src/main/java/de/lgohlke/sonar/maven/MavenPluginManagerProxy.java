@@ -21,9 +21,9 @@ package de.lgohlke.sonar.maven;
 
 import org.apache.maven.plugin.MavenPluginManager;
 import org.fest.reflect.exception.ReflectionError;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 
 public class MavenPluginManagerProxy<T extends MavenPluginManager> extends DynamicProxy<T> {
   private final ClassLoader classloader;
@@ -38,7 +38,7 @@ public class MavenPluginManagerProxy<T extends MavenPluginManager> extends Dynam
    */
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) {
-    if (method.getName().equals("setupPluginRealm")) {
+    if ("setupPluginRealm".equals(method.getName())) {
       args[2] = classloader;
     }
     try {

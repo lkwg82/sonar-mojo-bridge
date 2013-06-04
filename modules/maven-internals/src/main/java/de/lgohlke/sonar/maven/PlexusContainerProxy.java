@@ -46,7 +46,7 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) {
-    if (method.getName().equals("addComponentDescriptor")) {
+    if ("addComponentDescriptor".equals(method.getName())) {
       MojoDescriptor descriptor = (MojoDescriptor) args[0];
       checkGoal(descriptor);
     }
@@ -54,7 +54,7 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
     Object result;
     try {
       result = method.invoke(getUnderLying(), args);
-      if (method.getName().equals("lookup")) {
+      if ("lookup".equals(method.getName())) {
         checkMojoInstance(result);
       }
     } catch (IllegalAccessException e) {
