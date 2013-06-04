@@ -23,23 +23,22 @@ import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-
 /**
  * User: lars
  */
 @Rule(
-  description = DependencyConvergenceRule.DESCRIPTION, //
-  key = DependencyConvergenceRule.KEY, //
-  name = DependencyConvergenceRule.NAME, //
-  priority = Priority.CRITICAL
+    description = DependencyConvergenceRule.DESCRIPTION,
+    key = DependencyConvergenceRule.KEY,
+    name = DependencyConvergenceRule.NAME,
+    priority = Priority.CRITICAL
 )
 /**
  * @see http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html
  */
 public interface DependencyConvergenceRule extends MavenRule {
   String DESCRIPTION =
-    "This rule requires that dependency version numbers converge. If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C then the version of C depended on by B.<br/>" +
-    "<a href=\"http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html\">http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html</a>";
+      "This rule requires that dependency version numbers converge. If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C then the version of C depended on by B.<br/>" +
+          "<a href=\"http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html\">http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html</a>";
   String KEY = "DependencyConvergenceRule";
   String NAME = "DependencyConvergenceRule";
 }

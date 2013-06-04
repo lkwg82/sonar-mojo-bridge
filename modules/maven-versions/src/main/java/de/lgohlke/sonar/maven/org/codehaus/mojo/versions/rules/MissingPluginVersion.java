@@ -23,12 +23,15 @@ import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-
 /**
  * User: lars
  */
 
-@Rule(description = MissingPluginVersion.DESCRIPTION, name = MissingPluginVersion.NAME, key = MissingPluginVersion.KEY, priority = Priority.MINOR)
+@Rule(
+    description = MissingPluginVersion.DESCRIPTION,
+    name = MissingPluginVersion.NAME,
+    key = MissingPluginVersion.KEY,
+    priority = Priority.MINOR)
 public interface MissingPluginVersion extends MavenRule {
   String KEY = "Missing Plugin Version";
   String NAME = "[POM] found an plugin with no version";

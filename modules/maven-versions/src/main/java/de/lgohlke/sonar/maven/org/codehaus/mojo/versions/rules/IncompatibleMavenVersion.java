@@ -23,13 +23,14 @@ import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
-
 /**
  * User: lars
  */
 @Rule(
-  description = IncompatibleMavenVersion.DESCRIPTION, key = IncompatibleMavenVersion.KEY, priority = Priority.MAJOR,
-  name = IncompatibleMavenVersion.NAME
+    description = IncompatibleMavenVersion.DESCRIPTION,
+    key = IncompatibleMavenVersion.KEY,
+    priority = Priority.MAJOR,
+    name = IncompatibleMavenVersion.NAME
 )
 public interface IncompatibleMavenVersion extends MavenRule {
   String KEY = "INCOMPATIBLE MAVEN VERSION";

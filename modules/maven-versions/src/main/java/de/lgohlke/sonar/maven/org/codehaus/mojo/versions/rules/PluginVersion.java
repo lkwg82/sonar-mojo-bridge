@@ -25,10 +25,11 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
-
 @Rule(
-  description = PluginVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION, key = PluginVersion.KEY,
-  name = PluginVersion.NAME, priority = Priority.MINOR
+    description = PluginVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION,
+    key = PluginVersion.KEY,
+    name = PluginVersion.NAME,
+    priority = Priority.MINOR
 )
 public interface PluginVersion extends MavenRule {
   String KEY = "Old Plugin";

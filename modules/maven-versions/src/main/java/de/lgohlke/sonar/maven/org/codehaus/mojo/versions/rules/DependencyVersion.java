@@ -25,10 +25,11 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
-
 @Rule(
-  description = DependencyVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION, key = DependencyVersion.KEY,
-  name = DependencyVersion.NAME, priority = Priority.MINOR
+    description = DependencyVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION,
+    key = DependencyVersion.KEY,
+    name = DependencyVersion.NAME,
+    priority = Priority.MINOR
 )
 public interface DependencyVersion extends MavenRule {
   String KEY = "Old Dependency";
