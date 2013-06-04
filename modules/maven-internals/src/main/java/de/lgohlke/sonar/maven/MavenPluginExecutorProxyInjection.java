@@ -22,7 +22,6 @@ package de.lgohlke.sonar.maven;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.maven3.Maven3PluginExecutor;
 
-
 public final class MavenPluginExecutorProxyInjection {
   private MavenPluginExecutorProxyInjection() {
   }
@@ -37,7 +36,8 @@ public final class MavenPluginExecutorProxyInjection {
     try {
       return mavenPluginExecutor instanceof Maven3PluginExecutor;
     } catch (NoClassDefFoundError e) {
-      return false; // ok, this happens when maven 2 is used
+      // this happens when maven 2 is used
+      return false;
     }
   }
 }

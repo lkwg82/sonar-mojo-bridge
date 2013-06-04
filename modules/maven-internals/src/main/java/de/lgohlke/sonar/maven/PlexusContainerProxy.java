@@ -23,11 +23,12 @@ import com.google.common.collect.Sets;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.codehaus.plexus.PlexusContainer;
 import org.fest.reflect.exception.ReflectionError;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
-import static org.fest.reflect.core.Reflection.field;
 
+import static org.fest.reflect.core.Reflection.field;
 
 public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProxy<T> {
   private Set<MojoInjection> injections = Sets.newHashSet();
@@ -71,7 +72,8 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
     for (MojoInjection injection : injections) {
       if (injection.getBridgeMojoClass().isAssignableFrom(result.getClass())) {
         injection.setTransferHandler((BridgeMojo<?>) result);
-        return; // dont iterate further after already matched goal
+        // dont iterate further after already matched goal
+        return;
       }
     }
   }

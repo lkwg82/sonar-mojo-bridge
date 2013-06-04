@@ -28,13 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.cli.MavenLoggerManager;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import static com.google.common.base.Preconditions.*;
 
+import static com.google.common.base.Preconditions.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -63,7 +64,7 @@ public class Maven3SonarEmbedder {
     public static final String MAVEN_HOME_KEY = "maven.home";
     public static final int MIN_LOG_LEVEL = 0;
     public static final int MAX_LOG_LEVEL = 5;
-    private String pom = "pom.xml"; // default
+    private String pom = "pom.xml";
     private String mavenGoal = null;
     private File mavenHome = null;
     private int mavenLogLevel = org.codehaus.plexus.logging.Logger.LEVEL_ERROR;
@@ -113,7 +114,7 @@ public class Maven3SonarEmbedder {
       return this;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void detectMavenHomeIfNull() {
       if (mavenHome == null) {
         Map<String, String> envMap = new HashMap<String, String>(System.getenv());
@@ -128,7 +129,7 @@ public class Maven3SonarEmbedder {
 
         checkNotNull(mavenHome, "we did not find the maven directory");
         checkArgument(mavenHome.isDirectory(),
-          "maveHome is " + mavenHome + ", but a directory is needed");
+            "maveHome is " + mavenHome + ", but a directory is needed");
       }
     }
 
