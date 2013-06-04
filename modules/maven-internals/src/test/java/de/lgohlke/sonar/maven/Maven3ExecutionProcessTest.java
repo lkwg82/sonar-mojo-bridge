@@ -19,22 +19,23 @@
  */
 package de.lgohlke.sonar.maven;
 
+import hudson.maven.MavenEmbedderException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.execution.MavenSession;
 import org.sonar.maven3.Maven3PluginExecutor;
 import org.testng.annotations.Test;
+
 import java.io.File;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
-
 
 public class Maven3ExecutionProcessTest {
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
   private Maven3SonarEmbedder embedder;
 
-  //  @BeforeTest
-  protected void init() throws Exception {
+  protected void init() throws MavenEmbedderException {
     embedder = Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal("versions:help").setAlternativeMavenHome(MAVEN_HOME).build();
   }
 
@@ -45,7 +46,7 @@ public class Maven3ExecutionProcessTest {
   }
 
   @Test
-  public void shouldDecorate() throws Exception, ClassNotFoundException {
+  public void shouldDecorate() throws MavenEmbedderException {
     init();
 
     MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
@@ -62,7 +63,7 @@ public class Maven3ExecutionProcessTest {
   }
 
   @Test
-  public void shouldNotBeDecoratedTwice() throws Exception, ClassNotFoundException {
+  public void shouldNotBeDecoratedTwice() throws MavenEmbedderException {
     init();
 
     MavenSession mavenSession = field("embedder.mavenSession").ofType(MavenSession.class).in(embedder).get();
