@@ -40,7 +40,6 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-
 /**
  * User: lars
  */
@@ -86,9 +85,8 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
       ArtifactMetadataSource metadataSource = (ArtifactMetadataSource) helper.getComponent(ArtifactMetadataSource.class);
       ArtifactCollector collector = (ArtifactCollector) helper.getComponent(ArtifactCollector.class);
       ArtifactFilter filter = null; // we need to evaluate all scopes
-      DependencyNode node = dependencyTreeBuilder.buildDependencyTree(project, repository, factory, metadataSource, filter,
-        collector);
-      return node;
+      return dependencyTreeBuilder.buildDependencyTree(project, repository, factory, metadataSource, filter,
+          collector);
     } catch (ExpressionEvaluationException e) {
       throw new EnforcerRuleException("Unable to lookup an expression " + e.getLocalizedMessage(), e);
     } catch (ComponentLookupException e) {

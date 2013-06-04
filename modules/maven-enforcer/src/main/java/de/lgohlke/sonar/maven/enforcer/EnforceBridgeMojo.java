@@ -30,13 +30,9 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.DefaultEnforcementRuleHelper;
 import org.apache.maven.plugins.enforcer.EnforceMojo;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.fest.reflect.reference.TypeRef;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import static org.fest.reflect.core.Reflection.method;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: lars
@@ -60,8 +56,7 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
       List<String> list = new ArrayList<String>();
 
       // make sure the rules exist
-      if ((rules != null) && (rules.length > 0)) {
-        String currentRule = "Unknown";
+      if (rules.length > 0) {
 
         // create my helper
         EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
@@ -80,7 +75,7 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
           if (rule != null) {
             // store the current rule for
             // logging purposes
-            currentRule = rule.getClass().getName();
+            String currentRule = rule.getClass().getName();
             log.debug("Executing rule: " + currentRule);
             try {
               if (ignoreCache || shouldExecute(rule)) {
@@ -95,13 +90,12 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
               // because failfast will be
               // false if fail is false.
               if (failFast) {
-                throw new MojoExecutionException(currentRule + " failed with message:\n" +
-                  e.getMessage(), e);
+                throw new MojoExecutionException(currentRule + " failed with message:\n" + e.getMessage(), e);
               } else {
                 list.add("Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage());
                 log.debug("Adding failure due to exception", e);
               }
-              e.printStackTrace();
+              log.error(e.getLongMessage());
             }
           }
         }
@@ -113,24 +107,15 @@ public class EnforceBridgeMojo extends EnforceMojo implements BridgeMojo<RuleTra
           }
           if (fail) {
             throw new MojoExecutionException(
-              "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
+                "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
           }
         }
       } else {
         throw new MojoExecutionException(
-          "No rules are configured. Use the skip flag if you want to disable execution.");
+            "No rules are configured. Use the skip flag if you want to disable execution.");
       }
     } else {
       log.info("Skipping Rule Enforcement.");
     }
-  }
-
-  private Collection<? extends CharSequence> gettConvergenceErrorMsgs(List<List<DependencyNode>> conflictedVersionNumbers) {
-    return method("getConvergenceErrorMsgs").withReturnType(new TypeRef<Collection<? extends CharSequence>>() {
-      }).withParameterTypes(List.class).in(this).invoke(conflictedVersionNumbers);
-  }
-
-  private DependencyNode gettNode(EnforcerRuleHelper helper) {
-    return method("getNode").withReturnType(DependencyNode.class).withParameterTypes(EnforcerRuleHelper.class).in(this).invoke(helper);
   }
 }
