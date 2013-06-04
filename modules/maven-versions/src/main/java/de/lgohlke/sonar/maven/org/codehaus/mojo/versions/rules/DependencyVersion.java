@@ -41,6 +41,6 @@ public interface DependencyVersion extends MavenRule {
   String WHITE_LIST = null;
 
   String RULE_PROPERTY_BLACKLIST = "blacklist";
-  @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "", type = "TEXT", description = "this regex controls blacklisting")
+  @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "[^:].*?:[^:].*?:[^:].*(alpha|Alpha|beta|Beta).*", type = "TEXT", description = "this regex controls blacklisting")
   String BLACK_LIST = null;
 }
