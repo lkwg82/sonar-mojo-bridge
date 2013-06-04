@@ -19,14 +19,15 @@
  */
 package de.lgohlke.sonar.maven;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 
 /**
  * User: lars
  */
 @RequiredArgsConstructor
 public class MojoInjection {
+  @NonNull
   private final BridgeMojoMapper bridgeMojoMapper;
 
   public String getGoal() {
@@ -55,17 +56,11 @@ public class MojoInjection {
       return false;
     }
 
-    MojoInjection that = (MojoInjection) o;
-
-    if (!bridgeMojoMapper.equals(that.bridgeMojoMapper)) {
-      return false;
-    }
-
-    return true;
+    return bridgeMojoMapper.equals(((MojoInjection) o).bridgeMojoMapper);
   }
 
   @Override
   public int hashCode() {
-    return bridgeMojoMapper.hashCode();
+    return 6197 * bridgeMojoMapper.hashCode();
   }
 }
