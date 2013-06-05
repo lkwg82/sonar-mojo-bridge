@@ -33,12 +33,14 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.plugins.xml.language.Xml;
+
 import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BASE_IDENTIFIER;
 
-
-@Rules(values = { ParentPomVersion.class })
+@Rules(values = {ParentPomVersion.class})
 @SensorConfiguration(
-  bridgeMojo = UpdateParentBridgeMojo.class, resultTransferHandler = UpdateParentPomSensor.ResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
+    bridgeMojo = UpdateParentBridgeMojo.class,
+    resultTransferHandler = UpdateParentPomSensor.ResultHandler.class,
+    mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor.ResultHandler> {
   @Getter
@@ -62,12 +64,11 @@ public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor
       File file = new File("", getMavenProject().getFile().getName());
       file.setLanguage(Xml.INSTANCE);
 
-      Violation violation = Violation.create(rule, file);
-      violation.setLineId(1);
+      final String message = ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " +
+          resultHandler.getNewerVersion() + " is available";
 
-      violation.setMessage(ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " +
-        resultHandler.getNewerVersion() + " is available");
-      context.saveViolation(violation);
+      int line = getMavenProject().getModel().getParent().getLocation("version").getLineNumber();
+      context.saveViolation(Violation.create(rule, file).setLineId(line).setMessage(message));
     }
   }
 }

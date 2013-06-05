@@ -101,14 +101,12 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
     for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
       List<ArtifactUpdate> updates = entry.getValue();
       for (ArtifactUpdate update : updates) {
-        if (filter.acceptArtifact(update.toString())) {
-          if (verifyVersionIsFromThisProject(project, update)) {
-            int line = update.getDependency().getLocation("version").getLineNumber();
-            Violation violation = Violation.create(rule, file);
-            violation.setLineId(line);
-            violation.setMessage(update.toString());
-            context.saveViolation(violation);
-          }
+        if (filter.acceptArtifact(update.toString()) && verifyVersionIsFromThisProject(project, update)) {
+          int line = update.getDependency().getLocation("version").getLineNumber();
+          Violation violation = Violation.create(rule, file);
+          violation.setLineId(line);
+          violation.setMessage(update.toString());
+          context.saveViolation(violation);
         }
       }
     }
