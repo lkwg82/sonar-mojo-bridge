@@ -20,16 +20,19 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
 
-
 @RequiredArgsConstructor
 public class ArtifactUpdate {
+
   @Getter
+  @NonNull
   private final Dependency dependency;
   @Getter
+  @NonNull
   private final ArtifactVersion artifactVersion;
 
   @Override
@@ -42,9 +45,29 @@ public class ArtifactUpdate {
     result.append(":");
     result.append(dependency.getVersion());
 
-    result.append(" has newer version available: ");
+    result.append(" has newer version (");
     result.append(artifactVersion.toString());
+    result.append(") available");
 
     return result.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof ArtifactUpdate)) {
+      return false;
+    }
+
+    ArtifactUpdate that = (ArtifactUpdate) o;
+
+    return artifactVersion.compareTo(that.artifactVersion) == 0 && dependency.toString().equals(that.dependency.toString());
+  }
+
+  @Override
+  public int hashCode() {
+    return 31 * dependency.toString().hashCode() + artifactVersion.toString().hashCode();
   }
 }
