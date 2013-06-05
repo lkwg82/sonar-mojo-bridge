@@ -66,7 +66,10 @@ public class DependencyConvergenceAdapter extends DependencyConvergence implemen
 
   /**
    * Uses the {@link EnforcerRuleHelper} to populate the values of the
-   * {@link org.apache.maven.shared.dependency.tree.DependencyTreeBuilder#buildDependencyTree(org.apache.maven.project.MavenProject, org.apache.maven.artifact.repository.ArtifactRepository, org.apache.maven.artifact.factory.ArtifactFactory, org.apache.maven.artifact.metadata.ArtifactMetadataSource, org.apache.maven.artifact.resolver.filter.ArtifactFilter, org.apache.maven.artifact.resolver.ArtifactCollector)}
+   * {@link org.apache.maven.shared.dependency.tree.DependencyTreeBuilder#buildDependencyTree(org.apache.maven.project.MavenProject,
+   * org.apache.maven.artifact.repository.ArtifactRepository, org.apache.maven.artifact.factory.ArtifactFactory,
+   * org.apache.maven.artifact.metadata.ArtifactMetadataSource, org.apache.maven.artifact.resolver.filter.ArtifactFilter,
+   * org.apache.maven.artifact.resolver.ArtifactCollector)}
    * factory method. <br/>
    * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
    *

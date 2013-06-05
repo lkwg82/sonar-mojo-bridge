@@ -19,14 +19,13 @@
  */
 package de.lgohlke.sonar.maven.enforcer;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.sonar.api.batch.maven.MavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
-import java.util.List;
 
+import java.util.Map;
 
 /**
  * this mavenplugin handler enables us to configure dynamically the rules, activated
@@ -38,7 +37,7 @@ class EnforceMavenPluginHandler implements MavenPluginHandler, ConfigurableEnfor
   /**
    * key,value,key,value
    */
-  private final List<String> parameterList = Lists.newArrayList();
+  private final Map<String, String> parameters = Maps.newHashMap();
 
   @Override
   public String getGroupId() {
@@ -67,16 +66,14 @@ class EnforceMavenPluginHandler implements MavenPluginHandler, ConfigurableEnfor
 
   @Override
   public void configure(Project project, MavenPlugin plugin) {
-    Preconditions.checkArgument((parameterList.size() % 2) == 0, "should have odd size of entries");
-    for (int i = 0; i < parameterList.size(); i += 2) {
-      plugin.setParameter(parameterList.get(i), parameterList.get(i + 1));
+    for (Map.Entry<String, String> entry : parameters.entrySet()) {
+      plugin.setParameter(entry.getKey(), entry.getValue());
     }
   }
 
   @Override
   public ConfigurableEnforceMavenPluginHandler setParameter(final String key, final String value) {
-    parameterList.add(key);
-    parameterList.add(value);
+    parameters.put(key, value);
     return this;
   }
 }
