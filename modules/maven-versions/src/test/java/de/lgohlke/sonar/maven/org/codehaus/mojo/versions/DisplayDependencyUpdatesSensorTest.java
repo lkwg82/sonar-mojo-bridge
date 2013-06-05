@@ -27,6 +27,7 @@ import lombok.Getter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.InputLocation;
+import org.apache.maven.model.InputSource;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
@@ -38,13 +39,13 @@ import org.sonar.api.rules.Violation;
 import org.sonar.batch.DefaultSensorContext;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.testng.annotations.Test;
+
 import java.util.List;
 import java.util.Map;
+
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 
 /**
  * User: lgohlke
@@ -57,8 +58,15 @@ public class DisplayDependencyUpdatesSensorTest {
     Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
     ArtifactUpdate artifactUpdate = mock(ArtifactUpdate.class);
 
+    final String effectiveKey = "a";
+    final String analysisVersion = "1";
+    InputSource inputSource = new InputSource();
+    inputSource.setModelId(effectiveKey + ":" + analysisVersion);
+    InputLocation inputLocation = new InputLocation(1, 1, inputSource);
+
     Dependency mockDependency = mock(Dependency.class);
-    when(mockDependency.getLocation(any(String.class))).thenReturn(new InputLocation(1, 1));
+    when(mockDependency.getLocation("version")).thenReturn(new InputLocation(1, 1));
+    when(mockDependency.getLocation("")).thenReturn(inputLocation);
 
     String artifactQualifier = "group:artifact:version:goal";
     when(artifactUpdate.getDependency()).thenReturn(mockDependency);
@@ -72,8 +80,10 @@ public class DisplayDependencyUpdatesSensorTest {
     updateMap.put(DisplayDependencyUpdatesBridgeMojo.DEPENDENCIES, updateList);
     sensor.getMojoMapper().getResultTransferHandler().setUpdateMap(updateMap);
 
+    Project project = new Project(effectiveKey).setAnalysisVersion(analysisVersion);
+
     TestSensorContext context = new TestSensorContext();
-    sensor.analyse(mock(Project.class), context);
+    sensor.analyse(project, context);
 
     assertThat(context.getViolations()).hasSize(1);
     assertThat(context.getViolations().get(0).getMessage()).contains(artifactQualifier);
