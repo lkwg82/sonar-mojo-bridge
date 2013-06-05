@@ -21,14 +21,17 @@ package de.lgohlke.sonar.maven;
 
 import de.lgohlke.sonar.Configuration;
 import org.sonar.api.rules.Rule;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 
 /**
  * User: lars
  */
-public class RuleUtils {
+public final class RuleUtils {
+  private RuleUtils() {
+  }
+
   public static Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
     final org.sonar.check.Rule annotation = ruleClass.getAnnotation(org.sonar.check.Rule.class);
     checkNotNull(annotation, "each " + MavenRule.class + " needs a " + org.sonar.check.Rule.class + " annotation");
