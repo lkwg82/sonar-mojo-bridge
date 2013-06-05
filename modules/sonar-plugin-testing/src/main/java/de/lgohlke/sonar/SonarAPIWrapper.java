@@ -22,12 +22,13 @@ package de.lgohlke.sonar;
 import com.thoughtworks.xstream.XStream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sonar.wsclient.Host;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.connectors.HttpClient4Connector;
 import org.sonar.wsclient.services.*;
-import java.util.List;
 
+import java.util.List;
 
 /**
  * lightweight sonar api wrapper
@@ -35,6 +36,7 @@ import java.util.List;
  * @author lars
  */
 @RequiredArgsConstructor
+@Slf4j
 public class SonarAPIWrapper {
   public interface Description {
     String getDescription();
@@ -76,9 +78,10 @@ public class SonarAPIWrapper {
   }
 
   public List<Violation> getViolationsFor(final Integer resourceId, final String... ruleKeys) {
-    ViolationQuery query = new ViolationQuery(resourceId + "");
-    query.setRuleKeys(ruleKeys);
-    query.setDepth(-1);
+    ViolationQuery query = new ViolationQuery(resourceId + "")
+        .setDepth(-1)
+        .setRuleKeys(ruleKeys);
+
     lastQuery = query;
     return sonar().findAll(query);
   }
@@ -92,8 +95,8 @@ public class SonarAPIWrapper {
   }
 
   private void printOutXml(final Object resource) {
-    System.out.println("query: " + sonarHost + lastQuery.getUrl());
-    System.out.println(new XStream().toXML(resource));
+    log.info("query: " + sonarHost + lastQuery.getUrl());
+    log.info(new XStream().toXML(resource));
   }
 
   public void showQueryAndResult(final List<? extends Model> resources) {

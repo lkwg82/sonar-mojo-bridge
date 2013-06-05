@@ -23,12 +23,13 @@ import com.google.common.base.Preconditions;
 import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import static org.fest.assertions.api.Assertions.fail;
 
+import static org.fest.assertions.api.Assertions.fail;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -106,11 +107,11 @@ public final class SonarExecutor implements Cloneable {
   @Override
   public SonarExecutor clone() throws CloneNotSupportedException {
     return ((SonarExecutor) super.clone()).activateMavenDebug(activateMavenDebug)
-      .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
-      .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
-      .skipDesign(skipDesign)
-      .skipDynamicAnalysis(skipDynamicAnalysis)
-      .skipTests(skipTests);
+        .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
+        .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
+        .skipDesign(skipDesign)
+        .skipDynamicAnalysis(skipDynamicAnalysis)
+        .skipTests(skipTests);
   }
 
   public void execute() throws MavenEmbedderException {
@@ -120,19 +121,22 @@ public final class SonarExecutor implements Cloneable {
       log.info("calling : {}", command);
 
       Process proc = Runtime.getRuntime().exec(command);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
       StringBuilder outputFromMavenCall = new StringBuilder();
-      String line = reader.readLine();
-      while (line != null) {
-        if (SonarExecutor.log.isDebugEnabled()) {
-          SonarExecutor.log.debug(line);
-        } else if (showMavenOutputWhileAnalysis) {
-          SonarExecutor.log.info(line);
-        } else {
-          outputFromMavenCall.append(line);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+      try {
+        String line = reader.readLine();
+        while (line != null) {
+          if (SonarExecutor.log.isDebugEnabled()) {
+            SonarExecutor.log.debug(line);
+          } else if (showMavenOutputWhileAnalysis) {
+            SonarExecutor.log.info(line);
+          } else {
+            outputFromMavenCall.append(line);
+          }
+          line = reader.readLine();
         }
-        line = reader.readLine();
+      } finally {
+        reader.close();
       }
       proc.waitFor();
 
@@ -183,12 +187,15 @@ public final class SonarExecutor implements Cloneable {
   public String getMavenVersion() throws IOException, InterruptedException {
     Process proc = Runtime.getRuntime().exec("mvn -version");
     BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-    String line = reader.readLine();
-    if (line != null) {
-      return line.split("\\ +")[2];
-    } else {
-      return null;
+    try {
+      String line = reader.readLine();
+      if (line != null) {
+        return line.split("\\ +")[2];
+      } else {
+        return null;
+      }
+    } finally {
+      reader.close();
     }
   }
 }

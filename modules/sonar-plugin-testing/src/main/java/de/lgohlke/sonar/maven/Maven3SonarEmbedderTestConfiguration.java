@@ -21,11 +21,13 @@ package de.lgohlke.sonar.maven;
 
 import java.io.File;
 
-
 /**
  * User: lars
  */
-public class Maven3SonarEmbedderTestConfiguration {
+public final class Maven3SonarEmbedderTestConfiguration {
+  private Maven3SonarEmbedderTestConfiguration() {
+  }
+
   // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
   public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 }
