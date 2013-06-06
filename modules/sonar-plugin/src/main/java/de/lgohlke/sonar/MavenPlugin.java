@@ -41,7 +41,9 @@ import java.util.List;
             defaultValue = Configuration.DEFAULT,
             global = true,
             project = true,
-            type = PropertyType.BOOLEAN
+            module = true,
+            type = PropertyType.BOOLEAN,
+            category = "MojoBridge"
         )
     }
 )
