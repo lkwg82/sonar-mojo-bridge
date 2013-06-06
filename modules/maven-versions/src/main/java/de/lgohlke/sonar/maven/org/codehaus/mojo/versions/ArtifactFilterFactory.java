@@ -20,24 +20,18 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import com.google.common.base.Preconditions;
-import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
 import org.sonar.api.config.Settings;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * User: lars
  */
 @Slf4j
 public final class ArtifactFilterFactory {
-  private static final XStream XSTREAM = new XStream();
-
-  static {
-    XSTREAM.setClassLoader(ArtifactFilterFactory.class.getClassLoader());
-  }
 
   private ArtifactFilterFactory() {
   }
