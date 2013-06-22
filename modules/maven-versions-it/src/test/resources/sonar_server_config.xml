@@ -57,6 +57,11 @@
           <plugin><![CDATA[maven]]></plugin>
           <level><![CDATA[MINOR]]></level>
         </active-rule>
+        <active-rule>
+          <key><![CDATA[DependencyConvergence]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[CRITICAL]]></level>
+        </active-rule>
       </active-rules>
       <alerts/>
     </profile>
