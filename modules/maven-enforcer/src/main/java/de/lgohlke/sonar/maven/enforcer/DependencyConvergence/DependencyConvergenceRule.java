@@ -40,6 +40,6 @@ public interface DependencyConvergenceRule extends MavenRule {
       "This rule requires that dependency version numbers converge. If a project has two dependencies, A and B, both depending on the same artifact, " +
           "C, this rule will fail the build if A depends on a different version of C then the version of C depended on by B.<br/>" +
           "<a href=\"http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html\">http://maven.apache.org/enforcer/enforcer-rules/dependencyConvergence.html</a>";
-  String KEY = "DependencyConvergenceRule";
-  String NAME = "[POM] DependencyConvergenceRule";
+  String KEY = "DependencyConvergence";
+  String NAME = "[POM] enforce DependencyConvergenceRule";
 }
