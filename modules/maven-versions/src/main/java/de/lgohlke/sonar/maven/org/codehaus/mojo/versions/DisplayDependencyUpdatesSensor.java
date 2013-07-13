@@ -49,13 +49,23 @@ import static de.lgohlke.sonar.maven.org.codehaus.mojo.versions.Configuration.BA
             description = "this regex controls whitelisting <br>" +
                 "<i>examples:</i><br/>" +
                 "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>", defaultValue = ".*", global = false, project = true, type = PropertyType.STRING
+                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>",
+            defaultValue = ".*",
+            global = false,
+            project = true,
+            type = PropertyType.STRING,
+            category = "Mojo Bridge"
         ),
         @Property(
             key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
             name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
             description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
-                "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>", defaultValue = "", global = false, project = true, type = PropertyType.STRING
+                "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
+            defaultValue = "",
+            global = false,
+            project = true,
+            type = PropertyType.STRING,
+            category = "Mojo Bridge"
         )
     }
 )

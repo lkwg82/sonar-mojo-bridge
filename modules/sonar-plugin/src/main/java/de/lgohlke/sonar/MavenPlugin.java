@@ -43,7 +43,7 @@ import java.util.List;
             project = true,
             module = true,
             type = PropertyType.BOOLEAN,
-            category = "MojoBridge"
+            category = "Mojo Bridge"
         )
     }
 )
