@@ -58,7 +58,7 @@
   </developers>
 
   <properties>
-    <project.internal_version>0.1-is24-20130628</project.internal_version>
+    <project.internal.version>0.1-is24-20130628</project.internal.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <jdk.min.version>1.6</jdk.min.version>
@@ -138,13 +138,11 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>${logback.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

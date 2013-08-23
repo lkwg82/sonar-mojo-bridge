@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>sonar-mojo-bridge</artifactId>
-  <version>${project.internal_version}</version>
+  <version>${project.internal.version}</version>
   <packaging>sonar-plugin</packaging>
   <name>Sonar mojo bridge plugin</name>
   <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
@@ -55,9 +55,9 @@
   <build>
     <plugins>
       <plugin>
+        <extensions>true</extensions>
         <groupId>org.codehaus.sonar</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <extensions>true</extensions>
         <configuration>
           <pluginClass>de.lgohlke.sonar.MavenPlugin</pluginClass>
         </configuration>
@@ -82,7 +82,7 @@
                   <maxsize>900000</maxsize>
                   <minsize>300000</minsize>
                   <files>
-                    <file>${project.build.directory}/${project.artifactId}-${project.internal_version}.jar</file>
+                    <file>${project.build.directory}/${project.artifactId}-${project.internal.version}.jar</file>
                   </files>
                 </requireFilesSize>
               </rules>
