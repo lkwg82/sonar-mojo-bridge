@@ -17,20 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.lewisd.maven.lint;
+package com.lewisd.maven.lint.rules;
 
-import com.lewisd.maven.lint.rules.LintDuplicateDependenciesRule;
 import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import java.util.ArrayList;
-import java.util.List;
+@Rule(
+    description = LintRedundantDependencyVersionsRule.DESCRIPTION,
+    key = LintRedundantDependencyVersionsRule.KEY,
+    name = LintRedundantDependencyVersionsRule.NAME,
+    priority = Priority.MINOR
 
-public interface Configuration {
-  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.7:check";
-
-  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
-    {
-      add(LintDuplicateDependenciesRule.class);
-    }
-  };
+)
+public interface LintRedundantDependencyVersionsRule extends MavenRule {
+  String DESCRIPTION = "Dependency versions should be set in one place, and not overridden without changing the version. " +
+      "If, for example, <dependencyManagement> sets a version, and <dependencies> somewhere overrides it, " +
+      "but with the same version, this can make version upgrades more difficult, due to the repetition.";
+  String KEY = "lint.RedundantDepVersion";
+  String NAME = "[POM] redundant dependency versions";
 }

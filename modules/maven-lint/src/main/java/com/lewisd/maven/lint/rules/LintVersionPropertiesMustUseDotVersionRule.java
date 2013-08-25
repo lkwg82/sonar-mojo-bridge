@@ -17,20 +17,22 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.lewisd.maven.lint;
+package com.lewisd.maven.lint.rules;
 
-import com.lewisd.maven.lint.rules.LintDuplicateDependenciesRule;
 import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import java.util.ArrayList;
-import java.util.List;
+@Rule(
+    description = LintVersionPropertiesMustUseDotVersionRule.DESCRIPTION,
+    key = LintVersionPropertiesMustUseDotVersionRule.KEY,
+    name = LintVersionPropertiesMustUseDotVersionRule.NAME,
+    priority = Priority.MINOR
 
-public interface Configuration {
-  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.7:check";
-
-  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
-    {
-      add(LintDuplicateDependenciesRule.class);
-    }
-  };
+)
+public interface LintVersionPropertiesMustUseDotVersionRule extends MavenRule {
+  String DESCRIPTION = "The convention is to specify properties used to hold versions as \"some.library.version\", or some-library.version, " +
+      "but never some-library-version or some.library-version.";
+  String KEY = "lint.DotVersionProperty";
+  String NAME = "[POM] version property must use dot version";
 }

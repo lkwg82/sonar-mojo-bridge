@@ -17,20 +17,22 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.lewisd.maven.lint;
+package com.lewisd.maven.lint.rules;
 
-import com.lewisd.maven.lint.rules.LintDuplicateDependenciesRule;
 import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import java.util.ArrayList;
-import java.util.List;
+@Rule(
+    description = LintDuplicateDependenciesRule.DESCRIPTION,
+    key = LintDuplicateDependenciesRule.KEY,
+    name = LintDuplicateDependenciesRule.NAME,
+    priority = Priority.MAJOR
 
-public interface Configuration {
-  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.7:check";
-
-  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
-    {
-      add(LintDuplicateDependenciesRule.class);
-    }
-  };
+)
+public interface LintDuplicateDependenciesRule extends MavenRule {
+  String DESCRIPTION = "Multiple dependencies, in <dependencies> or <managedDependencies>, with the same co-ordinates are reduntant, " +
+      "and can be confusing.  If they have different versions, they can lead to unexpected behaviour.";
+  String KEY = "lint.DuplicateDep";
+  String NAME = "[POM] found DuplicateDependencies";
 }

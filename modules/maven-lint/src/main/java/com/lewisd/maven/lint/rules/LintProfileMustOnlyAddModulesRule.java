@@ -17,20 +17,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.lewisd.maven.lint;
+package com.lewisd.maven.lint.rules;
 
-import com.lewisd.maven.lint.rules.LintDuplicateDependenciesRule;
 import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import java.util.ArrayList;
-import java.util.List;
+@Rule(
+    description = LintProfileMustOnlyAddModulesRule.DESCRIPTION,
+    key = LintProfileMustOnlyAddModulesRule.KEY,
+    name = LintProfileMustOnlyAddModulesRule.NAME,
+    priority = Priority.MAJOR
 
-public interface Configuration {
-  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.7:check";
-
-  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
-    {
-      add(LintDuplicateDependenciesRule.class);
-    }
-  };
+)
+public interface LintProfileMustOnlyAddModulesRule extends MavenRule {
+  String DESCRIPTION = "Profiles who's ids match the pattern with-.* must only add modules to the reactor.";
+  String KEY = "lint.ProfileOnlyAddModules";
+  String NAME = "[POM] profile must only add modules";
 }

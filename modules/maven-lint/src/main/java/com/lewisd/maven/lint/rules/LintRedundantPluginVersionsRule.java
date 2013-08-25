@@ -17,20 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.lewisd.maven.lint;
+package com.lewisd.maven.lint.rules;
 
-import com.lewisd.maven.lint.rules.LintDuplicateDependenciesRule;
 import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import java.util.ArrayList;
-import java.util.List;
+@Rule(
+    description = LintRedundantPluginVersionsRule.DESCRIPTION,
+    key = LintRedundantPluginVersionsRule.KEY,
+    name = LintRedundantPluginVersionsRule.NAME,
+    priority = Priority.MINOR
 
-public interface Configuration {
-  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.7:check";
-
-  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
-    {
-      add(LintDuplicateDependenciesRule.class);
-    }
-  };
+)
+public interface LintRedundantPluginVersionsRule extends MavenRule {
+  String DESCRIPTION = "Plugin versions should be set in one place, and not overridden without changing the version. " +
+      "If, for example, <pluginManagement> sets a version, and <plugins> somewhere overrides it, " +
+      "but with the same version, this can make version upgrades more difficult, due to the repetition.";
+  String KEY = "lint.RedundantPluginVersion";
+  String NAME = "[POM] redundant plugin versions";
 }

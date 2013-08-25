@@ -20,15 +20,18 @@
 package com.lewisd.maven.lint;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.lewisd.maven.lint.xml.Results;
 import com.lewisd.maven.lint.xml.Violation;
+import de.lgohlke.sonar.maven.MavenRule;
+import de.lgohlke.sonar.maven.Rules;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonar.api.batch.SensorContext;
+import org.reflections.Reflections;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
@@ -37,6 +40,7 @@ import org.sonar.batch.DefaultSensorContext;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -71,6 +75,16 @@ public class LintSensorTest {
     Rule ruleFromViolation = sensor.createRuleFromViolation(violation);
 
     assertThat(ruleFromViolation).isNotNull();
+  }
+
+  @Test
+  public void testConfiguredAllRulesInAnnotation() {
+    Reflections reflections = new Reflections("com.lewisd.maven.lint.rules");
+    Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
+
+    Rules rules = LintSensor.class.getAnnotation(Rules.class);
+
+    assertThat(Sets.newHashSet(rules.values())).isEqualTo(rulesImplemented);
   }
 
   @Test

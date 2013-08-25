@@ -17,21 +17,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.lewisd.maven.lint;
+package com.lewisd.maven.lint.rules;
 
 import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-    description = LintDuplicateDependenciesRule.DESCRIPTION,
-    key = LintDuplicateDependenciesRule.KEY,
-    name = LintDuplicateDependenciesRule.NAME,
-    priority = Priority.CRITICAL
+    description = LintVersionPropertiesMustUseProjectVersionRule.DESCRIPTION,
+    key = LintVersionPropertiesMustUseProjectVersionRule.KEY,
+    name = LintVersionPropertiesMustUseProjectVersionRule.NAME,
+    priority = Priority.MINOR
+
 )
-public interface LintDuplicateDependenciesRule extends MavenRule {
-  String DESCRIPTION = "Multiple dependencies, in <dependencies> or <managedDependencies>, with the same co-ordinates are reduntant, " +
-      "and can be confusing.  If they have different versions, they can lead to unexpected behaviour.";
-  String KEY = "lint.DuplicateDep";
-  String NAME = "[POM] found DuplicateDependencies";
+public interface LintVersionPropertiesMustUseProjectVersionRule extends MavenRule {
+  String DESCRIPTION = "The ${version} property is deprecated.  Use ${project.version} instead.";
+  String KEY = "lint.VersionProp";
+  String NAME = "[POM] deprecated version property";
 }

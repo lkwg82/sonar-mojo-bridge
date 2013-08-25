@@ -21,6 +21,7 @@ package com.lewisd.maven.lint;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.lewisd.maven.lint.rules.*;
 import com.lewisd.maven.lint.xml.Results;
 import com.lewisd.maven.lint.xml.Violation;
 import de.lgohlke.sonar.Configuration;
@@ -47,7 +48,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-@Rules(values = {LintDuplicateDependenciesRule.class})
+@Rules(values = {
+    LintDuplicateDependenciesRule.class,
+    LintExecutionIdRule.class,
+    LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class,
+    LintRedundantDependencyVersionsRule.class,
+    LintRedundantPluginVersionsRule.class,
+    LintProfileMustOnlyAddModulesRule.class,
+    LintVersionPropertiesMustUseDotVersionRule.class,
+    LintVersionPropertiesMustUseProjectVersionRule.class,
+})
 @RequiredArgsConstructor
 @Slf4j
 public class LintSensor implements DependsUponMavenPlugin, Sensor {
