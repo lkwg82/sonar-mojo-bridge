@@ -28,6 +28,11 @@
       <artifactId>sonar-mojo-bridge-maven-enforcer</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-mojo-bridge-maven-lint</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
 
     <dependency>
       <groupId>org.codehaus.sonar</groupId>

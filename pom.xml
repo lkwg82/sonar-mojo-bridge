@@ -58,7 +58,7 @@
   </developers>
 
   <properties>
-    <project.internal.version>0.1-is24-20130628</project.internal.version>
+    <project.internal.version>0.1-is24-20130825</project.internal.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <jdk.min.version>1.6</jdk.min.version>
@@ -117,6 +117,7 @@
     <module>modules/sonar-plugin-utils</module>
     <module>modules/sonar-plugin-testing</module>
     <module>modules/maven-enforcer</module>
+    <module>modules/maven-lint</module>
     <module>modules/maven-versions</module>
     <module>modules/sonar-plugin</module>
     <module>modules/maven-versions-it</module>
