@@ -19,7 +19,7 @@
  */
 package com.lewisd.maven.lint;
 
-import com.lewisd.maven.lint.rules.LintDuplicateDependenciesRule;
+import com.lewisd.maven.lint.rules.*;
 import de.lgohlke.sonar.maven.MavenRule;
 
 import java.util.ArrayList;
@@ -31,6 +31,13 @@ public interface Configuration {
   List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
     {
       add(LintDuplicateDependenciesRule.class);
+      add(LintExecutionIdRule.class);
+      add(LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class);
+      add(LintProfileMustOnlyAddModulesRule.class);
+      add(LintRedundantDependencyVersionsRule.class);
+      add(LintRedundantPluginVersionsRule.class);
+      add(LintVersionPropertiesMustUseDotVersionRule.class);
+      add(LintVersionPropertiesMustUseProjectVersionRule.class);
     }
   };
 }
