@@ -26,13 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface Configuration {
-  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.7:check";
+  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.8:check";
 
   List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
     {
       add(LintDuplicateDependenciesRule.class);
       add(LintExecutionIdRule.class);
       add(LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class);
+      add(LintMissingCIManagementRule.class);
+      add(LintMissingDeveloperInformationRule.class);
       add(LintProfileMustOnlyAddModulesRule.class);
       add(LintRedundantDependencyVersionsRule.class);
       add(LintRedundantPluginVersionsRule.class);

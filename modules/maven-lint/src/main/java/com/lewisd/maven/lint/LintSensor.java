@@ -52,6 +52,8 @@ import java.util.List;
     LintDuplicateDependenciesRule.class,
     LintExecutionIdRule.class,
     LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class,
+    LintMissingCIManagementRule.class,
+    LintMissingDeveloperInformationRule.class,
     LintRedundantDependencyVersionsRule.class,
     LintRedundantPluginVersionsRule.class,
     LintProfileMustOnlyAddModulesRule.class,
