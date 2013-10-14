@@ -19,25 +19,59 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.google.common.base.Preconditions;
+import org.apache.maven.lifecycle.LifecycleExecutor;
+import org.apache.maven.project.MavenProject;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-import org.sonar.maven3.Maven3PluginExecutor;
+import org.sonar.plugins.maven.DefaultMavenPluginExecutor;
+
+import java.lang.reflect.Method;
+
+import static org.fest.reflect.core.Reflection.field;
 
 public final class MavenPluginExecutorProxyInjection {
-  private MavenPluginExecutorProxyInjection() {
-  }
-
-  public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
-    if (checkIfIsMaven3(mavenPluginExecutor)) {
-      Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
+    private MavenPluginExecutorProxyInjection() {
     }
-  }
 
-  public static boolean checkIfIsMaven3(final MavenPluginExecutor mavenPluginExecutor) {
-    try {
-      return mavenPluginExecutor instanceof Maven3PluginExecutor;
-    } catch (NoClassDefFoundError e) {
-      // this happens when maven 2 is used
-      return false;
+    public static void inject(final MavenPluginExecutor mavenPluginExecutor, final ClassLoader classLoader, final BridgeMojoMapper handler) {
+        if (checkIfIsMaven3(mavenPluginExecutor)) {
+            Maven3ExecutionProcess.decorate(mavenPluginExecutor, classLoader, handler);
+        }
     }
-  }
+
+    public static boolean checkIfIsMaven3(final MavenPluginExecutor mavenPluginExecutor) {
+        LifecycleExecutor lifecycleExecutor = field("lifecycleExecutor").ofType(LifecycleExecutor.class).in(mavenPluginExecutor).get();
+        DetectingMavenVersionMavenPluginExecutor detectingMavenVersionMavenPluginExecutor = new DetectingMavenVersionMavenPluginExecutor(lifecycleExecutor);
+        detectingMavenVersionMavenPluginExecutor.concreteExecute(null, "dummy goal");
+        return detectingMavenVersionMavenPluginExecutor.isMaven3();
+    }
+
+    /**
+     * {@see org.sonar.plugins.maven.DefaultMavenPluginExecutor} for details on detecting maven2 or maven3
+     */
+    private static class DetectingMavenVersionMavenPluginExecutor extends DefaultMavenPluginExecutor {
+        private boolean wasExecuted = false;
+        private boolean isMaven3;
+
+        public DetectingMavenVersionMavenPluginExecutor(LifecycleExecutor le) {
+            super(le, null);
+        }
+
+        @Override
+        public void concreteExecuteMaven2(Method executeMethod, MavenProject pom, String goal) {
+            isMaven3 = false;
+            wasExecuted = true;
+        }
+
+        @Override
+        public void concreteExecuteMaven3(MavenProject pom, String goal) {
+            isMaven3 = true;
+            wasExecuted = true;
+        }
+
+        boolean isMaven3() {
+            Preconditions.checkArgument(wasExecuted, "needs to be executed");
+            return isMaven3;
+        }
+    }
 }

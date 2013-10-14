@@ -58,13 +58,13 @@
     </developers>
 
     <properties>
-        <project.internal_version>0.1-is24-20130628</project.internal_version>
+        <project.internal_version>0.1-is24-20131014</project.internal_version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <jdk.min.version>1.6</jdk.min.version>
         <mavenVersion>3.0.5</mavenVersion>
-        <sonar.version>3.5</sonar.version>
-        <sonar-plugin-api.version>3.5</sonar-plugin-api.version>
+        <sonar.version>3.7.2</sonar.version>
+        <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
         <sonar-xml-plugin.version>1.0</sonar-xml-plugin.version>
 
         <!-- this code has a lot of violations, by design -->

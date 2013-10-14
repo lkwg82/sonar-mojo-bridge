@@ -19,26 +19,40 @@
  */
 package de.lgohlke.sonar.maven;
 
+import org.apache.maven.lifecycle.DefaultLifecycleExecutor;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-import org.sonar.maven3.Maven3PluginExecutor;
+import org.sonar.plugins.maven.DefaultMavenPluginExecutor;
 import org.testng.annotations.Test;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * User: lars
+ * this is a border test<br/>
+ * <p/>
+ * Maven2 has a {@see LifecycleExecutor} with a method 'execute ' with 3 params <br/>
+ * Maven3 has a {@see LifecycleExecutor} with a method 'execute ' with only one param <br/>
+ * <p/>
+ * {@see org.sonar.plugins.maven.DefaultMavenPluginExecutor} (Sonar 3.7.2)
  */
 public class MavenPluginExecutorProxyInjectionTest {
-  @Test
-  public void testCheckIfIsMaven3Negative() throws Exception {
-    MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);
-    assertThat(MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor)).isFalse();
-  }
 
-  @Test
-  public void testCheckIfIsMaven3Positiv() throws Exception {
-    MavenPluginExecutor mavenPluginExecutor = mock(Maven3PluginExecutor.class);
-    assertThat(MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor)).isTrue();
-  }
+    private static class Maven2LE extends DefaultLifecycleExecutor {
+        public void execute(int a, int b, int c) {
+        }
+    }
+
+    private static class Maven3LE extends DefaultLifecycleExecutor {
+    }
+
+    @Test
+    public void testCheckIfIsMaven3Negative() throws Exception {
+        MavenPluginExecutor mavenPluginExecutor = new DefaultMavenPluginExecutor(new Maven2LE(), null);
+        assertThat(MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor)).isFalse();
+    }
+
+    @Test
+    public void testCheckIfIsMaven3Positiv() throws Exception {
+        MavenPluginExecutor mavenPluginExecutor = new DefaultMavenPluginExecutor(new Maven3LE(), null);
+        assertThat(MavenPluginExecutorProxyInjection.checkIfIsMaven3(mavenPluginExecutor)).isTrue();
+    }
 }
