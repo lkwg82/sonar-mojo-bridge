@@ -59,6 +59,7 @@
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <finalName>${project.artifactId}-${project.internal_version}</finalName>
                     <pluginClass>de.lgohlke.sonar.MavenPlugin</pluginClass>
                 </configuration>
             </plugin>
