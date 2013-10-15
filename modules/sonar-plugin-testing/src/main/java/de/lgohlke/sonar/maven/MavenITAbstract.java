@@ -21,21 +21,19 @@ package de.lgohlke.sonar.maven;
 
 import com.google.common.base.Preconditions;
 import de.lgohlke.sonar.Configuration;
-import de.lgohlke.sonar.SonarAPIWrapper;
 import de.lgohlke.sonar.SonarExecutor;
-import org.fest.assertions.core.Condition;
-import org.sonar.wsclient.services.Resource;
-import org.sonar.wsclient.services.Violation;
+import org.sonar.wsclient.SonarClient;
+import org.sonar.wsclient.issue.IssueQuery;
+import org.sonar.wsclient.issue.Issues;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 
 import java.io.IOException;
-import java.util.List;
 
 public abstract class MavenITAbstract {
     private static final String SONAR_HOST = "http://localhost:9000";
     protected SonarExecutor executor;
-    protected SonarAPIWrapper api;
+    protected SonarClient api;
 
     @BeforeClass
     public void beforeAllTests() {
@@ -54,7 +52,7 @@ public abstract class MavenITAbstract {
     }
 
     public void initAPI() {
-        api = new SonarAPIWrapper(SONAR_HOST);
+        api = SonarClient.create(SONAR_HOST);
     }
 
     protected void skipTestIfNotMaven3() throws IOException, InterruptedException {
@@ -64,26 +62,14 @@ public abstract class MavenITAbstract {
         }
     }
 
-    protected List<Violation> getViolationsFor(final String projectKey, final String ruleKey) {
+    protected Issues getIssuesFor(final String projectKey, final String ruleKey) {
         Preconditions.checkNotNull(api, "please call initAPI() before each test");
 
-        Resource projectResource = api.getProjectWithKey(projectKey);
-        return api.getViolationsFor(projectResource.getId(), ruleKey);
+        IssueQuery query = IssueQuery.create().resolved(false).rules(ruleKey).componentRoots(projectKey);
+        return api.issueClient().find(query);
     }
 
     protected String createRuleKey(final String specificRuleKey) {
         return Configuration.REPOSITORY_KEY + ":" + specificRuleKey;
-    }
-
-    protected Condition<Violation> onlyForFile(final String filename) {
-        return new Condition<Violation>() {
-            @Override
-            public boolean matches(final Violation violation) {
-                // TODO replace Violation by Issues
-//                final boolean isScope = true; // violation.getResourceScope().equals(SonarAPIWrapper.SCOPES.FIL.name());
-                final boolean isQualifier = violation.getResourceQualifier().equals(SonarAPIWrapper.QUALIFIERS.FIL.name());
-                return /*isScope && */isQualifier && violation.getResourceName().equals(filename);
-            }
-        };
     }
 }
