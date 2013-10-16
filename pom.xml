@@ -58,15 +58,14 @@
     </developers>
 
     <properties>
-        <project.internal_version>0.1-is24-20131016</project.internal_version>
+        <project.internal.version>0.1-is24-20131016</project.internal.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <jdk.min.version>1.6</jdk.min.version>
-        <mavenVersion>3.0.5</mavenVersion>
+        <maven.version>3.0.5</maven.version>
         <sonar.version>3.7.2</sonar.version>
         <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
         <sonar-xml-plugin.version>1.0</sonar-xml-plugin.version>
-
         <!-- this code has a lot of violations, by design -->
         <sonar.exclusions>**/*BridgeMojo.java</sonar.exclusions>
         <test.database>h2</test.database>
@@ -117,6 +116,7 @@
         <module>modules/sonar-plugin-utils</module>
         <module>modules/sonar-plugin-testing</module>
         <module>modules/maven-enforcer</module>
+        <module>modules/maven-lint</module>
         <module>modules/maven-versions</module>
         <module>modules/sonar-plugin</module>
         <module>modules/maven-versions-it</module>
@@ -138,13 +138,11 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -166,38 +164,38 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-artifact</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-compat</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-embedder</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-model</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-settings</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
@@ -207,7 +205,7 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-repository-metadata</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
@@ -217,7 +215,7 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-aether-provider</artifactId>
-                <version>${mavenVersion}</version>
+        <version>${maven.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.sonatype.sisu</groupId>
@@ -566,3 +564,4 @@
         </pluginManagement>
     </build>
  </project>
+ 

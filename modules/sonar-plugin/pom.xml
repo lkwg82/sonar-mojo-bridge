@@ -28,6 +28,11 @@
             <artifactId>sonar-mojo-bridge-maven-enforcer</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins</groupId>
+            <artifactId>sonar-mojo-bridge-maven-lint</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.codehaus.sonar</groupId>
@@ -59,7 +64,7 @@
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <finalName>${project.artifactId}-${project.internal_version}</finalName>
+                    <finalName>${project.artifactId}-${project.internal.version}</finalName>
                     <pluginClass>de.lgohlke.sonar.MavenPlugin</pluginClass>
                 </configuration>
             </plugin>
@@ -80,11 +85,11 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <maxsize>900000</maxsize>
+                                    <maxsize>1300000</maxsize>
                                     <minsize>300000</minsize>
                                     <files>
                                         <file>
-                                            ${project.build.directory}/${project.artifactId}-${project.internal_version}.jar
+                                            ${project.build.directory}/${project.artifactId}-${project.internal.version}.jar
                                         </file>
                                     </files>
                                 </requireFilesSize>

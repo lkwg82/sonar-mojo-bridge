@@ -52,6 +52,7 @@ public class RulesRepository extends RuleRepository {
     List<Class> rules = Lists.newArrayList();
     rules.addAll(mavenVersionRules);
     rules.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet());
+    rules.addAll(com.lewisd.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY);
     return rules;
   }
 

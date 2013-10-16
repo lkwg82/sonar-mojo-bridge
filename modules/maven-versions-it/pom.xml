@@ -111,7 +111,7 @@
               <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
               <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
               <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
-              <pluginArtifact>../sonar-plugin/target/sonar-mojo-bridge-${project.internal_version}.jar</pluginArtifact>
+              <pluginArtifact>../sonar-plugin/target/sonar-mojo-bridge-${project.internal.version}.jar</pluginArtifact>
             </configuration>
           </execution>
           <execution>

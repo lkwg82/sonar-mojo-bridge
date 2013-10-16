@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-lint
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,13 +17,22 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package com.lewisd.maven.lint.rules;
 
-import java.lang.annotation.*;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface Rules {
-  Class<? extends MavenRule>[] values() default {};
+@Rule(
+    description = LintVersionPropertiesMustUseDotVersionRule.DESCRIPTION,
+    key = LintVersionPropertiesMustUseDotVersionRule.KEY,
+    name = LintVersionPropertiesMustUseDotVersionRule.NAME,
+    priority = Priority.MINOR
+
+)
+public interface LintVersionPropertiesMustUseDotVersionRule extends MavenRule {
+  String DESCRIPTION = "The convention is to specify properties used to hold versions as \"some.library.version\", or some-library.version, " +
+      "but never some-library-version or some.library-version.";
+  String KEY = "lint.DotVersionProperty";
+  String NAME = "[POM] version property must use dot version";
 }
