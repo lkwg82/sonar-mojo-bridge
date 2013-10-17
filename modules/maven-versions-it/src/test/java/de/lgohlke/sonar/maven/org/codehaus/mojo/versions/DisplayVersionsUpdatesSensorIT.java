@@ -23,79 +23,76 @@ import de.lgohlke.sonar.maven.MavenITAbstract;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
 import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.ParentPomVersion;
-import org.sonar.wsclient.services.Violation;
+import org.sonar.wsclient.issue.Issue;
+import org.sonar.wsclient.issue.Issues;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import java.io.File;
-import java.util.List;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
-
-/**
- * Created with IntelliJ IDEA.
- * User: lgohlke
- * Date: 12.10.12
- * Time: 12:35
- */
 public class DisplayVersionsUpdatesSensorIT extends MavenITAbstract {
-  @BeforeTest(alwaysRun = true)
-  public void beforeEachTest() {
-    initAPI();
-  }
+    @BeforeTest(alwaysRun = true)
+    public void beforeEachTest() {
+        initAPI();
+    }
 
-  @Test
-  public void shouldHaveHaveOldDependency() throws Exception {
-    skipTestIfNotMaven3();
+    @Test
+    public void shouldHaveHaveOldDependency() throws Exception {
+        skipTestIfNotMaven3();
 
-    final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
-    final String ruleKey = createRuleKey(DependencyVersion.KEY);
+        final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
+        final String ruleKey = createRuleKey(DependencyVersion.KEY);
 
-    executor.usePom(pomXml).execute();
+        executor.usePom(pomXml).execute();
 
-    List<Violation> violations = getViolationsFor("org.codehaus.sonar-plugins:it-old-dependency", ruleKey);
+        final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
+        Issues issues = getIssuesFor(projectKey, ruleKey);
 
-    assertThat(violations).isNotEmpty();
-    assertThat(violations).are(onlyForFile(pomXml.getName()));
-  }
+        assertThat(issues.list()).hasSize(1);
+        assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
+    }
 
-  @Test
-  public void shouldHaveHaveOldParentPom() throws Exception {
-    skipTestIfNotMaven3();
 
-    final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
-    final String ruleKey = createRuleKey(ParentPomVersion.KEY);
+    @Test
+    public void shouldHaveHaveOldParentPom() throws Exception {
+        skipTestIfNotMaven3();
 
-    executor.usePom(pomXml).execute();
+        final File pomXml = new File("src/test/resources/it/pom-old-dependency.xml");
+        final String ruleKey = createRuleKey(ParentPomVersion.KEY);
 
-    List<Violation> violations = getViolationsFor("org.codehaus.sonar-plugins:it-old-dependency", ruleKey);
+        executor.usePom(pomXml).execute();
 
-    assertThat(violations).isNotEmpty();
-    assertThat(violations).are(onlyForFile(pomXml.getName()));
-  }
+        final String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
+        Issues issues = getIssuesFor(projectKey, ruleKey);
 
-  @Test
-  public void shouldHaveViolationsOfPluginUpdate() throws Exception {
-    skipTestIfNotMaven3();
+        assertThat(issues.list()).isNotEmpty();
+        assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
+    }
 
-    final File pomXml = new File("src/test/resources/pom_missing_maven_version.xml");
-    final String ruleKey = createRuleKey(MissingPluginVersion.KEY);
+    @Test
+    public void shouldHaveViolationsOfPluginUpdate() throws Exception {
+        skipTestIfNotMaven3();
 
-    executor.usePom(pomXml).execute();
+        final File pomXml = new File("src/test/resources/pom_missing_maven_version.xml");
+        final String ruleKey = createRuleKey(MissingPluginVersion.KEY);
 
-    List<Violation> violations = getViolationsFor("MavenInvoker:MavenInvoker", ruleKey);
+        executor.usePom(pomXml).execute();
 
-    //    api.showQueryAndResult(violations);
+        final String projectKey = "MavenInvoker:MavenInvoker";
+        Issues issues = getIssuesFor(projectKey, ruleKey);
 
-    assertThat(violations).isNotEmpty();
-    assertThat(violations).are(onlyForFile(pomXml.getName()));
-  }
+        //    api.showQueryAndResult(violations);
 
-  @Test(enabled = false)
-  public void shouldHaveImportedPom() throws Exception {
-    skipTestIfNotMaven3();
+        assertThat(issues.list()).isNotEmpty();
 
-    // test this http://localhost:9000/api/resources?depth=-1&scope=FIL&resource=1981&qualifier=FIL
-    // not yet running
-    //    Resource project = api.getProjectWithKey(projectKey);
-  }
+        assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
+    }
+
+    private void assertThatIssuesOnlyFromThisPom(File pomXml, String projectKey, Issues issues) {
+        for (Issue issue : issues.list()) {
+            assertThat(issue.componentKey()).isEqualTo(projectKey + ":" + pomXml.getName());
+        }
+    }
 }
