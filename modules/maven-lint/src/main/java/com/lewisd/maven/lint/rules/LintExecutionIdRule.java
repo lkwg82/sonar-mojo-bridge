@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-lint
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,13 +17,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package com.lewisd.maven.lint.rules;
 
-import java.lang.annotation.*;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface Rules {
-  Class<? extends MavenRule>[] values() default {};
+@Rule(
+    description = LintExecutionIdRule.DESCRIPTION,
+    key = LintExecutionIdRule.KEY,
+    name = LintExecutionIdRule.NAME,
+    priority = Priority.CRITICAL
+
+)
+public interface LintExecutionIdRule extends MavenRule {
+  String DESCRIPTION = "Executions should always specify an id, so they can be overridden in child modules, and uniquely identified in build logs.";
+  String KEY = "lint.ExecutionId";
+  String NAME = "[POM] missing execution ids";
 }

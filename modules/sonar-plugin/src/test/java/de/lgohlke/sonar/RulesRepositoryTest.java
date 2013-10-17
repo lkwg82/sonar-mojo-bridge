@@ -24,10 +24,6 @@ import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * User: lgohlke
- * User: lgohlke
- */
 public class RulesRepositoryTest {
 
   @Test
@@ -35,7 +31,8 @@ public class RulesRepositoryTest {
     AnnotationRuleParser ruleParser = new AnnotationRuleParser();
     RulesRepository rulesRepository = new RulesRepository(ruleParser);
 
-    final int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-    assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount);
+    int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
+    int lintRuleCount = com.lewisd.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
+    assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
   }
 }

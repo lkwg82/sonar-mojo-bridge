@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-lint
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,13 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package com.lewisd.maven.lint.xml;
 
-import java.lang.annotation.*;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lombok.Data;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface Rules {
-  Class<? extends MavenRule>[] values() default {};
+@Data
+public class Location {
+  @XStreamAsAttribute
+  private String file;
+  @XStreamAsAttribute
+  private int line;
+  @XStreamAsAttribute
+  private int column;
 }

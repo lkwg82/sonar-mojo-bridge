@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-lint
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,13 +17,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package com.lewisd.maven.lint.rules;
 
-import java.lang.annotation.*;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface Rules {
-  Class<? extends MavenRule>[] values() default {};
+@Rule(
+    description = LintMissingCIManagementRule.DESCRIPTION,
+    key = LintMissingCIManagementRule.KEY,
+    name = LintMissingCIManagementRule.NAME,
+    priority = Priority.MAJOR
+
+)
+public interface LintMissingCIManagementRule extends MavenRule {
+  String DESCRIPTION = "For better understanding the project a link to the used integration system helps users to trust.";
+  String KEY = "lint.OSSContinuousIntegrationManagementSectionRule";
+  String NAME = "[POM] missing section of ci-management";
 }
