@@ -19,56 +19,57 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.maven.*;
+import de.lgohlke.sonar.maven.MavenBaseSensor;
+import de.lgohlke.sonar.maven.ResultTransferHandler;
+import de.lgohlke.sonar.maven.RuleUtils;
+import de.lgohlke.sonar.maven.Rules;
+import de.lgohlke.sonar.maven.SensorConfiguration;
 import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
-import org.sonar.plugins.xml.language.Xml;
 
 import static de.lgohlke.sonar.maven.versions.Configuration.BASE_IDENTIFIER;
 
 @Rules(values = {ParentPomVersion.class})
 @SensorConfiguration(
-        bridgeMojo = UpdateParentBridgeMojo.class,
-        resultTransferHandler = UpdateParentPomSensor.ResultHandler.class,
-        mavenBaseIdentifier = BASE_IDENTIFIER
+    bridgeMojo = UpdateParentBridgeMojo.class,
+    resultTransferHandler = UpdateParentPomSensor.ResultHandler.class,
+    mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor.ResultHandler> {
-    @Getter
-    @Setter
-    public static class ResultHandler implements ResultTransferHandler {
-        private String currentVersion;
-        private ArtifactVersion newerVersion;
+  @Getter
+  @Setter
+  public static class ResultHandler implements ResultTransferHandler {
+    private String currentVersion;
+    private ArtifactVersion newerVersion;
+  }
+
+  public UpdateParentPomSensor(RulesProfile rulesProfile,
+                               MavenPluginExecutor mavenPluginExecutor,
+                               MavenProject mavenProject,
+                               ResourcePerspectives resourcePerspectives) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+  }
+
+  @Override
+  public void analyse(final Project project, final SensorContext context) {
+    ResultHandler resultHandler = getMojoMapper().getResultTransferHandler();
+    if (resultHandler.getNewerVersion() != null) {
+      String message = ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " +
+          resultHandler.getNewerVersion() + " is available";
+
+      int line = getMavenProject().getModel().getParent().getLocation("version").getLineNumber();
+
+      Rule rule = RuleUtils.createRuleFrom(ParentPomVersion.class);
+      addIssue(message, line, rule);
     }
-
-    public UpdateParentPomSensor(RulesProfile rulesProfile,
-                                 MavenPluginExecutor mavenPluginExecutor,
-                                 MavenProject mavenProject) {
-        super(rulesProfile, mavenPluginExecutor, mavenProject);
-    }
-
-    @Override
-    public void analyse(final Project project, final SensorContext context) {
-        ResultHandler resultHandler = getMojoMapper().getResultTransferHandler();
-        if (resultHandler.getNewerVersion() != null) {
-            Rule rule = RuleUtils.createRuleFrom(ParentPomVersion.class);
-            File file = new File("", getMavenProject().getFile().getName());
-            file.setLanguage(Xml.INSTANCE);
-
-            final String message = ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " +
-                    resultHandler.getNewerVersion() + " is available";
-
-            int line = getMavenProject().getModel().getParent().getLocation("version").getLineNumber();
-            context.saveViolation(Violation.create(rule, file).setLineId(line).setMessage(message));
-        }
-    }
+  }
 }

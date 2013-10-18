@@ -20,67 +20,88 @@
 package de.lgohlke.sonar.maven.versions;
 
 import de.lgohlke.sonar.maven.BridgeMojoMapper;
-import de.lgohlke.sonar.maven.versions.UpdateParentPomSensor;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Parent;
 import org.apache.maven.project.MavenProject;
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.resources.Project;
-import org.sonar.api.rules.Violation;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.issue.Issuable;
+import org.sonar.api.issue.Issue;
+import org.sonar.api.profiles.RulesProfile;
+import org.sonar.batch.scan.maven.MavenPluginExecutor;
+import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * User: lars
- */
 public class UpdateParentPomSensorTest {
-    @Test
-    public void analyseWithNulNewVersion() {
-        UpdateParentPomSensor sensor = initSensor();
-        initBridgeMojoMapper(sensor, null, null);
+  private final List<Issue> issues = new ArrayList<Issue>();
+  private UpdateParentPomSensor sensor = initSensor();
 
-        SensorContext mockContext = mock(SensorContext.class);
-        sensor.analyse(mock(Project.class), mockContext);
+  @Test
+  public void analyseWithNullNewVersion() {
+    initBridgeMojoMapper(sensor, null, null);
 
-        verify(mockContext, times(0)).saveViolation(any(Violation.class));
-    }
+    issues.clear();
+    sensor.analyse(null, null);
 
-    @Test
-    public void analyseWithNewVersion() {
-        UpdateParentPomSensor sensor = initSensor();
-        initBridgeMojoMapper(sensor, new DefaultArtifactVersion("1.0"), "1.1");
+    assertThat(issues).isEmpty();
+  }
 
-        Parent parent = new Parent();
-        parent.setLocation("version", new InputLocation(1, 1));
-        MavenProject mavenProject = new MavenProject();
-        mavenProject.getModel().setParent(parent);
-        mavenProject.setFile(new File("pom.xml"));
-        when(sensor.getMavenProject()).thenReturn(mavenProject);
+  @Test
+  public void analyseWithNewVersion() {
+    initBridgeMojoMapper(sensor, new DefaultArtifactVersion("1.0"), "1.1");
+    issues.clear();
 
-        SensorContext mockContext = mock(SensorContext.class);
-        sensor.analyse(mock(Project.class), mockContext);
+    Parent parent = new Parent();
+    parent.setLocation("version", new InputLocation(1, 1));
+    MavenProject mavenProject = new MavenProject();
+    mavenProject.getModel().setParent(parent);
+    mavenProject.setFile(new File("pom.xml"));
+    when(sensor.getMavenProject()).thenReturn(mavenProject);
 
-        verify(mockContext, times(1)).saveViolation(any(Violation.class));
-    }
+    sensor.analyse(null, null);
 
-    private UpdateParentPomSensor initSensor() {
-        UpdateParentPomSensor sensor = mock(UpdateParentPomSensor.class);
-        doCallRealMethod().when(sensor).analyse(any(Project.class), any(SensorContext.class));
-        return sensor;
-    }
+    assertThat(issues).hasSize(1);
+  }
 
-    private void initBridgeMojoMapper(UpdateParentPomSensor mock, ArtifactVersion newerVersion, String currentVersion) {
-        BridgeMojoMapper<UpdateParentPomSensor.ResultHandler> mojoMapper = mock(BridgeMojoMapper.class);
-        when(mock.getMojoMapper()).thenReturn(mojoMapper);
-        UpdateParentPomSensor.ResultHandler resulHandler = new UpdateParentPomSensor.ResultHandler();
-        resulHandler.setNewerVersion(newerVersion);
-        resulHandler.setCurrentVersion(currentVersion);
-        when(mojoMapper.getResultTransferHandler()).thenReturn(resulHandler);
-    }
+  private UpdateParentPomSensor initSensor() {
+    RulesProfile rulesProfile = mock(RulesProfile.class);
+    MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);
+    MavenProject mavenProject = mock(MavenProject.class);
+
+    Issuable issuable = mock(Issuable.class);
+    when(issuable.addIssue(any(Issue.class))).thenAnswer(new Answer() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        Issue issue = (Issue) invocation.getArguments()[0];
+        issues.add(issue);
+        return null;
+      }
+    });
+    when(issuable.newIssueBuilder()).thenReturn(new DefaultIssueBuilder().componentKey("xxx"));
+    ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
+    when(resourcePerspectives.as(eq(Issuable.class), any(org.sonar.api.resources.File.class))).thenReturn(issuable);
+
+    return spy(new UpdateParentPomSensor(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives));
+  }
+
+  private void initBridgeMojoMapper(UpdateParentPomSensor sensor, ArtifactVersion newerVersion, String currentVersion) {
+    BridgeMojoMapper<UpdateParentPomSensor.ResultHandler> mojoMapper = mock(BridgeMojoMapper.class);
+    sensor.setMojoMapper(mojoMapper);
+
+    UpdateParentPomSensor.ResultHandler resulHandler = new UpdateParentPomSensor.ResultHandler();
+    resulHandler.setNewerVersion(newerVersion);
+    resulHandler.setCurrentVersion(currentVersion);
+    when(mojoMapper.getResultTransferHandler()).thenReturn(resulHandler);
+  }
 }

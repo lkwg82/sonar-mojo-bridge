@@ -37,12 +37,11 @@ import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
@@ -51,131 +50,123 @@ import java.util.Map;
 import static de.lgohlke.sonar.maven.versions.Configuration.BASE_IDENTIFIER;
 
 @Properties(
-        {
-                @Property(
-                        key = DisplayPluginUpdatesSensor.WHITELIST_KEY, name = DisplayPluginUpdatesSensor.BASE_NAME + " whitelist regex",
-                        description = "this regex controls whitelisting",
-                        defaultValue = ".*",
-                        global = false,
-                        project = true,
-                        type = PropertyType.REGULAR_EXPRESSION,
-                        category = "Mojo Bridge"
-                ),
-                @Property(
-                        key = DisplayPluginUpdatesSensor.BLACKLIST_KEY,
-                        name = DisplayPluginUpdatesSensor.BASE_NAME + " blacklist regex",
-                        description = "this regex controls blacklisting",
-                        defaultValue = "",
-                        global = false,
-                        project = true,
-                        type = PropertyType.REGULAR_EXPRESSION,
-                        category = "Mojo Bridge"
-                )
-        }
+    {
+        @Property(
+            key = DisplayPluginUpdatesSensor.WHITELIST_KEY, name = DisplayPluginUpdatesSensor.BASE_NAME + " whitelist regex",
+            description = "this regex controls whitelisting",
+            defaultValue = ".*",
+            global = false,
+            project = true,
+            type = PropertyType.REGULAR_EXPRESSION,
+            category = "Mojo Bridge"
+        ),
+        @Property(
+            key = DisplayPluginUpdatesSensor.BLACKLIST_KEY,
+            name = DisplayPluginUpdatesSensor.BASE_NAME + " blacklist regex",
+            description = "this regex controls blacklisting",
+            defaultValue = "",
+            global = false,
+            project = true,
+            type = PropertyType.REGULAR_EXPRESSION,
+            category = "Mojo Bridge"
+        )
+    }
 )
 @Rules(
-        values = {
-                IncompatibleMavenVersion.class,
-                MissingPluginVersion.class,
-                PluginVersion.class,
-                NoMinimumMavenVersion.class
-        }
+    values = {
+        IncompatibleMavenVersion.class,
+        MissingPluginVersion.class,
+        PluginVersion.class,
+        NoMinimumMavenVersion.class
+    }
 )
 @SensorConfiguration(
-        bridgeMojo = DisplayPluginUpdatesBridgeMojo.class, resultTransferHandler = DisplayPluginUpdatesSensor.ResultTransferHandler.class,
-        mavenBaseIdentifier = BASE_IDENTIFIER
+    bridgeMojo = DisplayPluginUpdatesBridgeMojo.class, resultTransferHandler = DisplayPluginUpdatesSensor.ResultTransferHandler.class,
+    mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpdatesSensor.ResultTransferHandler> {
-    static final String SENSOR_KEY = de.lgohlke.sonar.Configuration.PLUGIN_KEY + ".pluginUpdates";
-    static final String BASE_NAME = "PluginUpdates |";
-    static final String WHITELIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".whitelist";
-    static final String BLACKLIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".blacklist";
+  static final String SENSOR_KEY = de.lgohlke.sonar.Configuration.PLUGIN_KEY + ".pluginUpdates";
+  static final String BASE_NAME = "PluginUpdates |";
+  static final String WHITELIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".whitelist";
+  static final String BLACKLIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".blacklist";
 
-    private final Settings settings;
-    private final PomSourceImporter pomSourceImporter;
+  private final Settings settings;
+  private final PomSourceImporter pomSourceImporter;
 
-    @Getter
-    @Setter
-    public static class ResultTransferHandler implements de.lgohlke.sonar.maven.ResultTransferHandler {
-        private List<ArtifactUpdate> pluginUpdates;
-        private List<Dependency> missingVersionPlugins;
-        private boolean warninNoMinimumVersion;
-        private DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion;
+  @Getter
+  @Setter
+  public static class ResultTransferHandler implements de.lgohlke.sonar.maven.ResultTransferHandler {
+    private List<ArtifactUpdate> pluginUpdates;
+    private List<Dependency> missingVersionPlugins;
+    private boolean warningNoMinimumVersion;
+    private DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion;
+  }
+
+  public DisplayPluginUpdatesSensor(RulesProfile rulesProfile,
+                                    MavenPluginExecutor mavenPluginExecutor,
+                                    MavenProject mavenProject,
+                                    Settings settings,
+                                    PomSourceImporter pomSourceImporter,
+                                    ResourcePerspectives resourcePerspectives) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+    this.settings = settings;
+    this.pomSourceImporter = pomSourceImporter;
+  }
+
+  @Override
+  public void analyse(final Project project, final SensorContext context) {
+    ResultTransferHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
+
+    // minimum version warning
+    if (resultTransferHandler.isWarningNoMinimumVersion()) {
+      Rule rule = RuleUtils.createRuleFrom(NoMinimumMavenVersion.class);
+      String message = "Project does not define minimum Maven version, default is: 2.0";
+      addIssue(message, 1, rule);
     }
 
-    public DisplayPluginUpdatesSensor(RulesProfile rulesProfile,
-                                      MavenPluginExecutor mavenPluginExecutor,
-                                      MavenProject mavenProject,
-                                      Settings settings,
-                                      PomSourceImporter pomSourceImporter) {
-        super(rulesProfile, mavenPluginExecutor, mavenProject);
-        this.settings = settings;
-        this.pomSourceImporter = pomSourceImporter;
+    // incompatible minimum versions
+    DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion =
+        resultTransferHandler.getIncompatibleParentAndProjectMavenVersion();
+    if (incompatibleParentAndProjectMavenVersion != null) {
+
+      ArtifactVersion parentVersion = incompatibleParentAndProjectMavenVersion.getParentVersion();
+      ArtifactVersion projectVersion = incompatibleParentAndProjectMavenVersion.getProjectVersion();
+      String message = "Project does define incompatible minimum versions:  in parent pom " + parentVersion +
+          " and in project pom " + projectVersion;
+      Rule rule = RuleUtils.createRuleFrom(IncompatibleMavenVersion.class);
+      addIssue(message, 1, rule);
     }
 
-    @Override
-    public void analyse(final Project project, final SensorContext context) {
-        ResultTransferHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
+    String sourceOfPom = pomSourceImporter.getSourceOfPom();
 
-        final File file = pomSourceImporter.getPomFile();
-        String sourceOfPom = pomSourceImporter.getSourceOfPom();
+    // missing versions
+    Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
+    for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
+      int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
 
-        // minimum version warning
-        if (resultTransferHandler.isWarninNoMinimumVersion()) {
-            Rule rule = RuleUtils.createRuleFrom(NoMinimumMavenVersion.class);
-            Violation violation = Violation.create(rule, file);
-            violation.setLineId(1);
-            violation.setMessage("Project does not define minimum Maven version, default is: 2.0");
-            context.saveViolation(violation);
-        }
-
-        // incompatible minimum versions
-        DisplayPluginUpdatesBridgeMojo.IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion =
-                resultTransferHandler.getIncompatibleParentAndProjectMavenVersion();
-        if (incompatibleParentAndProjectMavenVersion != null) {
-            Rule rule = RuleUtils.createRuleFrom(IncompatibleMavenVersion.class);
-            Violation violation = Violation.create(rule, file);
-            violation.setLineId(1);
-
-            ArtifactVersion parentVersion = incompatibleParentAndProjectMavenVersion.getParentVersion();
-            ArtifactVersion projectVersion = incompatibleParentAndProjectMavenVersion.getProjectVersion();
-            violation.setMessage("Project does define incompatible minimum versions:  in parent pom " + parentVersion +
-                    " and in project pom " + projectVersion);
-            context.saveViolation(violation);
-        }
-
-        // missing versions
-        Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
-        for (Dependency dependency : resultTransferHandler.getMissingVersionPlugins()) {
-            Violation violation = Violation.create(missingVersionRule, file);
-            int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
-            violation.setLineId((line > 0) ? line : 1);
-
-            String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
-            violation.setMessage(artifact + " has no version");
-            context.saveViolation(violation);
-        }
-
-        // updates
-        Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
-        ArtifactFilter filter = createFilter(settings);
-        for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
-            if (filter.acceptArtifact(update.toString())) {
-                Violation violation = Violation.create(rule, file);
-                int line = PomUtils.getLine(sourceOfPom, update.getDependency(), PomUtils.TYPE.plugin);
-                violation.setLineId((line > 0) ? line : 1);
-                violation.setMessage(update.toString());
-                context.saveViolation(violation);
-            }
-        }
+      String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
+      String message = artifact + " has no version";
+      addIssue(message, (line > 0) ? line : 1, missingVersionRule);
     }
 
-    private ArtifactFilter createFilter(Settings settings) {
-        Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(PluginVersion.class);
-        ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, PluginVersion.RULE_PROPERTY_WHITELIST,
-                PluginVersion.RULE_PROPERTY_BLACKLIST);
-        ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
-
-        return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
+    // updates
+    Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
+    ArtifactFilter filter = createFilter(settings);
+    for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
+      if (filter.acceptArtifact(update.toString())) {
+        int line = PomUtils.getLine(sourceOfPom, update.getDependency(), PomUtils.TYPE.plugin);
+        addIssue(update.toString(), (line > 0) ? line : 1, rule);
+      }
     }
+  }
+
+  private ArtifactFilter createFilter(Settings settings) {
+    Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(PluginVersion.class);
+    String whitelist = PluginVersion.RULE_PROPERTY_WHITELIST;
+    String blacklist = PluginVersion.RULE_PROPERTY_BLACKLIST;
+    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, whitelist, blacklist);
+    ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
+
+    return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
+  }
 }

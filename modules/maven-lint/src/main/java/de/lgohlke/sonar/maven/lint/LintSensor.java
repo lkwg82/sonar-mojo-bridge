@@ -64,121 +64,121 @@ import java.util.List;
 import java.util.Properties;
 
 @Rules(values = {
-        LintDuplicateDependenciesRule.class,
-        LintExecutionIdRule.class,
-        LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class,
-        LintMissingCIManagementRule.class,
-        LintMissingDeveloperInformationRule.class,
-        LintRedundantDependencyVersionsRule.class,
-        LintRedundantPluginVersionsRule.class,
-        LintProfileMustOnlyAddModulesRule.class,
-        LintVersionPropertiesMustUseDotVersionRule.class,
-        LintVersionPropertiesMustUseProjectVersionRule.class
+    LintDuplicateDependenciesRule.class,
+    LintExecutionIdRule.class,
+    LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class,
+    LintMissingCIManagementRule.class,
+    LintMissingDeveloperInformationRule.class,
+    LintRedundantDependencyVersionsRule.class,
+    LintRedundantPluginVersionsRule.class,
+    LintProfileMustOnlyAddModulesRule.class,
+    LintVersionPropertiesMustUseDotVersionRule.class,
+    LintVersionPropertiesMustUseProjectVersionRule.class
 })
 @RequiredArgsConstructor
 @Slf4j
 public class LintSensor implements DependsUponMavenPlugin, Sensor {
-    private final static String LINT_FILENAME = "target/sonar-maven-lint." + System.currentTimeMillis() + ".xml";
-    private final static Object BASE_PREFIX = "lint";
-    private final MavenProject mavenProject;
-    private final RulesProfile rulesProfile;
-    private final ResourcePerspectives resourcePerspectives;
-    private final Settings settings;
+  private final static String LINT_FILENAME = "target/sonar-maven-lint." + System.currentTimeMillis() + ".xml";
+  private final static Object BASE_PREFIX = "lint";
+  private final MavenProject mavenProject;
+  private final RulesProfile rulesProfile;
+  private final ResourcePerspectives resourcePerspectives;
+  private final Settings settings;
 
-    @Override
-    public void analyse(Project project, SensorContext context) {
-        String xml = getXmlFromReport();
-        Results results = getResults(xml);
+  @Override
+  public void analyse(Project project, SensorContext context) {
+    String xml = getXmlFromReport();
+    Results results = getResults(xml);
 
-        for (Violation violation : results.getViolations()) {
-            Rule rule = createRuleFromViolation(violation);
-            addViolationToContext(violation, rule);
-        }
+    for (Violation violation : results.getViolations()) {
+      Rule rule = createRuleFromViolation(violation);
+      addIssue(violation, rule);
+    }
+  }
+
+  @VisibleForTesting
+  void addIssue(Violation violation, Rule rule) {
+    org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
+    file.setLanguage(Xml.INSTANCE);
+
+    Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+    RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
+
+    Issue issue = issuable.newIssueBuilder().
+        line(violation.getLocation().getLine()).
+        message(violation.getMessage()).
+        ruleKey(ruleKey).
+        build();
+
+    issuable.addIssue(issue);
+  }
+
+  @VisibleForTesting
+  Results getResults(String xml) {
+    return new ResultsReader().read(xml);
+  }
+
+  @VisibleForTesting
+  String getXmlFromReport() {
+    final File projectDirectory = mavenProject.getOriginalModel().getPomFile().getParentFile();
+    final File xmlReport = new File(projectDirectory, LINT_FILENAME);
+    try {
+      return FileUtils.readFileToString(xmlReport);
+    } catch (IOException e) {
+      LintSensor.log.error(e.getMessage(), e);
+      throw new IllegalStateException(e);
+    }
+  }
+
+  @VisibleForTesting
+  Rule createRuleFromViolation(Violation violation) {
+    final Class<? extends MavenRule>[] values = getClass().getAnnotation(Rules.class).values();
+    for (Class<? extends MavenRule> ruleClazz : values) {
+      org.sonar.check.Rule rule = ruleClazz.getAnnotation(org.sonar.check.Rule.class);
+      if (rule.key().equals(BASE_PREFIX + "." + violation.getRule())) {
+        return RuleUtils.createRuleFrom(ruleClazz);
+      }
     }
 
-    @VisibleForTesting
-    void addViolationToContext(Violation violation, Rule rule) {
-        org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-        file.setLanguage(Xml.INSTANCE);
+    throw new NotImplementedException("rule for violation " + violation.getRule() + " is not implemented yet");
+  }
 
-        Issuable issuable = resourcePerspectives.as(Issuable.class, file);
-        RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
+  @Override
+  public MavenPluginHandler getMavenPluginHandler(final Project project) {
+    final Properties mavenProjectProperties = mavenProject.getProperties();
+    mavenProjectProperties.setProperty("maven-lint.failOnViolation", "false");
+    mavenProjectProperties.setProperty("maven-lint.output.file.xml", LINT_FILENAME);
+    return MavenPluginHandlerFactory.createHandler(de.lgohlke.sonar.maven.lint.Configuration.BASE_IDENTIFIER);
+  }
 
-        Issue issue = issuable.newIssueBuilder().
-                line(violation.getLocation().getLine()).
-                message(violation.getMessage()).
-                ruleKey(ruleKey).
-                build();
-
-        issuable.addIssue(issue);
+  @Override
+  public boolean shouldExecuteOnProject(Project project) {
+    String prop = settings.getProperties().get(Configuration.ANALYSIS_ENABLED);
+    if (prop == null) {
+      prop = de.lgohlke.sonar.Configuration.DEFAULT;
     }
 
-    @VisibleForTesting
-    Results getResults(String xml) {
-        return new ResultsReader().read(xml);
+    boolean activatedByConfiguration = Boolean.parseBoolean(prop);
+    boolean activatedByRules = checkIfAtLeastOneRuleIsEnabled();
+
+    return activatedByConfiguration && activatedByRules;
+  }
+
+  private boolean checkIfAtLeastOneRuleIsEnabled() {
+    List<Rule> associatedRules = getAssociatedRules();
+    for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
+      if (associatedRules.contains(activeRule.getRule())) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    @VisibleForTesting
-    String getXmlFromReport() {
-        final File projectDirectory = mavenProject.getOriginalModel().getPomFile().getParentFile();
-        final File xmlReport = new File(projectDirectory, LINT_FILENAME);
-        try {
-            return FileUtils.readFileToString(xmlReport);
-        } catch (IOException e) {
-            LintSensor.log.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
+  private List<Rule> getAssociatedRules() {
+    List<Rule> rules = Lists.newArrayList();
+    for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
+      rules.add(RuleUtils.createRuleFrom(ruleClass));
     }
-
-    @VisibleForTesting
-    Rule createRuleFromViolation(Violation violation) {
-        final Class<? extends MavenRule>[] values = getClass().getAnnotation(Rules.class).values();
-        for (Class<? extends MavenRule> ruleClazz : values) {
-            org.sonar.check.Rule rule = ruleClazz.getAnnotation(org.sonar.check.Rule.class);
-            if (rule.key().equals(BASE_PREFIX + "." + violation.getRule())) {
-                return RuleUtils.createRuleFrom(ruleClazz);
-            }
-        }
-
-        throw new NotImplementedException("rule for violation " + violation.getRule() + " is not implemented yet");
-    }
-
-    @Override
-    public MavenPluginHandler getMavenPluginHandler(final Project project) {
-        final Properties mavenProjectProperties = mavenProject.getProperties();
-        mavenProjectProperties.setProperty("maven-lint.failOnViolation", "false");
-        mavenProjectProperties.setProperty("maven-lint.output.file.xml", LINT_FILENAME);
-        return MavenPluginHandlerFactory.createHandler(de.lgohlke.sonar.maven.lint.Configuration.BASE_IDENTIFIER);
-    }
-
-    @Override
-    public boolean shouldExecuteOnProject(Project project) {
-        String prop = settings.getProperties().get(Configuration.ANALYSIS_ENABLED);
-        if (prop == null) {
-            prop = de.lgohlke.sonar.Configuration.DEFAULT;
-        }
-
-        boolean activatedByConfiguration = Boolean.parseBoolean(prop);
-        boolean activatedByRules = checkIfAtLeastOneRuleIsEnabled();
-
-        return activatedByConfiguration && activatedByRules;
-    }
-
-    private boolean checkIfAtLeastOneRuleIsEnabled() {
-        List<Rule> associatedRules = getAssociatedRules();
-        for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
-            if (associatedRules.contains(activeRule.getRule())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<Rule> getAssociatedRules() {
-        List<Rule> rules = Lists.newArrayList();
-        for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
-            rules.add(RuleUtils.createRuleFrom(ruleClass));
-        }
-        return rules;
-    }
+    return rules;
+  }
 }

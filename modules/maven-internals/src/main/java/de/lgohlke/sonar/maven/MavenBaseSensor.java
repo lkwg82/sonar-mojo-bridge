@@ -22,6 +22,7 @@ package de.lgohlke.sonar.maven;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.Configuration;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,18 +31,25 @@ import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.issue.Issuable;
+import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
+import org.sonar.plugins.xml.language.Xml;
+
 import java.util.List;
 import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 
 /**
  * User: lars
@@ -54,11 +62,14 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   private final MavenProject mavenProject;
   @Getter
   private BridgeMojoMapper<T> mojoMapper;
+  @Getter(AccessLevel.PROTECTED)
+  private final ResourcePerspectives resourcePerspectives;
 
-  public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject) {
+  public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject, ResourcePerspectives resourcePerspectives) {
     this.rulesProfile = rulesProfile;
     this.mavenPluginExecutor = mavenPluginExecutor;
     this.mavenProject = mavenProject;
+    this.resourcePerspectives = resourcePerspectives;
 
     checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
     checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
@@ -156,5 +167,21 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
       }
     }
     return mappedParams;
+  }
+
+  protected void addIssue(String message, int line, Rule rule) {
+    File file = new File("", getMavenProject().getFile().getName());
+    file.setLanguage(Xml.INSTANCE);
+
+    Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+    RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
+
+    Issue issue = issuable.newIssueBuilder().
+        line(line).
+        message(message).
+        ruleKey(ruleKey).
+        build();
+
+    issuable.addIssue(issue);
   }
 }

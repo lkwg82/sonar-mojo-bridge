@@ -19,7 +19,6 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.*;
 import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 import lombok.Getter;
@@ -29,12 +28,11 @@ import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.File;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
@@ -43,97 +41,91 @@ import java.util.Map;
 import static de.lgohlke.sonar.maven.versions.Configuration.BASE_IDENTIFIER;
 
 @Properties(
-        {
-                @Property(
-                        key = DisplayDependencyUpdatesSensor.WHITELIST_KEY, name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
-                        description = "this regex controls whitelisting <br>" +
-                                "<i>examples:</i><br/>" +
-                                "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-                                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>",
-                        defaultValue = ".*",
-                        global = false,
-                        project = true,
-                        type = PropertyType.STRING,
-                        category = "Mojo Bridge"
-                ),
-                @Property(
-                        key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
-                        name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
-                        description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
-                                "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
-                        defaultValue = "",
-                        global = false,
-                        project = true,
-                        type = PropertyType.STRING,
-                        category = "Mojo Bridge"
-                )
-        }
+    {
+        @Property(
+            key = DisplayDependencyUpdatesSensor.WHITELIST_KEY, name = DisplayDependencyUpdatesSensor.BASE_NAME + " whitelist regex",
+            description = "this regex controls whitelisting <br>" +
+                "<i>examples:</i><br/>" +
+                "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
+                "wildcard <tt>org.apache..*?:spring:.*</tt><br/>",
+            defaultValue = ".*",
+            global = false,
+            project = true,
+            type = PropertyType.STRING,
+            category = "Mojo Bridge"
+        ),
+        @Property(
+            key = DisplayDependencyUpdatesSensor.BLACKLIST_KEY,
+            name = DisplayDependencyUpdatesSensor.BASE_NAME + " blacklist regex",
+            description = "this regex controls blacklisting" + "<i>examples:</i><br/>" +
+                "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>",
+            defaultValue = "",
+            global = false,
+            project = true,
+            type = PropertyType.STRING,
+            category = "Mojo Bridge"
+        )
+    }
 )
 @Rules(values = {DependencyVersion.class})
 @SensorConfiguration(
-        bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
-        resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
+    bridgeMojo = DisplayDependencyUpdatesBridgeMojo.class,
+    resultTransferHandler = DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler.class, mavenBaseIdentifier = BASE_IDENTIFIER
 )
 public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
-    static final String SENSOR_KEY = de.lgohlke.sonar.Configuration.PLUGIN_KEY + ".dependencyUpdates";
-    static final String BASE_NAME = "DependencyUpdates |";
-    static final String WHITELIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".whitelist";
-    static final String BLACKLIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".blacklist";
+  static final String SENSOR_KEY = de.lgohlke.sonar.Configuration.PLUGIN_KEY + ".dependencyUpdates";
+  static final String BASE_NAME = "DependencyUpdates |";
+  static final String WHITELIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".whitelist";
+  static final String BLACKLIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".blacklist";
 
-    private final Settings settings;
-    private final PomSourceImporter pomSourceImporter;
+  private final Settings settings;
 
-    @Getter
-    @Setter
-    public static class DisplayDependencyUpdatesResultHandler implements ResultTransferHandler {
-        private Map<String, List<ArtifactUpdate>> updateMap;
-    }
+  @Getter
+  @Setter
+  public static class DisplayDependencyUpdatesResultHandler implements ResultTransferHandler {
+    private Map<String, List<ArtifactUpdate>> updateMap;
+  }
 
-    public DisplayDependencyUpdatesSensor(RulesProfile rulesProfile,
-                                          MavenPluginExecutor mavenPluginExecutor,
-                                          MavenProject mavenProject,
-                                          Settings settings,
-                                          PomSourceImporter pomSourceImporter) {
-        super(rulesProfile, mavenPluginExecutor, mavenProject);
-        this.settings = settings;
-        this.pomSourceImporter = pomSourceImporter;
-    }
+  public DisplayDependencyUpdatesSensor(RulesProfile rulesProfile,
+                                        MavenPluginExecutor mavenPluginExecutor,
+                                        MavenProject mavenProject,
+                                        Settings settings,
+                                        ResourcePerspectives resourcePerspectives
+  ) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+    this.settings = settings;
+  }
 
-    @Override
-    public void analyse(final Project project, final SensorContext context) {
-        DisplayDependencyUpdatesResultHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
+  @Override
+  public void analyse(final Project project, final SensorContext context) {
+    DisplayDependencyUpdatesResultHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
 
-        Rule rule = RuleUtils.createRuleFrom(DependencyVersion.class);
-        final File file = pomSourceImporter.getPomFile();
+    Rule rule = RuleUtils.createRuleFrom(DependencyVersion.class);
+    ArtifactFilter filter = createFilter(settings);
 
-        ArtifactFilter filter = createFilter(settings);
-
-        for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
-            List<ArtifactUpdate> updates = entry.getValue();
-            for (ArtifactUpdate update : updates) {
-                if (filter.acceptArtifact(update.toString()) && verifyVersionIsFromThisProject(project, update)) {
-                    int line = update.getDependency().getLocation("version").getLineNumber();
-                    Violation violation = Violation.create(rule, file);
-                    violation.setLineId(line);
-                    violation.setMessage(update.toString());
-                    context.saveViolation(violation);
-                }
-            }
+    for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
+      List<ArtifactUpdate> updates = entry.getValue();
+      for (ArtifactUpdate update : updates) {
+        if (filter.acceptArtifact(update.toString()) && verifyVersionIsFromThisProject(project, update)) {
+          int line = update.getDependency().getLocation("version").getLineNumber();
+          addIssue(update.toString(), line, rule);
         }
+      }
     }
+  }
 
-    private boolean verifyVersionIsFromThisProject(Project project, ArtifactUpdate update) {
-        String currentProjectIdentifier = project.getEffectiveKey() + ":" + project.getAnalysisVersion();
-        String modelId = update.getDependency().getLocation("").getSource().getModelId();
-        return modelId.equals(currentProjectIdentifier);
-    }
+  private boolean verifyVersionIsFromThisProject(Project project, ArtifactUpdate update) {
+    String currentProjectIdentifier = project.getEffectiveKey() + ":" + project.getAnalysisVersion();
+    String modelId = update.getDependency().getLocation("").getSource().getModelId();
+    return modelId.equals(currentProjectIdentifier);
+  }
 
-    private ArtifactFilter createFilter(Settings settings) {
-        Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(DependencyVersion.class);
-        ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST,
-                DependencyVersion.RULE_PROPERTY_BLACKLIST);
-        ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
+  private ArtifactFilter createFilter(Settings settings) {
+    Map<String, String> mappedParams = createRulePropertiesMapFromQualityProfile(DependencyVersion.class);
+    ArtifactFilter filterFromRules = ArtifactFilterFactory.createFilterFromMap(mappedParams, DependencyVersion.RULE_PROPERTY_WHITELIST,
+        DependencyVersion.RULE_PROPERTY_BLACKLIST);
+    ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
 
-        return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
-    }
+    return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
+  }
 }
