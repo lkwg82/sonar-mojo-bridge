@@ -19,17 +19,10 @@
  */
 package de.lgohlke.sonar.maven.lint;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.lewisd.maven.lint.Results;
-import com.lewisd.maven.lint.Violation;
-import de.lgohlke.sonar.maven.lint.xml.Results;
-import de.lgohlke.sonar.maven.lint.xml.Violation;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.lint.LintSensor;
-import lombok.Getter;
-import lombok.Setter;
+import de.lgohlke.sonar.maven.lint.xml.Violation;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
@@ -39,10 +32,8 @@ import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.batch.DefaultSensorContext;
 
 import java.io.File;
-import java.util.List;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -105,42 +96,5 @@ public class LintSensorTest {
         MavenProject mavenProject = new MavenProject();
         mavenProject.setFile(new File("."));
         return mavenProject;
-    }
-
-    public static class MyLintSensor extends LintSensor {
-        @Setter
-        private Results results;
-
-        @Setter
-        private String xml;
-
-        public MyLintSensor(MavenProject mavenProject, RulesProfile rulesProfile) {
-            super(mavenProject, rulesProfile);
-        }
-
-        @Override
-        Results getResults(String xml) {
-            return results == null ? super.getResults(xml) : results;
-        }
-
-        @Override
-        String getXmlFromReport() {
-            return xml == null ? "" : xml;
-        }
-
-    }
-
-    private static class TestSensorContext extends DefaultSensorContext {
-        @Getter
-        List<org.sonar.api.rules.Violation> violations = Lists.newArrayList();
-
-        public TestSensorContext() {
-            super(null, null);
-        }
-
-        @Override
-        public void saveViolation(org.sonar.api.rules.Violation violation) {
-            violations.add(violation);
-        }
     }
 }
