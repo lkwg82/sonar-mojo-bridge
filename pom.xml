@@ -90,13 +90,13 @@
         <javassist.version>3.12.1.GA</javassist.version>
         <junit.version>4.11</junit.version>
         <logback.version>1.0.13</logback.version>
-        <lombok.version>0.11.8</lombok.version>
+        <lombok.version>1.12.2</lombok.version>
         <maven-reporting-api.version>3.0</maven-reporting-api.version>
         <maven-reporting-impl.version>2.2</maven-reporting-impl.version>
         <maven-project.version>2.2.0</maven-project.version>
         <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
         <plexus-cipher.version>1.7</plexus-cipher.version>
-        <plexus-classworlds.version>2.4.2</plexus-classworlds.version>
+        <plexus-classworlds.version>2.5.1</plexus-classworlds.version>
         <plexus-container-default.version>1.5.5</plexus-container-default.version>
         <plexus-interpolation.version>1.16</plexus-interpolation.version>
         <plexus-utils.version>3.0.15</plexus-utils.version>
@@ -153,6 +153,7 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.sonar</groupId>
