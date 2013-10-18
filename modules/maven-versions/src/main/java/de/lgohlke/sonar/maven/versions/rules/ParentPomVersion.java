@@ -1,5 +1,5 @@
 /*
- * Sonar mojo bridge plugin
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,22 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.versions.rules;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
-public class RulesRepositoryTest {
-
-    @Test
-    public void shouldHaveCompleteRuleSet() throws Exception {
-        AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-        RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-        int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-        int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
-        assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
-    }
+@Rule(
+        description = ParentPomVersion.DESCRIPTION,
+        key = ParentPomVersion.KEY,
+        name = ParentPomVersion.NAME,
+        priority = Priority.MINOR)
+public interface ParentPomVersion extends MavenRule {
+    String KEY = "Old Parent Pom";
+    String NAME = "[POM] found an newer version for the parent pom";
+    String DESCRIPTION = "a newer version of the parent pom is available";
 }

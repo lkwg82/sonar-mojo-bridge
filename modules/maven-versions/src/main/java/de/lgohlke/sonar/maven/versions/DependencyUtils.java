@@ -1,5 +1,5 @@
 /*
- * Sonar mojo bridge plugin
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,22 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.versions;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
+import org.apache.maven.model.Dependency;
 
-import static org.fest.assertions.api.Assertions.assertThat;
 
-public class RulesRepositoryTest {
+/**
+ * User: lars
+ */
+public final class DependencyUtils {
+    private DependencyUtils() {
+    }
 
-    @Test
-    public void shouldHaveCompleteRuleSet() throws Exception {
-        AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-        RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-        int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-        int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
-        assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
+    public static Dependency createDependency(final String groupId, final String artifactId, final String version) {
+        Dependency dependency = new Dependency();
+        dependency.setGroupId(groupId);
+        dependency.setArtifactId(artifactId);
+        dependency.setVersion(version);
+        return dependency;
     }
 }

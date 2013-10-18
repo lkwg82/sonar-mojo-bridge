@@ -1,5 +1,5 @@
 /*
- * Sonar mojo bridge plugin
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,22 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.versions.rules;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+/**
+ * User: lars
+ */
 
-public class RulesRepositoryTest {
-
-    @Test
-    public void shouldHaveCompleteRuleSet() throws Exception {
-        AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-        RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-        int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-        int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
-        assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
-    }
+@Rule(
+        description = MissingPluginVersion.DESCRIPTION,
+        name = MissingPluginVersion.NAME,
+        key = MissingPluginVersion.KEY,
+        priority = Priority.MINOR)
+public interface MissingPluginVersion extends MavenRule {
+    String KEY = "Missing Plugin Version";
+    String NAME = "[POM] found an plugin with no version";
+    String DESCRIPTION = "Set an explicit version for this plugin";
 }

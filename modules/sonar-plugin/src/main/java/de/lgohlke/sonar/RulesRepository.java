@@ -20,40 +20,33 @@
 package de.lgohlke.sonar;
 
 import com.google.common.collect.Lists;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.*;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleRepository;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RulesRepository extends RuleRepository {
-  private final AnnotationRuleParser ruleParser;
+    private final AnnotationRuleParser ruleParser;
 
-  public RulesRepository(final AnnotationRuleParser ruleParser) {
-    super(Configuration.REPOSITORY_KEY, "java");
-    setName(Configuration.REPOSITORY_NAME);
-    this.ruleParser = ruleParser;
-  }
+    public RulesRepository(final AnnotationRuleParser ruleParser) {
+        super(Configuration.REPOSITORY_KEY, "java");
+        setName(Configuration.REPOSITORY_NAME);
+        this.ruleParser = ruleParser;
+    }
 
-  @Override
-  public List<Rule> createRules() {
-    return ruleParser.parse(Configuration.REPOSITORY_KEY, getCheckedClasses());
-  }
+    @Override
+    public List<Rule> createRules() {
+        return ruleParser.parse(Configuration.REPOSITORY_KEY, getCheckedClasses());
+    }
 
-  @SuppressWarnings("rawtypes")
-  private static List<Class> getCheckedClasses() {
-    final List<Class> mavenVersionRules = Arrays.asList( //
-        // maven versions
-        (Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
-        IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class
-    );
-    List<Class> rules = Lists.newArrayList();
-    rules.addAll(mavenVersionRules);
-    rules.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet());
-    rules.addAll(com.lewisd.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY);
-    return rules;
-  }
+    @SuppressWarnings("rawtypes")
+    private static List<Class> getCheckedClasses() {
+        List<Class> rules = Lists.newArrayList();
+        rules.addAll(de.lgohlke.sonar.maven.versions.Configuration.MAVEN_VERSION_RULES);
+        rules.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet());
+        rules.addAll(de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY);
+        return rules;
+    }
 
 }

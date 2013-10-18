@@ -20,9 +20,9 @@
 package de.lgohlke.sonar.maven.org.codehaus.mojo.versions;
 
 import de.lgohlke.sonar.maven.MavenITAbstract;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.DependencyVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.MissingPluginVersion;
-import de.lgohlke.sonar.maven.org.codehaus.mojo.versions.rules.ParentPomVersion;
+import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
+import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
+import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 import org.sonar.wsclient.issue.Issue;
 import org.sonar.wsclient.issue.Issues;
 import org.testng.annotations.BeforeTest;

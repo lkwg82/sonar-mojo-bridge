@@ -1,5 +1,5 @@
 /*
- * Sonar mojo bridge plugin
+ * sonar-mojo-bridge-maven-lint
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,22 +17,22 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.lint.rules;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+@Rule(
+        description = LintDuplicateDependenciesRule.DESCRIPTION,
+        key = LintDuplicateDependenciesRule.KEY,
+        name = LintDuplicateDependenciesRule.NAME,
+        priority = Priority.MAJOR
 
-public class RulesRepositoryTest {
-
-    @Test
-    public void shouldHaveCompleteRuleSet() throws Exception {
-        AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-        RulesRepository rulesRepository = new RulesRepository(ruleParser);
-
-        int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-        int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
-        assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
-    }
+)
+public interface LintDuplicateDependenciesRule extends MavenRule {
+    String DESCRIPTION = "Multiple dependencies, in <dependencies> or <managedDependencies>, with the same co-ordinates are reduntant, " +
+            "and can be confusing.  If they have different versions, they can lead to unexpected behaviour.";
+    String KEY = "lint.DuplicateDep";
+    String NAME = "[POM] found DuplicateDependencies";
 }

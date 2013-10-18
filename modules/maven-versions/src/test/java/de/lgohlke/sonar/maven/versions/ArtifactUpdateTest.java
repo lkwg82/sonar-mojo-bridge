@@ -1,5 +1,5 @@
 /*
- * Sonar mojo bridge plugin
+ * sonar-mojo-bridge-maven-versions
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,22 +17,27 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven.versions;
 
-import org.sonar.api.rules.AnnotationRuleParser;
+import de.lgohlke.sonar.maven.versions.ArtifactUpdate;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.model.Dependency;
 import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class RulesRepositoryTest {
-
+/**
+ * User: lars
+ */
+public class ArtifactUpdateTest {
     @Test
-    public void shouldHaveCompleteRuleSet() throws Exception {
-        AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-        RulesRepository rulesRepository = new RulesRepository(ruleParser);
+    public void test() {
+        Dependency dependency = new Dependency();
+        dependency.setGroupId("g");
+        dependency.setArtifactId("a");
+        dependency.setVersion("2.0");
+        ArtifactUpdate artifactUpdate = new ArtifactUpdate(dependency, new DefaultArtifactVersion("2.1.0"));
 
-        int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-        int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
-        assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
+        assertThat(artifactUpdate.toString()).isEqualTo("g:a:2.0 has newer version (2.1.0) available");
     }
 }
