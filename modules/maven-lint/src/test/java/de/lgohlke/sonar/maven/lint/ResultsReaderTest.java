@@ -19,8 +19,7 @@
  */
 package de.lgohlke.sonar.maven.lint;
 
-import de.lgohlke.sonar.maven.lint.ResultsReader;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

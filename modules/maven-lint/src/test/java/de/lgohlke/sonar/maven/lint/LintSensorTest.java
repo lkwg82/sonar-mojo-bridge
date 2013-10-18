@@ -25,13 +25,13 @@ import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.maven.project.MavenProject;
-import org.junit.Before;
-import org.junit.Test;
 import org.reflections.Reflections;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.Set;
@@ -44,12 +44,12 @@ public class LintSensorTest {
     private MavenProject mavenProject = getMavenProject();
     private RulesProfile rulesProfile;
 
-    @Before
+    @BeforeTest
     public void beforeTest() {
         rulesProfile = RulesProfile.create("mine", "java");
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test(expectedExceptions = NotImplementedException.class)
     public void testNotImplementedViolation() {
 
         Violation violation = new Violation();
@@ -73,7 +73,7 @@ public class LintSensorTest {
 
     @Test
     public void testConfiguredAllRulesInAnnotation() {
-        Reflections reflections = new Reflections("com.lewisd.maven.lint.rules");
+        Reflections reflections = new Reflections("de.lgohlke.sonar.maven.lint.rules");
         Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
 
         Rules rules = LintSensor.class.getAnnotation(Rules.class);
