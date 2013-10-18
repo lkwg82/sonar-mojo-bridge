@@ -27,6 +27,8 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.maven.project.MavenProject;
 import org.reflections.Reflections;
 import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
@@ -42,11 +44,12 @@ import static org.mockito.Mockito.mock;
 public class LintSensorTest {
 
     private MavenProject mavenProject = getMavenProject();
-    private RulesProfile rulesProfile;
+    private LintSensor sensor;
 
     @BeforeTest
     public void beforeTest() {
-        rulesProfile = RulesProfile.create("mine", "java");
+        RulesProfile rulesProfile = RulesProfile.create("mine", "java");
+        sensor = new LintSensor(mavenProject, rulesProfile, mock(ResourcePerspectives.class), mock(Settings.class));
     }
 
     @Test(expectedExceptions = NotImplementedException.class)
@@ -55,7 +58,6 @@ public class LintSensorTest {
         Violation violation = new Violation();
         violation.setRule("xy");
 
-        LintSensor sensor = new LintSensor(mavenProject, rulesProfile);
         sensor.createRuleFromViolation(violation);
     }
 
@@ -65,7 +67,6 @@ public class LintSensorTest {
         Violation violation = new Violation();
         violation.setRule("DuplicateDep");
 
-        LintSensor sensor = new LintSensor(mavenProject, rulesProfile);
         Rule ruleFromViolation = sensor.createRuleFromViolation(violation);
 
         assertThat(ruleFromViolation).isNotNull();
@@ -83,7 +84,6 @@ public class LintSensorTest {
 
     @Test
     public void testMavenHandler() {
-        LintSensor sensor = new LintSensor(mavenProject, rulesProfile);
         MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
 
         assertThat(mavenPluginHandler.getGoals()).hasSize(1);

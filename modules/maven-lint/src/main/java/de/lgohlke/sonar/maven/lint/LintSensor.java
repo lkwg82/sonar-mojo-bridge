@@ -21,7 +21,11 @@ package de.lgohlke.sonar.maven.lint;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.lewisd.maven.lint.rules.*;
+import de.lgohlke.sonar.Configuration;
+import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
+import de.lgohlke.sonar.maven.MavenRule;
+import de.lgohlke.sonar.maven.RuleUtils;
+import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.lint.rules.LintDuplicateDependenciesRule;
 import de.lgohlke.sonar.maven.lint.rules.LintExecutionIdRule;
 import de.lgohlke.sonar.maven.lint.rules.LintGroupArtifactVersionMustBeInCorrectOrderIdRule;
@@ -34,11 +38,6 @@ import de.lgohlke.sonar.maven.lint.rules.LintVersionPropertiesMustUseDotVersionR
 import de.lgohlke.sonar.maven.lint.rules.LintVersionPropertiesMustUseProjectVersionRule;
 import de.lgohlke.sonar.maven.lint.xml.Results;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
-import de.lgohlke.sonar.Configuration;
-import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
-import de.lgohlke.sonar.maven.MavenRule;
-import de.lgohlke.sonar.maven.RuleUtils;
-import de.lgohlke.sonar.maven.Rules;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -48,8 +47,13 @@ import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
+import org.sonar.api.issue.Issuable;
+import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.plugins.xml.language.Xml;
@@ -57,6 +61,7 @@ import org.sonar.plugins.xml.language.Xml;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 @Rules(values = {
         LintDuplicateDependenciesRule.class,
@@ -68,7 +73,7 @@ import java.util.List;
         LintRedundantPluginVersionsRule.class,
         LintProfileMustOnlyAddModulesRule.class,
         LintVersionPropertiesMustUseDotVersionRule.class,
-        LintVersionPropertiesMustUseProjectVersionRule.class,
+        LintVersionPropertiesMustUseProjectVersionRule.class
 })
 @RequiredArgsConstructor
 @Slf4j
@@ -77,6 +82,8 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
     private final static Object BASE_PREFIX = "lint";
     private final MavenProject mavenProject;
     private final RulesProfile rulesProfile;
+    private final ResourcePerspectives resourcePerspectives;
+    private final Settings settings;
 
     @Override
     public void analyse(Project project, SensorContext context) {
@@ -85,19 +92,25 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
 
         for (Violation violation : results.getViolations()) {
             Rule rule = createRuleFromViolation(violation);
-            addViolationToContext(context, violation, rule);
+            addViolationToContext(violation, rule);
         }
     }
 
     @VisibleForTesting
-    void addViolationToContext(SensorContext context, Violation violation, Rule rule) {
+    void addViolationToContext(Violation violation, Rule rule) {
         org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
         file.setLanguage(Xml.INSTANCE);
 
-        org.sonar.api.rules.Violation sonarViolation = org.sonar.api.rules.Violation.create(rule, file);
-        sonarViolation.setLineId(violation.getLocation().getLine());
-        sonarViolation.setMessage(violation.getMessage());
-        context.saveViolation(sonarViolation);
+        Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+        RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
+
+        Issue issue = issuable.newIssueBuilder().
+                line(violation.getLocation().getLine()).
+                message(violation.getMessage()).
+                ruleKey(ruleKey).
+                build();
+
+        issuable.addIssue(issue);
     }
 
     @VisibleForTesting
@@ -132,14 +145,15 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
 
     @Override
     public MavenPluginHandler getMavenPluginHandler(final Project project) {
-        mavenProject.getProperties().setProperty("maven-lint.failOnViolation", "false");
-        mavenProject.getProperties().setProperty("maven-lint.output.file.xml", LINT_FILENAME);
+        final Properties mavenProjectProperties = mavenProject.getProperties();
+        mavenProjectProperties.setProperty("maven-lint.failOnViolation", "false");
+        mavenProjectProperties.setProperty("maven-lint.output.file.xml", LINT_FILENAME);
         return MavenPluginHandlerFactory.createHandler(de.lgohlke.sonar.maven.lint.Configuration.BASE_IDENTIFIER);
     }
 
     @Override
     public boolean shouldExecuteOnProject(Project project) {
-        String prop = (String) project.getProperty(Configuration.ANALYSIS_ENABLED);
+        String prop = settings.getProperties().get(Configuration.ANALYSIS_ENABLED);
         if (prop == null) {
             prop = de.lgohlke.sonar.Configuration.DEFAULT;
         }
