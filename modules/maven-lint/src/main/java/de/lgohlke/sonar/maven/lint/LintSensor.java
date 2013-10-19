@@ -26,22 +26,12 @@ import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.lint.rules.LintDuplicateDependenciesRule;
-import de.lgohlke.sonar.maven.lint.rules.LintExecutionIdRule;
-import de.lgohlke.sonar.maven.lint.rules.LintGroupArtifactVersionMustBeInCorrectOrderIdRule;
-import de.lgohlke.sonar.maven.lint.rules.LintMissingCIManagementRule;
-import de.lgohlke.sonar.maven.lint.rules.LintMissingDeveloperInformationRule;
-import de.lgohlke.sonar.maven.lint.rules.LintProfileMustOnlyAddModulesRule;
-import de.lgohlke.sonar.maven.lint.rules.LintRedundantDependencyVersionsRule;
-import de.lgohlke.sonar.maven.lint.rules.LintRedundantPluginVersionsRule;
-import de.lgohlke.sonar.maven.lint.rules.LintVersionPropertiesMustUseDotVersionRule;
-import de.lgohlke.sonar.maven.lint.rules.LintVersionPropertiesMustUseProjectVersionRule;
+import de.lgohlke.sonar.maven.lint.rules.*;
 import de.lgohlke.sonar.maven.lint.xml.Results;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -52,11 +42,11 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.AbstractLanguage;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
-import org.sonar.plugins.xml.language.Xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,20 +82,27 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
 
     for (Violation violation : results.getViolations()) {
       Rule rule = createRuleFromViolation(violation);
-      addIssue(violation, rule);
+      if (rule != null) {
+        addIssue(violation, rule);
+      }
     }
   }
 
   @VisibleForTesting
   void addIssue(Violation violation, Rule rule) {
     org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-    file.setLanguage(Xml.INSTANCE);
+    file.setLanguage( new AbstractLanguage("xml") {
+      @Override
+      public String[] getFileSuffixes() {
+        return new String[]{"xml"};
+      }
+    });
 
     Issuable issuable = resourcePerspectives.as(Issuable.class, file);
     RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
 
     Issue issue = issuable.newIssueBuilder().
-        line(violation.getLocation().getLine()).
+        line(violation.getLocation().getLine()+1).
         message(violation.getMessage()).
         ruleKey(ruleKey).
         build();
@@ -140,7 +137,8 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
       }
     }
 
-    throw new NotImplementedException("rule for violation " + violation.getRule() + " is not implemented yet");
+    log.warn("rule for violation " + violation.getRule() + " is not implemented yet");
+    return null;
   }
 
   @Override
