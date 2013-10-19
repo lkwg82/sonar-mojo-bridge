@@ -20,35 +20,27 @@
 package de.lgohlke.sonar.maven.lint;
 
 import de.lgohlke.sonar.maven.MavenRule;
-import de.lgohlke.sonar.maven.lint.rules.LintDuplicateDependenciesRule;
-import de.lgohlke.sonar.maven.lint.rules.LintExecutionIdRule;
-import de.lgohlke.sonar.maven.lint.rules.LintGroupArtifactVersionMustBeInCorrectOrderIdRule;
-import de.lgohlke.sonar.maven.lint.rules.LintMissingCIManagementRule;
-import de.lgohlke.sonar.maven.lint.rules.LintMissingDeveloperInformationRule;
-import de.lgohlke.sonar.maven.lint.rules.LintProfileMustOnlyAddModulesRule;
-import de.lgohlke.sonar.maven.lint.rules.LintRedundantDependencyVersionsRule;
-import de.lgohlke.sonar.maven.lint.rules.LintRedundantPluginVersionsRule;
-import de.lgohlke.sonar.maven.lint.rules.LintVersionPropertiesMustUseDotVersionRule;
-import de.lgohlke.sonar.maven.lint.rules.LintVersionPropertiesMustUseProjectVersionRule;
+import de.lgohlke.sonar.maven.lint.rules.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public interface Configuration {
-    String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.8:check";
+  String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.8:check";
 
-    List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
-        {
-            add(LintDuplicateDependenciesRule.class);
-            add(LintExecutionIdRule.class);
-            add(LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class);
-            add(LintMissingCIManagementRule.class);
-            add(LintMissingDeveloperInformationRule.class);
-            add(LintProfileMustOnlyAddModulesRule.class);
-            add(LintRedundantDependencyVersionsRule.class);
-            add(LintRedundantPluginVersionsRule.class);
-            add(LintVersionPropertiesMustUseDotVersionRule.class);
-            add(LintVersionPropertiesMustUseProjectVersionRule.class);
-        }
-    };
+  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
+    {
+      add(LintDuplicateDependenciesRule.class);
+      add(LintExecutionIdRule.class);
+      add(LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class);
+      add(LintMissingCIManagementRule.class);
+      add(LintMissingIssueManagementRule.class);
+      add(LintMissingDeveloperInformationRule.class);
+      add(LintProfileMustOnlyAddModulesRule.class);
+      add(LintRedundantDependencyVersionsRule.class);
+      add(LintRedundantPluginVersionsRule.class);
+      add(LintVersionPropertiesMustUseDotVersionRule.class);
+      add(LintVersionPropertiesMustUseProjectVersionRule.class);
+    }
+  };
 }
