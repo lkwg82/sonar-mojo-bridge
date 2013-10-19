@@ -43,58 +43,55 @@ import static org.mockito.Mockito.mock;
 
 public class LintSensorTest {
 
-    private MavenProject mavenProject = getMavenProject();
-    private LintSensor sensor;
+  private MavenProject mavenProject;
+  private LintSensor sensor;
 
-    @BeforeTest
-    public void beforeTest() {
-        RulesProfile rulesProfile = RulesProfile.create("mine", "java");
-        sensor = new LintSensor(mavenProject, rulesProfile, mock(ResourcePerspectives.class), mock(Settings.class));
-    }
+  @BeforeTest(alwaysRun = true)
+  public void beforeTest() {
+    mavenProject = new MavenProject();
+    mavenProject.setFile(new File("."));
 
-    @Test(expectedExceptions = NotImplementedException.class)
-    public void testNotImplementedViolation() {
+    RulesProfile rulesProfile = RulesProfile.create("mine", "java");
+    sensor = new LintSensor(mavenProject, rulesProfile, mock(ResourcePerspectives.class), mock(Settings.class));
+  }
 
-        Violation violation = new Violation();
-        violation.setRule("xy");
+  @Test(expectedExceptions = NotImplementedException.class)
+  public void testNotImplementedViolation() {
 
-        sensor.createRuleFromViolation(violation);
-    }
+    Violation violation = new Violation();
+    violation.setRule("xy");
 
-    @Test
-    public void testRuleMatchingViolation() {
+    sensor.createRuleFromViolation(violation);
+  }
 
-        Violation violation = new Violation();
-        violation.setRule("DuplicateDep");
+  @Test
+  public void testRuleMatchingViolation() {
 
-        Rule ruleFromViolation = sensor.createRuleFromViolation(violation);
+    Violation violation = new Violation();
+    violation.setRule("DuplicateDep");
 
-        assertThat(ruleFromViolation).isNotNull();
-    }
+    Rule ruleFromViolation = sensor.createRuleFromViolation(violation);
 
-    @Test
-    public void testConfiguredAllRulesInAnnotation() {
-        Reflections reflections = new Reflections("de.lgohlke.sonar.maven.lint.rules");
-        Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
+    assertThat(ruleFromViolation).isNotNull();
+  }
 
-        Rules rules = LintSensor.class.getAnnotation(Rules.class);
+  @Test
+  public void testConfiguredAllRulesInAnnotation() {
+    Reflections reflections = new Reflections("de.lgohlke.sonar.maven.lint.rules");
+    Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
 
-        assertThat(Sets.newHashSet(rules.values())).isEqualTo(rulesImplemented);
-    }
+    Rules rules = LintSensor.class.getAnnotation(Rules.class);
 
-    @Test
-    public void testMavenHandler() {
-        MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
+    assertThat(Sets.newHashSet(rules.values())).isEqualTo(rulesImplemented);
+  }
 
-        assertThat(mavenPluginHandler.getGoals()).hasSize(1);
-        assertThat(mavenPluginHandler.getGoals()).contains("check");
-        assertThat(mavenProject.getProperties()).containsKey("maven-lint.failOnViolation");
-        assertThat(mavenProject.getProperties()).containsKey("maven-lint.output.file.xml");
-    }
+  @Test
+  public void testMavenHandler() {
+    MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
 
-    static MavenProject getMavenProject() {
-        MavenProject mavenProject = new MavenProject();
-        mavenProject.setFile(new File("."));
-        return mavenProject;
-    }
+    assertThat(mavenPluginHandler.getGoals()).hasSize(1);
+    assertThat(mavenPluginHandler.getGoals()).contains("check");
+    assertThat(mavenProject.getProperties()).containsKey("maven-lint.failOnViolation");
+    assertThat(mavenProject.getProperties()).containsKey("maven-lint.output.file.xml");
+  }
 }
