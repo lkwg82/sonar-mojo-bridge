@@ -80,10 +80,10 @@ public class LintSensorTest {
   @Test
   public void testConfiguredAllRulesInAnnotation() {
 
-    class StringComparator implements Comparator {
+    class StringComparator implements Comparator<String> {
       @Override
-      public int compare(Object o1, Object o2) {
-        return ((String) o1).compareTo((String) o2);
+      public int compare(String o1, String o2) {
+        return o1.compareTo(o2);
       }
     }
     ;
@@ -93,11 +93,11 @@ public class LintSensorTest {
 
     Rules rules = LintSensor.class.getAnnotation(Rules.class);
 
-    TreeSet<String> configuredRules = new TreeSet(new StringComparator());
+    TreeSet<String> configuredRules = new TreeSet<String>(new StringComparator());
     for (Class clazz : rules.values()) {
       configuredRules.add(clazz.getCanonicalName());
     }
-    TreeSet<String> implementedRules = new TreeSet(new StringComparator());
+    TreeSet<String> implementedRules = new TreeSet<String>(new StringComparator());
     for (Class clazz : rulesImplemented) {
       implementedRules.add(clazz.getCanonicalName());
     }
