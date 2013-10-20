@@ -58,6 +58,7 @@ import java.util.Properties;
     LintExecutionIdRule.class,
     LintGroupArtifactVersionMustBeInCorrectOrderIdRule.class,
     LintMissingCIManagementRule.class,
+    LintMissingIssueManagementRule.class,
     LintMissingDeveloperInformationRule.class,
     LintRedundantDependencyVersionsRule.class,
     LintRedundantPluginVersionsRule.class,
@@ -91,7 +92,7 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
   @VisibleForTesting
   void addIssue(Violation violation, Rule rule) {
     org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-    file.setLanguage( new AbstractLanguage("xml") {
+    file.setLanguage(new AbstractLanguage("xml") {
       @Override
       public String[] getFileSuffixes() {
         return new String[]{"xml"};
@@ -102,7 +103,7 @@ public class LintSensor implements DependsUponMavenPlugin, Sensor {
     RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
 
     Issue issue = issuable.newIssueBuilder().
-        line(violation.getLocation().getLine()+1).
+        line(violation.getLocation().getLine() + 1).
         message(violation.getMessage()).
         ruleKey(ruleKey).
         build();
