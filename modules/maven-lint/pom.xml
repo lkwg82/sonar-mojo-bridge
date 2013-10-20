@@ -51,77 +51,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lewisd</groupId>
-            <artifactId>lint-maven-plugin</artifactId>
-            <version>0.0.8</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.maven</groupId>
-                    <artifactId>maven-plugin-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.maven</groupId>
-                    <artifactId>maven-model-builder</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.maven</groupId>
-                    <artifactId>maven-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.maven</groupId>
-                    <artifactId>maven-compat</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jmock</groupId>
-                    <artifactId>jmock-junit4</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jdom</groupId>
-                    <artifactId>jdom</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jdom</groupId>
-                    <artifactId>jaxen-jdom</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jdom</groupId>
-                    <artifactId>jaxen-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jdom</groupId>
-                    <artifactId>saxpath</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.velocity</groupId>
-                    <artifactId>velocity</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.velocity</groupId>
-                    <artifactId>velocity-tools</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-jxpath</groupId>
-                    <artifactId>commons-jxpath</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.thoughtworks.xstream</groupId>
-                    <artifactId>xstream</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.3.1</version>
@@ -139,13 +68,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
