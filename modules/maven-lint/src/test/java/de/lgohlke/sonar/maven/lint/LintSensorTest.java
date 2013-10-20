@@ -19,11 +19,9 @@
  */
 package de.lgohlke.sonar.maven.lint;
 
-import com.google.common.collect.Sets;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.maven.project.MavenProject;
 import org.reflections.Reflections;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -36,7 +34,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -55,13 +55,15 @@ public class LintSensorTest {
     sensor = new LintSensor(mavenProject, rulesProfile, mock(ResourcePerspectives.class), mock(Settings.class));
   }
 
-  @Test(expectedExceptions = NotImplementedException.class)
-  public void testNotImplementedViolation() {
+  @Test
+  public void testNotImplementedNullReturn() {
 
     Violation violation = new Violation();
     violation.setRule("xy");
 
-    sensor.createRuleFromViolation(violation);
+    Rule rule = sensor.createRuleFromViolation(violation);
+
+    assertThat(rule).isNull();
   }
 
   @Test
@@ -77,12 +79,30 @@ public class LintSensorTest {
 
   @Test
   public void testConfiguredAllRulesInAnnotation() {
+
+    class StringComparator implements Comparator {
+      @Override
+      public int compare(Object o1, Object o2) {
+        return ((String) o1).compareTo((String) o2);
+      }
+    }
+    ;
+
     Reflections reflections = new Reflections("de.lgohlke.sonar.maven.lint.rules");
     Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
 
     Rules rules = LintSensor.class.getAnnotation(Rules.class);
 
-    assertThat(Sets.newHashSet(rules.values())).isEqualTo(rulesImplemented);
+    TreeSet<String> configuredRules = new TreeSet(new StringComparator());
+    for (Class clazz : rules.values()) {
+      configuredRules.add(clazz.getCanonicalName());
+    }
+    TreeSet<String> implementedRules = new TreeSet(new StringComparator());
+    for (Class clazz : rulesImplemented) {
+      implementedRules.add(clazz.getCanonicalName());
+    }
+
+    assertThat(configuredRules).isEqualTo(implementedRules);
   }
 
   @Test
