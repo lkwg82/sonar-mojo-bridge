@@ -20,6 +20,7 @@
 package de.lgohlke.sonar;
 
 import org.fest.assertions.core.Condition;
+import org.sonar.api.Extension;
 import org.sonar.api.batch.Sensor;
 import org.testng.annotations.Test;
 
@@ -35,15 +36,15 @@ public class MavenPluginTest {
   public void shouldHaveImportantExtensions() throws Exception {
     MavenPlugin plugin = new MavenPlugin();
 
-    List<Class<?>> extensions = plugin.getExtensions();
+    List<Class<? extends Extension>> extensions = plugin.getExtensions();
     assertThat(extensions).has(classOfSubType(Sensor.class));
     assertThat(extensions).has(classOfSubType(RulesRepository.class));
   }
 
-  private Condition<List<Class<?>>> classOfSubType(final Class<?> clazz) {
-    return new Condition<List<Class<?>>>() {
+  private Condition<List<Class<? extends Extension>>> classOfSubType(final Class<?> clazz) {
+    return new Condition<List<Class<? extends Extension>>>() {
       @Override
-      public boolean matches(List<Class<?>> list) {
+      public boolean matches(List<Class<? extends Extension>> list) {
         for (Class<?> c : list) {
           if (clazz.isAssignableFrom(c)) {
             return true;

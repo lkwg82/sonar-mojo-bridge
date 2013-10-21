@@ -24,53 +24,50 @@ import de.lgohlke.sonar.maven.enforcer.EnforceSensor;
 import de.lgohlke.sonar.maven.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.versions.DisplayPluginUpdatesSensor;
 import de.lgohlke.sonar.maven.versions.UpdateParentPomSensor;
-import org.sonar.api.Properties;
-import org.sonar.api.Property;
-import org.sonar.api.PropertyType;
-import org.sonar.api.SonarPlugin;
+import org.sonar.api.*;
 import org.sonar.plugins.xml.language.Xml;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Properties(
-        {
-                @Property(
-                        key = Configuration.ANALYSIS_ENABLED,
-                        name = "enable maven analysis",
-                        description = "Enable maven analysis.",
-                        defaultValue = Configuration.DEFAULT,
-                        global = true,
-                        project = true,
-                        module = true,
-                        type = PropertyType.BOOLEAN,
-                        category = "Mojo Bridge"
-                )
-        }
+    {
+        @Property(
+            key = Configuration.ANALYSIS_ENABLED,
+            name = "enable maven analysis",
+            description = "Enable maven analysis.",
+            defaultValue = Configuration.DEFAULT,
+            global = true,
+            project = true,
+            module = true,
+            type = PropertyType.BOOLEAN,
+            category = "Mojo Bridge"
+        )
+    }
 )
 public class MavenPlugin extends SonarPlugin {
 
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public List getExtensions() {
-        return Arrays.asList(
-                DisplayPluginUpdatesSensor.class,
-                DisplayDependencyUpdatesSensor.class,
-                UpdateParentPomSensor.class,
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public List<Class<? extends Extension>> getExtensions() {
+    return Arrays.asList(
+        DisplayPluginUpdatesSensor.class,
+        DisplayDependencyUpdatesSensor.class,
+        UpdateParentPomSensor.class,
 
-                EnforceSensor.class,
+        EnforceSensor.class,
 
-                LintSensor.class,
-                RulesRepository.class,
+        LintSensor.class,
+        RulesRepository.class,
 
-                // xml language from xml-plugin
-                Xml.class,
+        // xml language from xml-plugin
+        Xml.class,
 
-                // source importer
-                PomSourceImporter.class
+        // source importer
+        PomSourceImporter.class
 
-                // code colorizer
-                // XmlCodeColorizerFormat.class
-        );
-    }
+        // code colorizer
+        // XmlCodeColorizerFormat.class
+    );
+  }
 }
