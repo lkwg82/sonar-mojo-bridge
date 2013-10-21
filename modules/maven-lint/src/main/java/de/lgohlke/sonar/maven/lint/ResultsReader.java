@@ -19,34 +19,27 @@
  */
 package de.lgohlke.sonar.maven.lint;
 
+import com.thoughtworks.xstream.XStream;
 import de.lgohlke.sonar.maven.lint.xml.Location;
 import de.lgohlke.sonar.maven.lint.xml.Results;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
-import com.thoughtworks.xstream.XStream;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ResultsReader {
-    public de.lgohlke.sonar.maven.lint.xml.Results read(File file) throws IOException {
-        return read(FileUtils.readFileToString(file));
+  public de.lgohlke.sonar.maven.lint.xml.Results read(String xml) {
+
+    XStream xstream = new XStream();
+    xstream.setClassLoader(getClass().getClassLoader());
+    xstream.autodetectAnnotations(true);
+    xstream.alias("results", Results.class);
+    xstream.alias("violation", Violation.class);
+    xstream.alias("location", Location.class);
+
+    final Results results = (Results) xstream.fromXML(xml);
+    if (results.getViolations() == null) {
+      results.setViolations(new ArrayList<de.lgohlke.sonar.maven.lint.xml.Violation>());
     }
-
-    public de.lgohlke.sonar.maven.lint.xml.Results read(String xml) {
-
-        XStream xstream = new XStream();
-        xstream.setClassLoader(getClass().getClassLoader());
-        xstream.autodetectAnnotations(true);
-        xstream.alias("results", Results.class);
-        xstream.alias("violation", Violation.class);
-        xstream.alias("location", Location.class);
-
-        final Results results = (Results) xstream.fromXML(xml);
-        if (results.getViolations() == null) {
-            results.setViolations(new ArrayList<de.lgohlke.sonar.maven.lint.xml.Violation>());
-        }
-        return results;
-    }
+    return results;
+  }
 }
