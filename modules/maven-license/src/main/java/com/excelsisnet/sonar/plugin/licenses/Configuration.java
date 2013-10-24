@@ -19,18 +19,6 @@
  */
 package com.excelsisnet.sonar.plugin.licenses;
 
-import com.excelsisnet.sonar.plugin.licenses.ui.LicenseTableWidget;
-import org.sonar.api.Extension;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class LicenseExtensions {
-  public static List<Class<? extends Extension>> getExtensions() {
-    return new ArrayList<Class<? extends Extension>>() {{
-      add(LicenseMetrics.class);
-      add(LicensesSensor.class);
-      add(LicenseTableWidget.class);
-    }};
-  }
+public interface Configuration {
+  String BASE_IDENTIFIER = "org.codehaus.mojo:license-maven-plugin:1.5:add-third-party";
 }

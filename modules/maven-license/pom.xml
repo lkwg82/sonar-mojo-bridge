@@ -11,14 +11,15 @@
   </parent>
 
   <artifactId>sonar-mojo-bridge-maven-license</artifactId>
-  <packaging>jar</packaging>
   <version>0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <name>Dependency Licenses</name>
   <description>A module to display the licenses of the dependecies.</description>
 
   <developers>
     <developer>
+      <id>HAngst?</id>
       <name>Hannes Angst</name>
     </developer>
     <developer>
@@ -33,41 +34,19 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-mojo-bridge-maven-internals</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>${sonar.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar</groupId>
-      <artifactId>sonar-core</artifactId>
-      <version>${sonar.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar</groupId>
-      <artifactId>sonar-ws-client</artifactId>
-      <version>3.3.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <scope>provided</scope>
-      <version>2.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar</groupId>
-      <artifactId>sonar-gwt-api</artifactId>
-      <scope>provided</scope>
-      <version>3.3.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <scope>provided</scope>
-      <version>2.0.1</version>
     </dependency>
 
     <!-- unit tests -->
@@ -77,29 +56,7 @@
       <version>${sonar.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.2.1</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.googlecode.json-simple</groupId>
-        <artifactId>json-simple</artifactId>
-        <version>1.1.1</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <plugins>
@@ -110,6 +67,7 @@
         <version>1.0-beta-1</version>
         <executions>
           <execution>
+            <id>native2ascii</id>
             <goals>
               <goal>native2ascii</goal>
             </goals>
