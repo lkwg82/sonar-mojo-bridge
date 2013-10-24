@@ -111,6 +111,7 @@
     <version.failsafe.plugin>2.16</version.failsafe.plugin>
     <version.surefire.plugin>2.16</version.surefire.plugin>
     <version.sonar-dev.plugin>1.7</version.sonar-dev.plugin>
+    <version.sonar-packaging.plugin>1.9</version.sonar-packaging.plugin>
   </properties>
 
   <modules>
@@ -119,10 +120,14 @@
     <module>modules/maven-internals</module>
     <module>modules/sonar-plugin-utils</module>
     <module>modules/sonar-plugin-testing</module>
+
     <module>modules/maven-enforcer</module>
+    <module>modules/maven-license</module>
     <module>modules/maven-lint</module>
     <module>modules/maven-versions</module>
+
     <module>modules/sonar-plugin</module>
+
     <module>modules/maven-lint-it</module>
     <module>modules/maven-versions-it</module>
   </modules>
