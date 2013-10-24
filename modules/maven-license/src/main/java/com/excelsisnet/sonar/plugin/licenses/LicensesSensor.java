@@ -25,6 +25,7 @@ import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
@@ -35,15 +36,14 @@ import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Project;
 import org.sonar.check.Priority;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 @RequiredArgsConstructor
 @Slf4j
 public class LicensesSensor implements DependsUponMavenPlugin, Sensor {
   private final static String FILENAME = "sonar-maven-license." + System.currentTimeMillis() + ".xml";
-  private final static String TEMPLATE = "src/main/resources/third-party-file.ftl";
+  private final static String TEMPLATE = "/third-party-file.ftl";
 
   private final MavenProject mavenProject;
   private final Settings settings;
@@ -52,7 +52,19 @@ public class LicensesSensor implements DependsUponMavenPlugin, Sensor {
   public MavenPluginHandler getMavenPluginHandler(final Project project) {
     Properties mavenProjectProperties = mavenProject.getProperties();
     mavenProjectProperties.setProperty("license.thirdPartyFilename", FILENAME);
-    mavenProjectProperties.setProperty("license.fileTemplate", TEMPLATE);
+
+    File tempFile;
+    try {
+      tempFile = File.createTempFile("template", "ftl");
+      InputStream inputStream = getClass().getResourceAsStream(TEMPLATE);
+      OutputStream outputStream = new FileOutputStream(tempFile);
+      IOUtils.copy(inputStream, outputStream);
+    } catch (IOException e) {
+      log.error(e.getMessage(), e);
+      throw new IllegalStateException(e);
+    }
+
+    mavenProjectProperties.setProperty("license.fileTemplate", tempFile.getAbsolutePath());
     return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER);
   }
 
