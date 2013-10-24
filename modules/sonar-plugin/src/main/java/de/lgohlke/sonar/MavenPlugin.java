@@ -19,8 +19,10 @@
  */
 package de.lgohlke.sonar;
 
-import de.lgohlke.sonar.maven.lint.LintSensor;
+import com.excelsisnet.sonar.plugin.licenses.LicenseExtensions;
+import com.google.common.collect.Lists;
 import de.lgohlke.sonar.maven.enforcer.EnforceSensor;
+import de.lgohlke.sonar.maven.lint.LintSensor;
 import de.lgohlke.sonar.maven.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.versions.DisplayPluginUpdatesSensor;
 import de.lgohlke.sonar.maven.versions.UpdateParentPomSensor;
@@ -48,9 +50,10 @@ import java.util.List;
 public class MavenPlugin extends SonarPlugin {
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
   public List<Class<? extends Extension>> getExtensions() {
-    return Arrays.asList(
+    List<Class<? extends Extension>> extensions = Lists.newArrayList();
+
+    List<Class<? extends Extension>> old = Arrays.asList(
         DisplayPluginUpdatesSensor.class,
         DisplayDependencyUpdatesSensor.class,
         UpdateParentPomSensor.class,
@@ -69,5 +72,10 @@ public class MavenPlugin extends SonarPlugin {
         // code colorizer
         // XmlCodeColorizerFormat.class
     );
+
+    extensions.addAll(old);
+    extensions.addAll(LicenseExtensions.getExtensions());
+
+    return extensions;
   }
 }
