@@ -1,5 +1,5 @@
 /*
- * Dependency Licenses
+ * sonar-mojo-bridge-maven-license
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *

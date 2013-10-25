@@ -1,5 +1,5 @@
 /*
- * Dependency Licenses
+ * sonar-mojo-bridge-maven-license
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -26,19 +26,17 @@ import org.sonar.api.measures.Metrics;
 import java.util.Arrays;
 import java.util.List;
 
-public final class LicenseMetrics implements Metrics
-{
+public final class LicenseMetrics implements Metrics {
 
-	public static final Metric LICENSE = new Metric.Builder("deplic", "dependency_license", Metric.ValueType.DATA)
-		.setDescription("Dependency Licenses")
-		.setDirection(Metric.DIRECTION_NONE)
-		.setQualitative(false)
-		.setDomain(CoreMetrics.DOMAIN_GENERAL)
-		.create();
+  public static final Metric LICENSE = new Metric.Builder("deplic", "dependency_license", Metric.ValueType.DATA)
+      .setDescription("Dependency Licenses")
+      .setDirection(Metric.DIRECTION_NONE)
+      .setQualitative(false)
+      .setDomain(CoreMetrics.DOMAIN_GENERAL)
+      .create();
 
-	public List<Metric> getMetrics()
-	{
-		return Arrays.asList(LICENSE);
-	}
+  public List<Metric> getMetrics() {
+    return Arrays.asList(LICENSE);
+  }
 
 }

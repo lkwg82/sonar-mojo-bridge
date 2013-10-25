@@ -1,5 +1,5 @@
 /*
- * Dependency Licenses
+ * sonar-mojo-bridge-maven-license
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -28,21 +28,17 @@ import org.sonar.api.web.WidgetCategory;
 @UserRole(UserRole.USER)
 @Description("Displays the licenses of project dependecies.")
 @WidgetCategory("Lab")
-public class LicenseTableWidget extends AbstractRubyTemplate implements RubyRailsWidget
-{
-	public String getId()
-	{
-		return "deplic";
-	}
+public class LicenseTableWidget extends AbstractRubyTemplate implements RubyRailsWidget {
+  public String getId() {
+    return "deplic";
+  }
 
-	public String getTitle()
-	{
-		return "Dependency Licenses";
-	}
+  public String getTitle() {
+    return "Dependency Licenses";
+  }
 
-	@Override
-	protected String getTemplatePath()
-	{
-		return "/com/excelsisnet/sonar/plugin/licenses/table.html.erb";
-	}
+  @Override
+  protected String getTemplatePath() {
+    return "/com/excelsisnet/sonar/plugin/licenses/table.html.erb";
+  }
 }

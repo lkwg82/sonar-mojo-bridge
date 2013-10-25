@@ -1,5 +1,5 @@
 /*
- * Dependency Licenses
+ * sonar-mojo-bridge-maven-license
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,7 +24,6 @@ import com.google.common.base.Joiner;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.Sensor;
@@ -103,7 +102,7 @@ public class LicensesSensor implements DependsUponMavenPlugin, Sensor {
   }
 
   public void analyse(Project project, SensorContext context) {
-    List<Dependency> dependencies = getListOfDependenciesFromReport();
+    List<Dependency> dependencies = new ReportReader().getListOfDependenciesFromReport(new File("."), FILENAME);
 
     /**
      * TODO here is sth. like a semantic gap:
@@ -123,15 +122,5 @@ public class LicensesSensor implements DependsUponMavenPlugin, Sensor {
       }
     }
     context.saveMeasure(getMeasure(licenses));
-  }
-
-  private static List<Dependency> getListOfDependenciesFromReport() {
-    try {
-      final String baseDir = "target/generated-sources/license/";
-      return new ReportReader().read(FileUtils.readFileToString(new File(baseDir + FILENAME)));
-    } catch (IOException e) {
-      log.error(e.getMessage(), e);
-      throw new IllegalStateException(e);
-    }
   }
 }

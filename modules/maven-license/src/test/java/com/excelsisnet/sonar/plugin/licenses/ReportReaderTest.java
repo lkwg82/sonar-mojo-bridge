@@ -1,5 +1,5 @@
 /*
- * Dependency Licenses
+ * sonar-mojo-bridge-maven-license
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -20,39 +20,45 @@
 package com.excelsisnet.sonar.plugin.licenses;
 
 import com.excelsisnet.sonar.plugin.licenses.xml.Dependency;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Fail.fail;
 
 public class ReportReaderTest {
+  private final String xml = "" +
+      "<dependencies>" +
+      "        <dependency>" +
+      "                <licenses>" +
+      "                        <license>Unknown license</license>" +
+      "                </licenses>" +
+      "                <groupId>antlr</groupId>" +
+      "                <artifactId>antlr</artifactId>" +
+      "                <version>2.7.6</version>" +
+      "                <url>http://www.antlr.org/</url>" +
+      "                <name>AntLR</name>" +
+      "        </dependency>" +
+      "        <dependency>" +
+      "                <licenses>" +
+      "                        <license>Public Domain</license>" +
+      "                </licenses>" +
+      "                <groupId>aopalliance</groupId>" +
+      "                <artifactId>aopalliance</artifactId>" +
+      "                <version>1.0</version>" +
+      "                <url>http://aopalliance.sourceforge.net</url>" +
+      "                <name>AOP alliance</name>" +
+      "        </dependency>" +
+      "</dependencies>";
+
   @Test
   public void testRead() {
-    String xml = "" +
-        "<dependencies>" +
-        "        <dependency>" +
-        "                <licenses>" +
-        "                        <license>Unknown license</license>" +
-        "                </licenses>" +
-        "                <groupId>antlr</groupId>" +
-        "                <artifactId>antlr</artifactId>" +
-        "                <version>2.7.6</version>" +
-        "                <url>http://www.antlr.org/</url>" +
-        "                <name>AntLR</name>" +
-        "        </dependency>" +
-        "        <dependency>" +
-        "                <licenses>" +
-        "                        <license>Public Domain</license>" +
-        "                </licenses>" +
-        "                <groupId>aopalliance</groupId>" +
-        "                <artifactId>aopalliance</artifactId>" +
-        "                <version>1.0</version>" +
-        "                <url>http://aopalliance.sourceforge.net</url>" +
-        "                <name>AOP alliance</name>" +
-        "        </dependency>" +
-        "</dependencies>";
 
     List<Dependency> dependencies = new ReportReader().read(xml);
 
@@ -79,5 +85,27 @@ public class ReportReaderTest {
     ReportReader resultsReader = new ReportReader();
     String xml = resultsReader.write(dependencies);
     resultsReader.read(xml);
+  }
+
+  @Test
+  public void testFindFile() throws IOException {
+    File tempdir = new File(File.createTempFile("adasd", "asdad").getCanonicalPath() + ".d");
+    if (tempdir.mkdir()) {
+      tempdir.deleteOnExit();
+
+      int limit = new Random().nextInt(100) + 100;
+      for (int i = 0; i < limit; i++) {
+        new File(tempdir, "" + i).createNewFile();
+      }
+
+      int piece = new Random().nextInt(limit);
+      final File pieceFile = new File(tempdir, "" + piece);
+      FileUtils.write(pieceFile, xml);
+
+      List<Dependency> listOfDependenciesFromReport = new ReportReader().getListOfDependenciesFromReport(tempdir, pieceFile.getName());
+      assertThat(listOfDependenciesFromReport).hasSize(2);
+    } else {
+      fail("could not create tempdir");
+    }
   }
 }
