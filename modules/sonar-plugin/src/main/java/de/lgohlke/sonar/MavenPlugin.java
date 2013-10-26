@@ -20,13 +20,13 @@
 package de.lgohlke.sonar;
 
 import de.lgohlke.sonar.maven.lint.LintSensor;
-import de.lgohlke.sonar.maven.enforcer.EnforceSensor;
 import de.lgohlke.sonar.maven.versions.DisplayDependencyUpdatesSensor;
 import de.lgohlke.sonar.maven.versions.DisplayPluginUpdatesSensor;
 import de.lgohlke.sonar.maven.versions.UpdateParentPomSensor;
 import org.sonar.api.*;
 import org.sonar.plugins.xml.language.Xml;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,26 +48,16 @@ import java.util.List;
 public class MavenPlugin extends SonarPlugin {
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
   public List<Class<? extends Extension>> getExtensions() {
-    return Arrays.asList(
-        DisplayPluginUpdatesSensor.class,
-        DisplayDependencyUpdatesSensor.class,
-        UpdateParentPomSensor.class,
+    List<Class<? extends Extension>> extensions = new ArrayList<Class<? extends Extension>>();
 
-        EnforceSensor.class,
+    extensions.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.EXTENSIONS);
+    extensions.addAll(de.lgohlke.sonar.maven.lint.Configuration.EXTENSIONS);
+    extensions.addAll(de.lgohlke.sonar.maven.versions.Configuration.EXTENSIONS);
 
-        LintSensor.class,
-        RulesRepository.class,
-
-        // xml language from xml-plugin
-        Xml.class,
-
-        // source importer
-        PomSourceImporter.class
-
-        // code colorizer
-        // XmlCodeColorizerFormat.class
-    );
+    extensions.add(RulesRepository.class);
+    extensions.add(PomSourceImporter.class);
+    extensions.add(Xml.class);
+    return extensions;
   }
 }

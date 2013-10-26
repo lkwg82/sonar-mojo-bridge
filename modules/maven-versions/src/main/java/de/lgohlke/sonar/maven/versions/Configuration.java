@@ -19,29 +19,33 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
-import de.lgohlke.sonar.maven.versions.rules.IncompatibleMavenVersion;
-import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
-import de.lgohlke.sonar.maven.versions.rules.NoMinimumMavenVersion;
-import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
-import de.lgohlke.sonar.maven.versions.rules.PluginVersion;
+import de.lgohlke.sonar.maven.versions.rules.*;
+import org.sonar.api.Extension;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public interface Configuration {
-    String BASE_IDENTIFIER = "org.codehaus.mojo:versions-maven-plugin:1.3.1:";
-    String REGEX_DESCRIPTION = "<i>examples:</i><br/>" +
-            "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
-            "wildcard <tt>org.apache..*?:spring:.*</tt><br/>" +
-            "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>";
+  String BASE_IDENTIFIER = "org.codehaus.mojo:versions-maven-plugin:1.3.1:";
+  String REGEX_DESCRIPTION = "<i>examples:</i><br/>" +
+      "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
+      "wildcard <tt>org.apache..*?:spring:.*</tt><br/>" +
+      "except RC's pattern <tt>[^:].*?:[^:].*?:[^:].*RC.*</tt><br/>";
 
-    String MULTILINE_CONFIGURATION = "<p>(regex are separated by a newline and will be concatentated with logical OR, e.g. <br/>" +
-            "<pre>org.apache.*\norg.codehaus.*</pre>" +
-            " will be combined as ((org.apache.*)|(org.codehaus.*)) </p>";
+  String MULTILINE_CONFIGURATION = "<p>(regex are separated by a newline and will be concatentated with logical OR, e.g. <br/>" +
+      "<pre>org.apache.*\norg.codehaus.*</pre>" +
+      " will be combined as ((org.apache.*)|(org.codehaus.*)) </p>";
 
-    List<Class> MAVEN_VERSION_RULES = Arrays.asList(
-            (Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
-            IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class
-    );
+  List<Class> RULES = Arrays.asList(
+      (Class) DependencyVersion.class, PluginVersion.class, MissingPluginVersion.class,
+      IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class
+  );
+
+  Set<Class<? extends Extension>> EXTENSIONS = new HashSet<Class<? extends Extension>>() {{
+    add(DisplayPluginUpdatesSensor.class);
+    add(DisplayDependencyUpdatesSensor.class);
+    add(UpdateParentPomSensor.class);
+  }};
 }

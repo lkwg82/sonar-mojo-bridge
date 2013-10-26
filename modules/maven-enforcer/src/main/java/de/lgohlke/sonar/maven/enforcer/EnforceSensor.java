@@ -65,7 +65,7 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
   }
 
   private void initEnforcerRule(final MavenProject mavenProject, final Class<? extends MavenRule> ruleClass) {
-    Class<? extends EnforcerRule> aClass = Configuration.RULE_IMPLEMENTATION_REPOSITORY.get(ruleClass);
+    Class<? extends EnforcerRule> aClass = Configuration.RULE_ADAPTER_MAP.get(ruleClass);
     EnforcerRule enforcerRule = constructor().in(aClass).newInstance();
 
     getMojoMapper().getResultTransferHandler().getRules().add(enforcerRule);

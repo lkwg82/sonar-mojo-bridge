@@ -26,13 +26,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class RulesRepositoryTest {
 
-    @Test
-    public void shouldHaveCompleteRuleSet() throws Exception {
-        AnnotationRuleParser ruleParser = new AnnotationRuleParser();
-        RulesRepository rulesRepository = new RulesRepository(ruleParser);
+  @Test
+  public void shouldHaveCompleteRuleSet() throws Exception {
+    AnnotationRuleParser ruleParser = new AnnotationRuleParser();
+    RulesRepository rulesRepository = new RulesRepository(ruleParser);
 
-        int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_IMPLEMENTATION_REPOSITORY.keySet().size();
-        int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULE_IMPLEMENTATION_REPOSITORY.size();
-        assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
-    }
+    int enforcerRuleCount = de.lgohlke.sonar.maven.enforcer.Configuration.RULE_ADAPTER_MAP.keySet().size();
+    int lintRuleCount = de.lgohlke.sonar.maven.lint.Configuration.RULES.size();
+    assertThat(rulesRepository.createRules()).hasSize(6 + enforcerRuleCount + lintRuleCount);
+  }
 }

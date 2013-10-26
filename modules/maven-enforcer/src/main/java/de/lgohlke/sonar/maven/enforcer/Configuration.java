@@ -22,17 +22,25 @@ package de.lgohlke.sonar.maven.enforcer;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceAdapter;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceRule;
-import java.util.HashMap;
-import java.util.Map;
+import org.sonar.api.Extension;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public interface Configuration {
   String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.2:";
 
-  Map<Class<? extends MavenRule>, Class<? extends EnforcerRule>> RULE_IMPLEMENTATION_REPOSITORY =
-    new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
-      {
-        put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
-      }
-    };
+  Map<Class<? extends MavenRule>, Class<? extends EnforcerRule>> RULE_ADAPTER_MAP =
+      new HashMap<Class<? extends MavenRule>, Class<? extends EnforcerRule>>() {
+        {
+          put(DependencyConvergenceRule.class, DependencyConvergenceAdapter.class);
+        }
+      };
+
+  Set<Class<? extends MavenRule>> RULES = RULE_ADAPTER_MAP.keySet();
+  Set<Class<? extends Extension>> EXTENSIONS = new HashSet<Class<? extends Extension>>() {{
+    add(EnforceSensor.class);
+  }};
 }
