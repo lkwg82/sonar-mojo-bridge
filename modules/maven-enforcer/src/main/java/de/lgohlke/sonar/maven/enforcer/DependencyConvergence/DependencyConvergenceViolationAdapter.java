@@ -22,24 +22,22 @@ package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import de.lgohlke.sonar.maven.RuleUtils;
+import de.lgohlke.sonar.maven.enforcer.Violation;
 import de.lgohlke.sonar.maven.enforcer.ViolationAdapter;
 import lombok.Setter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.sonar.api.resources.File;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
-import org.sonar.plugins.xml.language.Xml;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * User: lgohlke
  */
-public class DependencyConvergenceViolationAdapter extends ViolationAdapter<DependencyConvergenceRule> {
+public class DependencyConvergenceViolationAdapter extends ViolationAdapter {
   @Setter
   private List<List<DependencyNode>> errors;
 
@@ -51,14 +49,12 @@ public class DependencyConvergenceViolationAdapter extends ViolationAdapter<Depe
   public List<Violation> getViolations() {
     List<Violation> violations = new ArrayList<Violation>();
 
-    File file = new File("", getMavenProject().getFile().getName());
-    file.setLanguage(Xml.INSTANCE);
-
     Rule rule = RuleUtils.createRuleFrom(DependencyConvergenceRule.class);
 
     for (List<DependencyNode> error : errors) {
-      Violation violation = Violation.create(rule, file);
-      violation.setLineId(1);
+      Violation violation = new Violation();
+      violation.setRule(rule);
+      violation.setLine(1);
       violation.setMessage(createMessage(error));
       violations.add(violation);
     }

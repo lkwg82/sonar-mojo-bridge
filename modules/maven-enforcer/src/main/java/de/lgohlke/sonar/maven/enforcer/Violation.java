@@ -19,18 +19,12 @@
  */
 package de.lgohlke.sonar.maven.enforcer;
 
-import de.lgohlke.sonar.maven.MavenRule;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.maven.project.MavenProject;
+import lombok.Data;
+import org.sonar.api.rules.Rule;
 
-import java.util.List;
-
-@RequiredArgsConstructor
-public abstract class ViolationAdapter {
-  @Getter(AccessLevel.PROTECTED)
-  private final MavenProject mavenProject;
-
-  public abstract List<Violation> getViolations();
+@Data
+public class Violation {
+  private int line;
+  private String message;
+  private Rule rule;
 }

@@ -19,9 +19,6 @@
  */
 package de.lgohlke.sonar.maven.enforcer;
 
-/**
- * User: lgohlke
- */
 public interface HasViolationAdapter<T extends ViolationAdapter> {
   void setViolationAdapter(T adapter);
 

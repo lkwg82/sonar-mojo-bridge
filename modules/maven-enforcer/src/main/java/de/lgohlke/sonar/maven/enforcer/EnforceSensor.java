@@ -29,7 +29,6 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
@@ -80,18 +79,17 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
 
   @Override
   public boolean shouldExecuteOnProject(final Project project) {
-    boolean rulesNotEmpty = getMojoMapper().getResultTransferHandler().getRules().size() != 0;
-    return rulesNotEmpty && super.shouldExecuteOnProject(project);
+    boolean rulesEmpty = getMojoMapper().getResultTransferHandler().getRules().isEmpty();
+    return !rulesEmpty && super.shouldExecuteOnProject(project);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void analyse(Project project, SensorContext context) {
     List<EnforcerRule> rules = getMojoMapper().getResultTransferHandler().getRules();
     for (EnforcerRule rule : rules) {
       ViolationAdapter violationAdapter = rule.getViolationAdapter();
-      for (Violation violation : (List<Violation>) violationAdapter.getViolations()) {
-        context.saveViolation(violation);
+      for (Violation violation : violationAdapter.getViolations()) {
+        addIssue(violation.getMessage(), violation.getLine(), violation.getRule());
       }
     }
   }
