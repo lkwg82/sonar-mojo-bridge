@@ -64,6 +64,7 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void initEnforcerRule(final MavenProject mavenProject, final Class<? extends MavenRule> ruleClass) {
     Class<? extends EnforcerRule> aClass = Configuration.RULE_ADAPTER_MAP.get(ruleClass);
     EnforcerRule enforcerRule = constructor().in(aClass).newInstance();
@@ -83,6 +84,7 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
     return rulesNotEmpty && super.shouldExecuteOnProject(project);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void analyse(Project project, SensorContext context) {
     List<EnforcerRule> rules = getMojoMapper().getResultTransferHandler().getRules();

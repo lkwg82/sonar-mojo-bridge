@@ -96,6 +96,7 @@ public class UpdateParentPomSensorTest {
   }
 
   private void initBridgeMojoMapper(UpdateParentPomSensor sensor, ArtifactVersion newerVersion, String currentVersion) {
+    @SuppressWarnings("unchecked")
     BridgeMojoMapper<UpdateParentPomSensor.ResultHandler> mojoMapper = mock(BridgeMojoMapper.class);
     sensor.setMojoMapper(mojoMapper);
 
