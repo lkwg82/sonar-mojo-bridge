@@ -29,6 +29,7 @@ import de.lgohlke.sonar.maven.versions.UpdateParentPomSensor;
 import org.sonar.api.*;
 import org.sonar.plugins.xml.language.Xml;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,31 +52,16 @@ public class MavenPlugin extends SonarPlugin {
 
   @Override
   public List<Class<? extends Extension>> getExtensions() {
-    List<Class<? extends Extension>> extensions = Lists.newArrayList();
+    List<Class<? extends Extension>> extensions = new ArrayList<Class<? extends Extension>>();
 
-    List<Class<? extends Extension>> old = Arrays.asList(
-        DisplayPluginUpdatesSensor.class,
-        DisplayDependencyUpdatesSensor.class,
-        UpdateParentPomSensor.class,
-
-        EnforceSensor.class,
-
-        LintSensor.class,
-        RulesRepository.class,
-
-        // xml language from xml-plugin
-        Xml.class,
-
-        // source importer
-        PomSourceImporter.class
-
-        // code colorizer
-        // XmlCodeColorizerFormat.class
-    );
-
-    extensions.addAll(old);
+    extensions.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.EXTENSIONS);
+    extensions.addAll(de.lgohlke.sonar.maven.lint.Configuration.EXTENSIONS);
+    extensions.addAll(de.lgohlke.sonar.maven.versions.Configuration.EXTENSIONS);
     extensions.addAll(LicenseExtensions.getExtensions());
-
+    
+    extensions.add(RulesRepository.class);
+    extensions.add(PomSourceImporter.class);
+    extensions.add(Xml.class);
     return extensions;
   }
 }

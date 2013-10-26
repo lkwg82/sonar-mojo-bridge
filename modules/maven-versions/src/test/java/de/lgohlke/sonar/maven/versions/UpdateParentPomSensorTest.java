@@ -28,6 +28,7 @@ import org.apache.maven.project.MavenProject;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
@@ -92,10 +93,12 @@ public class UpdateParentPomSensorTest {
     ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
     when(resourcePerspectives.as(eq(Issuable.class), any(org.sonar.api.resources.File.class))).thenReturn(issuable);
 
-    return spy(new UpdateParentPomSensor(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives));
+    Settings settings = mock(Settings.class);
+    return spy(new UpdateParentPomSensor(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings));
   }
 
   private void initBridgeMojoMapper(UpdateParentPomSensor sensor, ArtifactVersion newerVersion, String currentVersion) {
+    @SuppressWarnings("unchecked")
     BridgeMojoMapper<UpdateParentPomSensor.ResultHandler> mojoMapper = mock(BridgeMojoMapper.class);
     sensor.setMojoMapper(mojoMapper);
 

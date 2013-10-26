@@ -25,11 +25,11 @@ import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
 import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
 import java.util.List;
@@ -46,8 +46,8 @@ import static org.fest.reflect.core.Reflection.constructor;
 public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
   private final EnforceMavenPluginHandler mavenPluginHandler;
 
-  public EnforceSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, Project project, ResourcePerspectives resourcePerspectives) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+  public EnforceSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, Project project, ResourcePerspectives resourcePerspectives, Settings settings) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
     this.mavenPluginHandler = new EnforceMavenPluginHandler(super.getMavenPluginHandler(project));
 
     configureMavenPluginHandler(rulesProfile, mavenProject);
@@ -64,8 +64,9 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void initEnforcerRule(final MavenProject mavenProject, final Class<? extends MavenRule> ruleClass) {
-    Class<? extends EnforcerRule> aClass = Configuration.RULE_IMPLEMENTATION_REPOSITORY.get(ruleClass);
+    Class<? extends EnforcerRule> aClass = Configuration.RULE_ADAPTER_MAP.get(ruleClass);
     EnforcerRule enforcerRule = constructor().in(aClass).newInstance();
 
     getMojoMapper().getResultTransferHandler().getRules().add(enforcerRule);
@@ -79,8 +80,8 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
 
   @Override
   public boolean shouldExecuteOnProject(final Project project) {
-    boolean rulesNotEmpty = getMojoMapper().getResultTransferHandler().getRules().size() != 0;
-    return rulesNotEmpty && super.shouldExecuteOnProject(project);
+    boolean rulesEmpty = getMojoMapper().getResultTransferHandler().getRules().isEmpty();
+    return !rulesEmpty && super.shouldExecuteOnProject(project);
   }
 
   @Override
@@ -88,8 +89,8 @@ public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
     List<EnforcerRule> rules = getMojoMapper().getResultTransferHandler().getRules();
     for (EnforcerRule rule : rules) {
       ViolationAdapter violationAdapter = rule.getViolationAdapter();
-      for (Violation violation : (List<Violation>) violationAdapter.getViolations()) {
-        context.saveViolation(violation);
+      for (Violation violation : violationAdapter.getViolations()) {
+        addIssue(violation.getMessage(), violation.getLine(), violation.getRule());
       }
     }
   }

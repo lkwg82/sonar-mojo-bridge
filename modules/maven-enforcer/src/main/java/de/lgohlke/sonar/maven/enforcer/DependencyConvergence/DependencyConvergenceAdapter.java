@@ -40,9 +40,7 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-/**
- * User: lars
- */
+@SuppressWarnings("deprecated")
 public class DependencyConvergenceAdapter extends DependencyConvergence implements EnforcerRule<DependencyConvergenceViolationAdapter> {
   @Setter
   private boolean uniqueVersions;

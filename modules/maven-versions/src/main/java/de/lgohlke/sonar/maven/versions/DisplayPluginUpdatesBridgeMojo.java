@@ -58,7 +58,7 @@ import static org.fest.reflect.core.Reflection.field;
 import static org.fest.reflect.core.Reflection.method;
 
 @Goal("display-plugin-updates")
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "unchecked"})
 public class DisplayPluginUpdatesBridgeMojo extends DisplayPluginUpdatesMojo implements BridgeMojo<DisplayPluginUpdatesSensor.ResultTransferHandler> {
   @Data
   @RequiredArgsConstructor

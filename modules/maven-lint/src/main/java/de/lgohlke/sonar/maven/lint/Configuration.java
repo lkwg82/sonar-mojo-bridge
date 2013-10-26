@@ -21,14 +21,17 @@ package de.lgohlke.sonar.maven.lint;
 
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.lint.rules.*;
+import org.sonar.api.Extension;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public interface Configuration {
   String BASE_IDENTIFIER = "com.lewisd:lint-maven-plugin:0.0.8:check";
 
-  List<Class<? extends MavenRule>> RULE_IMPLEMENTATION_REPOSITORY = new ArrayList<Class<? extends MavenRule>>() {
+  List<Class<? extends MavenRule>> RULES = new ArrayList<Class<? extends MavenRule>>() {
     {
       add(LintDuplicateDependenciesRule.class);
       add(LintExecutionIdRule.class);
@@ -43,4 +46,8 @@ public interface Configuration {
       add(LintVersionPropertiesMustUseProjectVersionRule.class);
     }
   };
+
+  Set<Class<? extends Extension>> EXTENSIONS = new HashSet<Class<? extends Extension>>() {{
+    add(LintSensor.class);
+  }};
 }

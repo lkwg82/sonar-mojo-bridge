@@ -32,55 +32,54 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.mojo.versions.UpdateParentMojo;
 import org.codehaus.mojo.versions.rewriting.ModifiedPomXMLEventReader;
 
-
 @Goal("update-parent")
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "unchecked"})
 public class UpdateParentBridgeMojo extends UpdateParentMojo implements BridgeMojo<UpdateParentPomSensor.ResultHandler> {
-    @Setter
-    private UpdateParentPomSensor.ResultHandler resultHandler;
+  @Setter
+  private UpdateParentPomSensor.ResultHandler resultHandler;
 
-    @Override
-    protected void update(ModifiedPomXMLEventReader pom) throws MojoExecutionException, MojoFailureException {
-        if (hasParentPom() && !isPartOfReactorProject()) {
-            String currentVersion = getProject().getParent().getVersion();
-            String version = currentVersion;
+  @Override
+  protected void update(ModifiedPomXMLEventReader pom) throws MojoExecutionException, MojoFailureException {
+    if (hasParentPom() && !isPartOfReactorProject()) {
+      String currentVersion = getProject().getParent().getVersion();
+      String version = currentVersion;
 
-            if (parentVersion != null) {
-                version = parentVersion;
-            }
+      if (parentVersion != null) {
+        version = parentVersion;
+      }
 
-            VersionRange versionRange;
-            try {
-                versionRange = VersionRange.createFromVersionSpec(version);
-            } catch (InvalidVersionSpecificationException e) {
-                throw new MojoExecutionException("Invalid version range specification: " + version, e);
-            }
+      VersionRange versionRange;
+      try {
+        versionRange = VersionRange.createFromVersionSpec(version);
+      } catch (InvalidVersionSpecificationException e) {
+        throw new MojoExecutionException("Invalid version range specification: " + version, e);
+      }
 
-            Artifact artifact = artifactFactory.createDependencyArtifact(getProject().getParent().getGroupId(),
-                    getProject().getParent().getArtifactId(),
-                    versionRange, "pom", null, null);
+      Artifact artifact = artifactFactory.createDependencyArtifact(getProject().getParent().getGroupId(),
+          getProject().getParent().getArtifactId(),
+          versionRange, "pom", null, null);
 
-            ArtifactVersion artifactVersion;
-            try {
-                artifactVersion = findLatestVersion(artifact, versionRange, null, false);
-            } catch (ArtifactMetadataRetrievalException e) {
-                throw new MojoExecutionException(e.getMessage(), e);
-            }
+      ArtifactVersion artifactVersion;
+      try {
+        artifactVersion = findLatestVersion(artifact, versionRange, null, false);
+      } catch (ArtifactMetadataRetrievalException e) {
+        throw new MojoExecutionException(e.getMessage(), e);
+      }
 
-            if (!shouldApplyUpdate(artifact, currentVersion, artifactVersion)) {
-                return;
-            }
+      if (!shouldApplyUpdate(artifact, currentVersion, artifactVersion)) {
+        return;
+      }
 
-            resultHandler.setCurrentVersion(currentVersion);
-            resultHandler.setNewerVersion(artifactVersion);
-        }
+      resultHandler.setCurrentVersion(currentVersion);
+      resultHandler.setNewerVersion(artifactVersion);
     }
+  }
 
-    private boolean isPartOfReactorProject() {
-        return reactorProjects.contains(getProject().getParent());
-    }
+  private boolean isPartOfReactorProject() {
+    return reactorProjects.contains(getProject().getParent());
+  }
 
-    private boolean hasParentPom() {
-        return getProject().getParent() != null;
-    }
+  private boolean hasParentPom() {
+    return getProject().getParent() != null;
+  }
 }

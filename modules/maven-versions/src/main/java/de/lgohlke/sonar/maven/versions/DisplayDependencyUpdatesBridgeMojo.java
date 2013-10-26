@@ -40,83 +40,82 @@ import java.util.Map.Entry;
 
 import static org.fest.reflect.core.Reflection.staticMethod;
 
-
 @Goal("display-dependency-updates")
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "unchecked"})
 public class DisplayDependencyUpdatesBridgeMojo extends DisplayDependencyUpdatesMojo
-        implements BridgeMojo<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
-    public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
-    public static final String DEPENDENCIES = "Dependencies";
-    private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
+    implements BridgeMojo<DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler> {
+  public static final String DEPENDENCY_MANAGEMENT = "Dependency Management";
+  public static final String DEPENDENCIES = "Dependencies";
+  private final Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
 
-    private Boolean processDependencyManagement;
-    private Boolean processDependencies;
-    @Setter
-    private DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler resultHandler;
+  private Boolean processDependencyManagement;
+  private Boolean processDependencies;
+  @Setter
+  private DisplayDependencyUpdatesSensor.DisplayDependencyUpdatesResultHandler resultHandler;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Set<Dependency> dependencyManagement = new TreeSet<Dependency>(new DependencyComparator());
-        if (getProject().getDependencyManagement() != null) {
-            dependencyManagement.addAll(getProject().getDependencyManagement().getDependencies());
-        }
-
-        Set<Dependency> dependencies = new TreeSet<Dependency>(new DependencyComparator());
-        dependencies.addAll(getProject().getDependencies());
-        if (!Boolean.FALSE.equals(processDependencyManagement)) {
-            dependencies = removeDependencyManagment(dependencies, dependencyManagement);
-        }
-
-        try {
-            if (!Boolean.FALSE.equals(processDependencyManagement)) {
-                logUpdates(getHelper().lookupDependenciesUpdates(dependencyManagement, false), DEPENDENCY_MANAGEMENT);
-            }
-            if (!Boolean.FALSE.equals(processDependencies)) {
-                logUpdates(getHelper().lookupDependenciesUpdates(dependencies, false), DEPENDENCIES);
-            }
-        } catch (InvalidVersionSpecificationException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        } catch (ArtifactMetadataRetrievalException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        }
-
-        resultHandler.setUpdateMap(updateMap);
+  @Override
+  @SuppressWarnings("unchecked")
+  public void execute() throws MojoExecutionException, MojoFailureException {
+    Set<Dependency> dependencyManagement = new TreeSet<Dependency>(new DependencyComparator());
+    if (getProject().getDependencyManagement() != null) {
+      dependencyManagement.addAll(getProject().getDependencyManagement().getDependencies());
     }
 
-    /**
-     * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment(java.util.Set, java.util.Set)}
-     */
-    private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
-        final Object[] args = new Object[]{dependencies, dependencyManagement};
-        final Class<?>[] parameterTypes = new Class<?>[]{Set.class, Set.class};
-        return staticMethod("removeDependencyManagment").withReturnType(new TypeRef<Set<Dependency>>() {
-        }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
+    Set<Dependency> dependencies = new TreeSet<Dependency>(new DependencyComparator());
+    dependencies.addAll(getProject().getDependencies());
+    if (!Boolean.FALSE.equals(processDependencyManagement)) {
+      dependencies = removeDependencyManagment(dependencies, dependencyManagement);
     }
 
-    private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section) {
-        List<ArtifactUpdate> artiFactUpdates = new ArrayList<ArtifactUpdate>(updates.size());
+    try {
+      if (!Boolean.FALSE.equals(processDependencyManagement)) {
+        logUpdates(getHelper().lookupDependenciesUpdates(dependencyManagement, false), DEPENDENCY_MANAGEMENT);
+      }
+      if (!Boolean.FALSE.equals(processDependencies)) {
+        logUpdates(getHelper().lookupDependenciesUpdates(dependencies, false), DEPENDENCIES);
+      }
+    } catch (InvalidVersionSpecificationException e) {
+      throw new MojoExecutionException(e.getMessage(), e);
+    } catch (ArtifactMetadataRetrievalException e) {
+      throw new MojoExecutionException(e.getMessage(), e);
+    }
 
-        for (Entry<Dependency, ArtifactVersions> entry : updates.entrySet()) {
-            ArtifactVersions versions = entry.getValue();
-            ArtifactVersion latest = null;
-            if (versions.isCurrentVersionDefined()) {
-                latest = versions.getNewestUpdate(UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
-            } else {
-                ArtifactVersion newestVersion = versions.getNewestVersion(versions.getArtifact().getVersionRange(), Boolean.TRUE.equals(allowSnapshots));
-                if (newestVersion != null) {
-                    latest = versions.getNewestUpdate(newestVersion, UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
-                    if (ArtifactVersions.isVersionInRange(latest, versions.getArtifact().getVersionRange())) {
-                        latest = null;
-                    }
-                }
-            }
+    resultHandler.setUpdateMap(updateMap);
+  }
 
-            if (latest != null) {
-                ArtifactUpdate update = new ArtifactUpdate(entry.getKey(), latest);
-                artiFactUpdates.add(update);
-            }
+  /**
+   * calling private static methods from super class {@link DisplayDependencyUpdatesMojo#removeDependencyManagment(java.util.Set, java.util.Set)}
+   */
+  private Set<Dependency> removeDependencyManagment(final Set<Dependency> dependencies, final Set<Dependency> dependencyManagement) {
+    final Object[] args = new Object[]{dependencies, dependencyManagement};
+    final Class<?>[] parameterTypes = new Class<?>[]{Set.class, Set.class};
+    return staticMethod("removeDependencyManagment").withReturnType(new TypeRef<Set<Dependency>>() {
+    }).withParameterTypes(parameterTypes).in(DisplayDependencyUpdatesMojo.class).invoke(args);
+  }
+
+  private void logUpdates(final Map<Dependency, ArtifactVersions> updates, final String section) {
+    List<ArtifactUpdate> artiFactUpdates = new ArrayList<ArtifactUpdate>(updates.size());
+
+    for (Entry<Dependency, ArtifactVersions> entry : updates.entrySet()) {
+      ArtifactVersions versions = entry.getValue();
+      ArtifactVersion latest = null;
+      if (versions.isCurrentVersionDefined()) {
+        latest = versions.getNewestUpdate(UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
+      } else {
+        ArtifactVersion newestVersion = versions.getNewestVersion(versions.getArtifact().getVersionRange(), Boolean.TRUE.equals(allowSnapshots));
+        if (newestVersion != null) {
+          latest = versions.getNewestUpdate(newestVersion, UpdateScope.ANY, Boolean.TRUE.equals(allowSnapshots));
+          if (ArtifactVersions.isVersionInRange(latest, versions.getArtifact().getVersionRange())) {
+            latest = null;
+          }
         }
-        updateMap.put(section, artiFactUpdates);
+      }
+
+      if (latest != null) {
+        ArtifactUpdate update = new ArtifactUpdate(entry.getKey(), latest);
+        artiFactUpdates.add(update);
+      }
     }
+    updateMap.put(section, artiFactUpdates);
+  }
 }

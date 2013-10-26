@@ -9,18 +9,12 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-mojo-bridge-maven-lint-integration</artifactId>
+  <artifactId>sonar-mojo-bridge-integration</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
   <dependencies>
-    <!-- internal dependencies //-->
-    <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-mojo-bridge-maven-versions</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-mojo-bridge-testing</artifactId>
@@ -31,10 +25,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.sonar</groupId>
         <artifactId>sonar-dev-maven-plugin</artifactId>
@@ -67,6 +57,10 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

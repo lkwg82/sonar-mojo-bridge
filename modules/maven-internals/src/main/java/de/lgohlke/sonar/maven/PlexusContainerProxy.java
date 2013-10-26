@@ -68,6 +68,7 @@ public class PlexusContainerProxy<T extends PlexusContainer> extends DynamicProx
     return result;
   }
 
+  @SuppressWarnings("unchecked")
   private void checkMojoInstance(Object result) throws BridgeMojoMapperException {
     for (MojoInjection injection : injections) {
       if (injection.getBridgeMojoClass().isAssignableFrom(result.getClass())) {

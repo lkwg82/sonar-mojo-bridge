@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint-integration
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,26 +17,14 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.lint;
+package de.lgohlke.sonar.maven.enforcer;
 
-import de.lgohlke.sonar.maven.MavenITAbstract;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import lombok.Data;
+import org.sonar.api.rules.Rule;
 
-import java.io.File;
-
-public class LintSensorIT extends MavenITAbstract {
-  @BeforeTest(alwaysRun = true)
-  public void beforeEachTest() {
-    initAPI();
-  }
-
-  @Test
-  public void shouldBeOk() throws Exception {
-    skipTestIfNotMaven3();
-
-    final File pomXml = new File("pom.xml");
-
-    executor.usePom(pomXml).execute();
-  }
+@Data
+public class Violation {
+  private int line;
+  private String message;
+  private Rule rule;
 }

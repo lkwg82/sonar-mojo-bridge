@@ -19,8 +19,5 @@
  */
 package de.lgohlke.sonar.maven.enforcer;
 
-/**
- * User: lgohlke
- */
 public interface EnforcerRule<T extends ViolationAdapter> extends ConfiguringEnforceMavenPluginHandler, HasViolationAdapter<T> {
 }

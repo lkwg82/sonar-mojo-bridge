@@ -24,15 +24,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.project.MavenProject;
-import org.sonar.api.rules.Violation;
+
 import java.util.List;
 
-
-/**
- * User: lgohlke
- */
 @RequiredArgsConstructor
-public abstract class ViolationAdapter<T extends MavenRule> {
+public abstract class ViolationAdapter {
   @Getter(AccessLevel.PROTECTED)
   private final MavenProject mavenProject;
 
