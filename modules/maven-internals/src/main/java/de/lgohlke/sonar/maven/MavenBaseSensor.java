@@ -65,6 +65,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   @Getter(AccessLevel.PROTECTED)
   private final ResourcePerspectives resourcePerspectives;
 
+  @SuppressWarnings("unchecked")
   public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject, ResourcePerspectives resourcePerspectives) {
     this.rulesProfile = rulesProfile;
     this.mavenPluginExecutor = mavenPluginExecutor;

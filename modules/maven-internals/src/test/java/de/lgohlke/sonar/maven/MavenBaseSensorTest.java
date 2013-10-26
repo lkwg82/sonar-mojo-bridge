@@ -102,6 +102,7 @@ public class MavenBaseSensorTest {
       return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public BridgeMojoMapper getMojoMapper() {
       return null;

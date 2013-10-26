@@ -34,10 +34,11 @@ public class MojoInjection {
     return bridgeMojoMapper.getGoal();
   }
 
-  public Class<Object> getBridgeMojoClass() {
+  public Class getBridgeMojoClass() {
     return bridgeMojoMapper.getBridgeMojoClass();
   }
 
+  @SuppressWarnings("unchecked")
   public void setTransferHandler(BridgeMojo<?> result) throws BridgeMojoMapperException {
     bridgeMojoMapper.injectResultTransferHandler(result);
   }
