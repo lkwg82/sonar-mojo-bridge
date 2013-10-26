@@ -90,7 +90,6 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
   static final String WHITELIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".whitelist";
   static final String BLACKLIST_KEY = DisplayPluginUpdatesSensor.SENSOR_KEY + ".blacklist";
 
-  private final Settings settings;
   private final PomSourceImporter pomSourceImporter;
 
   @Getter
@@ -108,8 +107,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
                                     Settings settings,
                                     PomSourceImporter pomSourceImporter,
                                     ResourcePerspectives resourcePerspectives) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
-    this.settings = settings;
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
     this.pomSourceImporter = pomSourceImporter;
   }
 
@@ -151,7 +149,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensor<DisplayPluginUpd
 
     // updates
     Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
-    ArtifactFilter filter = createFilter(settings);
+    ArtifactFilter filter = createFilter(getSettings());
     for (ArtifactUpdate update : resultTransferHandler.getPluginUpdates()) {
       if (filter.acceptArtifact(update.toString())) {
         int line = PomUtils.getLine(sourceOfPom, update.getDependency(), PomUtils.TYPE.plugin);

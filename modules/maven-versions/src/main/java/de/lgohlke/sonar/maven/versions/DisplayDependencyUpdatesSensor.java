@@ -78,8 +78,6 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
   static final String WHITELIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".whitelist";
   static final String BLACKLIST_KEY = DisplayDependencyUpdatesSensor.SENSOR_KEY + ".blacklist";
 
-  private final Settings settings;
-
   @Getter
   @Setter
   public static class DisplayDependencyUpdatesResultHandler implements ResultTransferHandler {
@@ -92,8 +90,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
                                         Settings settings,
                                         ResourcePerspectives resourcePerspectives
   ) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
-    this.settings = settings;
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
   }
 
   @Override
@@ -101,7 +98,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensor<DisplayDepen
     DisplayDependencyUpdatesResultHandler resultTransferHandler = getMojoMapper().getResultTransferHandler();
 
     Rule rule = RuleUtils.createRuleFrom(DependencyVersion.class);
-    ArtifactFilter filter = createFilter(settings);
+    ArtifactFilter filter = createFilter(getSettings());
 
     for (Map.Entry<String, List<ArtifactUpdate>> entry : resultTransferHandler.getUpdateMap().entrySet()) {
       List<ArtifactUpdate> updates = entry.getValue();

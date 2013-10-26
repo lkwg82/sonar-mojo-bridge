@@ -34,6 +34,7 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
@@ -43,14 +44,13 @@ import org.sonar.plugins.maven.DefaultMavenPluginExecutor;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MavenBaseSensorTest {
-  private final MavenPluginExecutor mavenPluginExecutor = mock(MavenPluginExecutor.class);
-
   private final MavenProject mavenProject = mock(MavenProject.class);
 
   private final RulesProfile profile = mock(RulesProfile.class);
@@ -84,8 +84,8 @@ public class MavenBaseSensorTest {
     public static class MyResultTransferHandler implements ResultTransferHandler {
     }
 
-    public MyMavenVersionSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject, ResourcePerspectives resourcePerspectives) {
-      super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+    public MyMavenVersionSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
+      super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
     }
 
     protected boolean checkIfAtLeastOneRuleIsEnabled() {
@@ -114,8 +114,8 @@ public class MavenBaseSensorTest {
       bridgeMojo = MyBridgeMojo.class, resultTransferHandler = MyMavenVersionSensor.MyResultTransferHandler.class, mavenBaseIdentifier = "a"
   )
   public static class MyBrokenMavenVersionSensor extends MyMavenVersionSensor {
-    public MyBrokenMavenVersionSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, ResourcePerspectives resourcePerspectives) {
-      super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+    public MyBrokenMavenVersionSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
+      super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
     }
   }
 
@@ -145,13 +145,13 @@ public class MavenBaseSensorTest {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void shouldFailOnWrongSensorconfiguration() {
     MavenPluginExecutor maven3PluginExecutor = new Maven3PluginExecutorMock();
-    mavenVersionSensor = new MyBrokenMavenVersionSensor(profile, maven3PluginExecutor, mavenProject, mock(ResourcePerspectives.class));
+    mavenVersionSensor = new MyBrokenMavenVersionSensor(profile, maven3PluginExecutor, mavenProject, mock(ResourcePerspectives.class), mock(Settings.class));
   }
 
   @Test
   public void shouldExecuteOnProjectWithMaven3() {
     MavenPluginExecutor maven3PluginExecutor = new Maven3PluginExecutorMock();
-    mavenVersionSensor = new MyMavenVersionSensor(profile, maven3PluginExecutor, mavenProject, mock(ResourcePerspectives.class));
+    mavenVersionSensor = new MyMavenVersionSensor(profile, maven3PluginExecutor, mavenProject, mock(ResourcePerspectives.class), mock(Settings.class));
     mavenVersionSensor.setRulesEnabled(true);
 
     assertThat(mavenVersionSensor.shouldExecuteOnProject(mock(Project.class))).isTrue();
@@ -160,19 +160,21 @@ public class MavenBaseSensorTest {
   @Test
   public void shouldExecuteOnProjectWithMaven3Disabled() {
     MavenPluginExecutor maven3PluginExecutor = new Maven3PluginExecutorMock();
-    mavenVersionSensor = new MyMavenVersionSensor(profile, maven3PluginExecutor, mavenProject, mock(ResourcePerspectives.class));
+    Settings settings = mock(Settings.class);
+    mavenVersionSensor = new MyMavenVersionSensor(profile, maven3PluginExecutor, mavenProject, mock(ResourcePerspectives.class), settings);
 
-    final Project projectMock = mock(Project.class);
-    when(projectMock.getProperty(Configuration.ANALYSIS_ENABLED)).thenReturn("false");
-    assertThat(mavenVersionSensor.shouldExecuteOnProject(projectMock)).isFalse();
+    when(settings.getProperties()).thenReturn(new HashMap<String, String>() {{
+      put(Configuration.ANALYSIS_ENABLED, "false");
+    }});
+    assertThat(mavenVersionSensor.shouldExecuteOnProject(mock(Project.class))).isFalse();
   }
 
   @Test
   public void shouldNotRunBecauseNoRuleActivated() {
     when(profile.getActiveRules()).thenReturn(new ArrayList<ActiveRule>());
-    mavenVersionSensor = new MyMavenVersionSensor(profile, new Maven3PluginExecutorMock(), mavenProject, mock(ResourcePerspectives.class));
+    mavenVersionSensor = new MyMavenVersionSensor(profile, new Maven3PluginExecutorMock(), mavenProject, mock(ResourcePerspectives.class), mock(Settings.class));
 
-    final Project projectMock = mock(Project.class);
+    Project projectMock = mock(Project.class);
     assertThat(mavenVersionSensor.shouldExecuteOnProject(projectMock)).isFalse();
   }
 }

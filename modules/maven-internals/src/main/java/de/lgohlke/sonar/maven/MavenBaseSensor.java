@@ -32,6 +32,7 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
@@ -64,13 +65,16 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   private BridgeMojoMapper<T> mojoMapper;
   @Getter(AccessLevel.PROTECTED)
   private final ResourcePerspectives resourcePerspectives;
+  @Getter(AccessLevel.PROTECTED)
+  private final Settings settings;
 
   @SuppressWarnings("unchecked")
-  public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject, ResourcePerspectives resourcePerspectives) {
+  public MavenBaseSensor(final RulesProfile rulesProfile, final MavenPluginExecutor mavenPluginExecutor, final MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
     this.rulesProfile = rulesProfile;
     this.mavenPluginExecutor = mavenPluginExecutor;
     this.mavenProject = mavenProject;
     this.resourcePerspectives = resourcePerspectives;
+    this.settings = settings;
 
     checkNotNull(getClass().getAnnotation(SensorConfiguration.class), "each sensor must have the annotation " + SensorConfiguration.class);
     checkNotNull(getClass().getAnnotation(Rules.class), "each sensor must have the annotation " + Rules.class);
@@ -96,7 +100,7 @@ public abstract class MavenBaseSensor<T extends ResultTransferHandler> implement
   }
 
   public boolean shouldExecuteOnProject(final Project project) {
-    String prop = (String) project.getProperty(Configuration.ANALYSIS_ENABLED);
+    String prop = settings.getProperties().get(Configuration.ANALYSIS_ENABLED);
     if (prop == null) {
       prop = de.lgohlke.sonar.Configuration.DEFAULT;
     }

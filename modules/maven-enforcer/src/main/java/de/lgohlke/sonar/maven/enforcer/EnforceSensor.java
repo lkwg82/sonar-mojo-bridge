@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
@@ -45,8 +46,8 @@ import static org.fest.reflect.core.Reflection.constructor;
 public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
   private final EnforceMavenPluginHandler mavenPluginHandler;
 
-  public EnforceSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, Project project, ResourcePerspectives resourcePerspectives) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+  public EnforceSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, Project project, ResourcePerspectives resourcePerspectives, Settings settings) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
     this.mavenPluginHandler = new EnforceMavenPluginHandler(super.getMavenPluginHandler(project));
 
     configureMavenPluginHandler(rulesProfile, mavenProject);

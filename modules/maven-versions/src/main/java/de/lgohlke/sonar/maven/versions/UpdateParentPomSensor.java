@@ -31,6 +31,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
@@ -55,8 +56,9 @@ public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor
   public UpdateParentPomSensor(RulesProfile rulesProfile,
                                MavenPluginExecutor mavenPluginExecutor,
                                MavenProject mavenProject,
-                               ResourcePerspectives resourcePerspectives) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives);
+                               ResourcePerspectives resourcePerspectives,
+                               Settings settings) {
+    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
   }
 
   @Override
