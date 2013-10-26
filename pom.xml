@@ -124,8 +124,7 @@
     <module>modules/maven-lint</module>
     <module>modules/maven-versions</module>
     <module>modules/sonar-plugin</module>
-    <module>modules/maven-lint-it</module>
-    <module>modules/maven-versions-it</module>
+    <module>modules/maven-integration-tests</module>
   </modules>
 
   <dependencies>
