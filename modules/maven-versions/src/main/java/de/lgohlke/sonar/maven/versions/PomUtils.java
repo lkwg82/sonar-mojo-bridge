@@ -88,7 +88,7 @@ public final class PomUtils {
 
     private static int findStartOrEndOfBlock(String[] lines, int currentPosition, int step, TYPE type) {
         int i = currentPosition;
-        while ((i > 0) && (Math.abs(currentPosition - i) < lines.length)) {
+        while ((i > 0) && (Math.abs(currentPosition - i) < lines.length) && i< lines.length) {
             if (lines[i].contains(type.getStart()) || lines[i].contains(type.getEnd())) {
                 return i;
             } else {
