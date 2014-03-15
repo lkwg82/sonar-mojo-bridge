@@ -19,49 +19,40 @@
  */
 package de.lgohlke.sonar;
 
-import com.excelsisnet.sonar.plugin.licenses.LicenseExtensions;
-import com.google.common.collect.Lists;
-import de.lgohlke.sonar.maven.enforcer.EnforceSensor;
-import de.lgohlke.sonar.maven.lint.LintSensor;
-import de.lgohlke.sonar.maven.versions.DisplayDependencyUpdatesSensor;
-import de.lgohlke.sonar.maven.versions.DisplayPluginUpdatesSensor;
-import de.lgohlke.sonar.maven.versions.UpdateParentPomSensor;
 import org.sonar.api.*;
 import org.sonar.plugins.xml.language.Xml;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Properties(
-    {
-        @Property(
-            key = Configuration.ANALYSIS_ENABLED,
-            name = "enable maven analysis",
-            description = "Enable maven analysis.",
-            defaultValue = Configuration.DEFAULT,
-            global = true,
-            project = true,
-            module = true,
-            type = PropertyType.BOOLEAN,
-            category = "Mojo Bridge"
-        )
-    }
+        {
+                @Property(
+                        key = Configuration.ANALYSIS_ENABLED,
+                        name = "enable maven analysis",
+                        description = "Enable maven analysis.",
+                        defaultValue = Configuration.DEFAULT,
+                        global = true,
+                        project = true,
+                        module = true,
+                        type = PropertyType.BOOLEAN,
+                        category = "Mojo Bridge"
+                )
+        }
 )
 public class MavenPlugin extends SonarPlugin {
 
-  @Override
-  public List<Class<? extends Extension>> getExtensions() {
-    List<Class<? extends Extension>> extensions = new ArrayList<Class<? extends Extension>>();
+    @Override
+    public List<Class<? extends Extension>> getExtensions() {
+        List<Class<? extends Extension>> extensions = new ArrayList<Class<? extends Extension>>();
 
-    extensions.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.EXTENSIONS);
-    extensions.addAll(de.lgohlke.sonar.maven.lint.Configuration.EXTENSIONS);
-    extensions.addAll(de.lgohlke.sonar.maven.versions.Configuration.EXTENSIONS);
-    extensions.addAll(LicenseExtensions.getExtensions());
-    
-    extensions.add(RulesRepository.class);
-    extensions.add(PomSourceImporter.class);
-    extensions.add(Xml.class);
-    return extensions;
-  }
+        extensions.addAll(de.lgohlke.sonar.maven.enforcer.Configuration.EXTENSIONS);
+        extensions.addAll(de.lgohlke.sonar.maven.lint.Configuration.EXTENSIONS);
+        extensions.addAll(de.lgohlke.sonar.maven.versions.Configuration.EXTENSIONS);
+
+        extensions.add(RulesRepository.class);
+        extensions.add(PomSourceImporter.class);
+        extensions.add(Xml.class);
+        return extensions;
+    }
 }
