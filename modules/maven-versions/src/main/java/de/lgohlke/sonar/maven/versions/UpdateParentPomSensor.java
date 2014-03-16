@@ -19,59 +19,68 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.maven.MavenBaseSensor;
-import de.lgohlke.sonar.maven.ResultTransferHandler;
+import com.google.common.annotations.VisibleForTesting;
+import com.thoughtworks.xstream.XStream;
+import de.lgohlke.sonar.maven.MavenBaseSensorNG;
+import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.SensorConfiguration;
 import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.versions.api.DisplayParentUpdateReport;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
-import static de.lgohlke.sonar.maven.versions.Configuration.BASE_IDENTIFIER;
+import java.util.Properties;
 
+@Slf4j
 @Rules(values = {ParentPomVersion.class})
-@SensorConfiguration(
-    bridgeMojo = UpdateParentBridgeMojo.class,
-    resultTransferHandler = UpdateParentPomSensor.ResultHandler.class,
-    mavenBaseIdentifier = BASE_IDENTIFIER
-)
-public class UpdateParentPomSensor extends MavenBaseSensor<UpdateParentPomSensor.ResultHandler> {
-  @Getter
-  @Setter
-  public static class ResultHandler implements ResultTransferHandler {
-    private String currentVersion;
-    private ArtifactVersion newerVersion;
-  }
+public class UpdateParentPomSensor extends MavenBaseSensorNG {
+    private final static String XML_REPORT = "target/versions_parent_update_report.xml";
+    private final static String GOAL = "display-parent-update";
+    private final MavenProject mavenProject;
 
-  public UpdateParentPomSensor(RulesProfile rulesProfile,
-                               MavenPluginExecutor mavenPluginExecutor,
-                               MavenProject mavenProject,
-                               ResourcePerspectives resourcePerspectives,
-                               Settings settings) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
-  }
-
-  @Override
-  public void analyse(final Project project, final SensorContext context) {
-    ResultHandler resultHandler = getMojoMapper().getResultTransferHandler();
-    if (resultHandler.getNewerVersion() != null) {
-      String message = ParentPomVersion.DESCRIPTION + ", currently used is " + resultHandler.getCurrentVersion() + " but " +
-          resultHandler.getNewerVersion() + " is available";
-
-      int line = getMavenProject().getModel().getParent().getLocation("version").getLineNumber();
-
-      Rule rule = RuleUtils.createRuleFrom(ParentPomVersion.class);
-      addIssue(message, line, rule);
+    public UpdateParentPomSensor(RulesProfile rulesProfile, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
+        super(log, mavenProject, rulesProfile, resourcePerspectives, settings);
+        this.mavenProject = mavenProject;
     }
-  }
+
+    @Override
+    public MavenPluginHandler getMavenPluginHandler(final Project project) {
+        final Properties mavenProjectProperties = mavenProject.getProperties();
+        mavenProjectProperties.setProperty("xmlReport", XML_REPORT);
+        return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER + GOAL);
+    }
+
+    @Override
+    public void analyse(Project project, SensorContext context) {
+        if (null != mavenProject.getModel().getParent()) {
+            DisplayParentUpdateReport report = getReport(XML_REPORT);
+
+            if (null != report.getLatestVersion()) {
+                String message = ParentPomVersion.DESCRIPTION + ", currently used is " + report.getCurrentVersion() + " but " +
+                        report.getLatestVersion() + " is available";
+
+                int line = mavenProject.getModel().getParent().getLocation("version").getLineNumber();
+
+                Rule rule = RuleUtils.createRuleFrom(ParentPomVersion.class);
+                addIssue(message, line, rule);
+            }
+        }
+    }
+
+    @VisibleForTesting
+    protected DisplayParentUpdateReport getReport(String xmlReport) {
+        XStream xstream = new XStream();
+        xstream.setClassLoader(getClass().getClassLoader());
+
+        String xml = getXmlFromReport(xmlReport);
+        return (DisplayParentUpdateReport) xstream.fromXML(xml);
+    }
 }
