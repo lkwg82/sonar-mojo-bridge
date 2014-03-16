@@ -41,13 +41,13 @@ import java.util.Properties;
 
 @Slf4j
 @Rules(values = {ParentPomVersion.class})
-public class UpdateParentPomSensor extends MavenBaseSensorNG {
+public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
     private final static String XML_REPORT = "target/versions_parent_update_report.xml";
     private final static String GOAL = "display-parent-update";
     private final MavenProject mavenProject;
 
-    public UpdateParentPomSensor(RulesProfile rulesProfile, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
-        super(log, mavenProject, rulesProfile, resourcePerspectives, settings);
+    public DisplayParentPomUpdateSensor(RulesProfile rulesProfile, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
+        super(DisplayParentPomUpdateSensor.log, mavenProject, rulesProfile, resourcePerspectives, settings);
         this.mavenProject = mavenProject;
     }
 

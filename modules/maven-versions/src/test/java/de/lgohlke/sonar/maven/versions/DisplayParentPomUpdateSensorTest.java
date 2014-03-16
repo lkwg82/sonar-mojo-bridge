@@ -47,14 +47,14 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class UpdateParentPomSensorTest {
+public class DisplayParentPomUpdateSensorTest {
     private final List<Issue> issues = new ArrayList<Issue>();
 
-    class MyUpdateParentPomSensor extends UpdateParentPomSensor {
+    class MyDisplayParentPomUpdateSensor extends DisplayParentPomUpdateSensor {
         @Setter
         private DisplayParentUpdateReport report;
 
-        public MyUpdateParentPomSensor(RulesProfile rulesProfile, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
+        public MyDisplayParentPomUpdateSensor(RulesProfile rulesProfile, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
             super(rulesProfile, mavenProject, resourcePerspectives, settings);
         }
 
@@ -73,7 +73,7 @@ public class UpdateParentPomSensorTest {
         mavenProject.getModel().setParent(parent);
         mavenProject.setFile(new File("pom.xml"));
 
-        MyUpdateParentPomSensor sensor = initSensor(mavenProject);
+        MyDisplayParentPomUpdateSensor sensor = initSensor(mavenProject);
 
         issues.clear();
 
@@ -96,7 +96,7 @@ public class UpdateParentPomSensorTest {
         mavenProject.getModel().setParent(parent);
         mavenProject.setFile(new File("pom.xml"));
 
-        MyUpdateParentPomSensor sensor = initSensor(mavenProject);
+        MyDisplayParentPomUpdateSensor sensor = initSensor(mavenProject);
 
         DisplayParentUpdateReport report = createReport("1");
 
@@ -133,7 +133,7 @@ public class UpdateParentPomSensorTest {
         MavenProject mavenProject = new MavenProject();
         mavenProject.getModel().setParent(null);
         mavenProject.setFile(new File("pom.xml"));
-        MyUpdateParentPomSensor sensor = initSensor(mavenProject);
+        MyDisplayParentPomUpdateSensor sensor = initSensor(mavenProject);
 
         sensor.analyse(null, null);
 
@@ -143,7 +143,7 @@ public class UpdateParentPomSensorTest {
     @Test
     public void testMavenHandler() {
         final MavenProject mavenProject = new MavenProject();
-        UpdateParentPomSensor sensor = initSensor(mavenProject);
+        DisplayParentPomUpdateSensor sensor = initSensor(mavenProject);
         MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
 
         assertThat(mavenPluginHandler.getGoals()).hasSize(1);
@@ -151,7 +151,7 @@ public class UpdateParentPomSensorTest {
         assertThat(mavenProject.getProperties()).containsKey("xmlReport");
     }
 
-    private MyUpdateParentPomSensor initSensor(MavenProject mavenProject) {
+    private MyDisplayParentPomUpdateSensor initSensor(MavenProject mavenProject) {
         RulesProfile rulesProfile = mock(RulesProfile.class);
 
         Issuable issuable = mock(Issuable.class);
@@ -168,6 +168,6 @@ public class UpdateParentPomSensorTest {
         when(resourcePerspectives.as(eq(Issuable.class), any(org.sonar.api.resources.File.class))).thenReturn(issuable);
 
         Settings settings = mock(Settings.class);
-        return new MyUpdateParentPomSensor(rulesProfile, mavenProject, resourcePerspectives, settings);
+        return new MyDisplayParentPomUpdateSensor(rulesProfile, mavenProject, resourcePerspectives, settings);
     }
 }

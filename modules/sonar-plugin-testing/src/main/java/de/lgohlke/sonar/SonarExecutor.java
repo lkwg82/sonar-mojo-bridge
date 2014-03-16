@@ -20,7 +20,6 @@
 package de.lgohlke.sonar;
 
 import com.google.common.base.Preconditions;
-import hudson.maven.MavenEmbedderException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,168 +33,168 @@ import static org.fest.assertions.api.Assertions.fail;
 @RequiredArgsConstructor
 @Slf4j
 public final class SonarExecutor implements Cloneable {
-  private final String jdbcDriver;
-  private final String jdbcUrl;
-  private boolean skipTests;
-  private boolean skipDesign;
-  private boolean skipDynamicAnalysis;
-  private boolean activateMavenDebug;
-  private boolean showMavenErrorWhileAnalysis;
-  private boolean showMavenOutputWhileAnalysis;
-  private File pomXML = new File("pom.xml");
+    private final String jdbcDriver;
+    private final String jdbcUrl;
+    private boolean skipTests;
+    private boolean skipDesign;
+    private boolean skipDynamicAnalysis;
+    private boolean activateMavenDebug;
+    private boolean showMavenErrorWhileAnalysis;
+    private boolean showMavenOutputWhileAnalysis;
+    private File pomXML = new File("pom.xml");
 
-  public SonarExecutor skipTests() {
-    return skipTests(true);
-  }
+    public SonarExecutor skipTests() {
+        return skipTests(true);
+    }
 
-  private SonarExecutor skipTests(final boolean skipTests) {
-    this.skipTests = skipTests;
-    return this;
-  }
+    private SonarExecutor skipTests(final boolean skipTests) {
+        this.skipTests = skipTests;
+        return this;
+    }
 
-  public SonarExecutor skipDesign() {
-    return skipDesign(true);
-  }
+    public SonarExecutor skipDesign() {
+        return skipDesign(true);
+    }
 
-  private SonarExecutor skipDesign(final boolean skipDesign) {
-    this.skipDesign = skipDesign;
-    return this;
-  }
+    private SonarExecutor skipDesign(final boolean skipDesign) {
+        this.skipDesign = skipDesign;
+        return this;
+    }
 
-  public SonarExecutor skipDynamicAnalysis() {
-    return skipDynamicAnalysis(true);
-  }
+    public SonarExecutor skipDynamicAnalysis() {
+        return skipDynamicAnalysis(true);
+    }
 
-  private SonarExecutor skipDynamicAnalysis(final boolean skipDynamicAnalysis) {
-    this.skipDynamicAnalysis = skipDynamicAnalysis;
-    return this;
-  }
+    private SonarExecutor skipDynamicAnalysis(final boolean skipDynamicAnalysis) {
+        this.skipDynamicAnalysis = skipDynamicAnalysis;
+        return this;
+    }
 
-  public SonarExecutor usePom(final File pom) {
-    Preconditions.checkArgument(pom.isFile());
-    this.pomXML = pom;
-    return this;
-  }
+    public SonarExecutor usePom(final File pom) {
+        Preconditions.checkArgument(pom.isFile());
+        this.pomXML = pom;
+        return this;
+    }
 
-  public SonarExecutor activateMavenDebug() {
-    return activateMavenDebug(true);
-  }
+    public SonarExecutor activateMavenDebug() {
+        return activateMavenDebug(true);
+    }
 
-  private SonarExecutor activateMavenDebug(final boolean activateMavenDebug) {
-    this.activateMavenDebug = activateMavenDebug;
-    return this;
-  }
+    private SonarExecutor activateMavenDebug(final boolean activateMavenDebug) {
+        this.activateMavenDebug = activateMavenDebug;
+        return this;
+    }
 
-  public SonarExecutor showMavenErrorWhileAnalysis() {
-    return showMavenErrorWhileAnalysis(true);
-  }
+    public SonarExecutor showMavenErrorWhileAnalysis() {
+        return showMavenErrorWhileAnalysis(true);
+    }
 
-  private SonarExecutor showMavenErrorWhileAnalysis(final boolean showMavenErrorWhileAnalysis) {
-    this.showMavenErrorWhileAnalysis = showMavenErrorWhileAnalysis;
-    return this;
-  }
+    private SonarExecutor showMavenErrorWhileAnalysis(final boolean showMavenErrorWhileAnalysis) {
+        this.showMavenErrorWhileAnalysis = showMavenErrorWhileAnalysis;
+        return this;
+    }
 
-  public SonarExecutor showMavenOutputWhileAnalysis() {
-    return showMavenOutputWhileAnalysis(true);
-  }
+    public SonarExecutor showMavenOutputWhileAnalysis() {
+        return showMavenOutputWhileAnalysis(true);
+    }
 
-  private SonarExecutor showMavenOutputWhileAnalysis(final boolean showMavenOutputWhileAnalysis) {
-    this.showMavenOutputWhileAnalysis = showMavenOutputWhileAnalysis;
-    return this;
-  }
+    private SonarExecutor showMavenOutputWhileAnalysis(final boolean showMavenOutputWhileAnalysis) {
+        this.showMavenOutputWhileAnalysis = showMavenOutputWhileAnalysis;
+        return this;
+    }
 
-  @Override
-  public SonarExecutor clone() throws CloneNotSupportedException {
-    return ((SonarExecutor) super.clone()).activateMavenDebug(activateMavenDebug)
-        .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
-        .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
-        .skipDesign(skipDesign)
-        .skipDynamicAnalysis(skipDynamicAnalysis)
-        .skipTests(skipTests);
-  }
+    @Override
+    public SonarExecutor clone() throws CloneNotSupportedException {
+        return ((SonarExecutor) super.clone()).activateMavenDebug(activateMavenDebug)
+                .showMavenErrorWhileAnalysis(showMavenErrorWhileAnalysis)
+                .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
+                .skipDesign(skipDesign)
+                .skipDynamicAnalysis(skipDynamicAnalysis)
+                .skipTests(skipTests);
+    }
 
-  public void execute() throws MavenEmbedderException {
-    final String command = configureExecutionCommand();
+    public void execute() {
+        final String command = configureExecutionCommand();
 
-    try {
-      log.info("calling : {}", command);
+        try {
+            log.info("calling : {}", command);
 
-      Process proc = Runtime.getRuntime().exec(command);
-      StringBuilder outputFromMavenCall = new StringBuilder();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-      try {
-        String line = reader.readLine();
-        while (line != null) {
-          if (SonarExecutor.log.isDebugEnabled()) {
-            SonarExecutor.log.debug(line);
-          } else if (showMavenOutputWhileAnalysis) {
-            SonarExecutor.log.info(line);
-          } else {
-            outputFromMavenCall.append(line);
-          }
-          line = reader.readLine();
+            Process proc = Runtime.getRuntime().exec(command);
+            StringBuilder outputFromMavenCall = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            try {
+                String line = reader.readLine();
+                while (line != null) {
+                    if (SonarExecutor.log.isDebugEnabled()) {
+                        SonarExecutor.log.debug(line);
+                    } else if (showMavenOutputWhileAnalysis) {
+                        SonarExecutor.log.info(line);
+                    } else {
+                        outputFromMavenCall.append(line);
+                    }
+                    line = reader.readLine();
+                }
+            } finally {
+                reader.close();
+            }
+            proc.waitFor();
+
+            if (proc.exitValue() > 0) {
+                if (!SonarExecutor.log.isDebugEnabled()) {
+                    SonarExecutor.log.error("call output:\n {}", outputFromMavenCall.toString());
+                }
+                fail("sonar test run failed");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-      } finally {
-        reader.close();
-      }
-      proc.waitFor();
+    }
 
-      if (proc.exitValue() > 0) {
-        if (!SonarExecutor.log.isDebugEnabled()) {
-          SonarExecutor.log.error("call output:\n {}", outputFromMavenCall.toString());
+    private String configureExecutionCommand() {
+        StringBuilder builder = new StringBuilder("mvn -f " + pomXML.getAbsolutePath() + " sonar:sonar");
+
+        if (jdbcDriver != null) {
+            builder.append(" -Dsonar.jdbc.driver=").append(jdbcDriver);
         }
-        fail("sonar test run failed");
-      }
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-    }
-  }
 
-  private String configureExecutionCommand() {
-    StringBuilder builder = new StringBuilder("mvn -f " + pomXML.getAbsolutePath() + " sonar:sonar");
+        if (jdbcUrl != null) {
+            builder.append(" -Dsonar.jdbc.url=").append(jdbcUrl);
+        }
 
-    if (jdbcDriver != null) {
-      builder.append(" -Dsonar.jdbc.driver=").append(jdbcDriver);
-    }
+        if (skipTests) {
+            builder.append(" -DskipTests");
+        }
 
-    if (jdbcUrl != null) {
-      builder.append(" -Dsonar.jdbc.url=").append(jdbcUrl);
-    }
+        if (skipDesign) {
+            builder.append(" -Dsonar.skipDesign");
+        }
 
-    if (skipTests) {
-      builder.append(" -DskipTests");
-    }
+        if (skipDynamicAnalysis) {
+            builder.append(" -Dsonar.dynamicAnalysis=false");
+        }
 
-    if (skipDesign) {
-      builder.append(" -Dsonar.skipDesign");
-    }
+        if (activateMavenDebug) {
+            builder.append(" -X");
+        }
 
-    if (skipDynamicAnalysis) {
-      builder.append(" -Dsonar.dynamicAnalysis=false");
+        if (showMavenErrorWhileAnalysis) {
+            builder.append(" -e");
+        }
+        return builder.toString();
     }
 
-    if (activateMavenDebug) {
-      builder.append(" -X");
+    public String getMavenVersion() throws IOException {
+        Process proc = Runtime.getRuntime().exec("mvn -version");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        try {
+            String line = reader.readLine();
+            if (line != null) {
+                return line.split("\\ +")[2];
+            } else {
+                return null;
+            }
+        } finally {
+            reader.close();
+        }
     }
-
-    if (showMavenErrorWhileAnalysis) {
-      builder.append(" -e");
-    }
-    return builder.toString();
-  }
-
-  public String getMavenVersion() throws IOException, InterruptedException {
-    Process proc = Runtime.getRuntime().exec("mvn -version");
-    BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-    try {
-      String line = reader.readLine();
-      if (line != null) {
-        return line.split("\\ +")[2];
-      } else {
-        return null;
-      }
-    } finally {
-      reader.close();
-    }
-  }
 }

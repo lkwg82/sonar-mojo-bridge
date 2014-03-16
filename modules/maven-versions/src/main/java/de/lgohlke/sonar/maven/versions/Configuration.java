@@ -47,6 +47,6 @@ public interface Configuration {
     Set<Class<? extends Extension>> EXTENSIONS = new HashSet<Class<? extends Extension>>() {{
         add(DisplayPluginUpdatesSensor.class);
         add(DisplayDependencyUpdatesSensor.class);
-        add(UpdateParentPomSensor.class);
+        add(DisplayParentPomUpdateSensor.class);
     }};
 }
