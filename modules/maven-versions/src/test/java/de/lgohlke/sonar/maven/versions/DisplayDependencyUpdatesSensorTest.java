@@ -23,8 +23,10 @@ import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 import lombok.Setter;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.versions.api.ArtifactUpdate;
-import org.codehaus.mojo.versions.api.DisplayDependencyUpdatesReport;
+import org.codehaus.mojo.versions.report.ArtifactUpdate;
+import org.codehaus.mojo.versions.report.Dependency;
+import org.codehaus.mojo.versions.report.DisplayDependencyUpdatesReport;
+import org.codehaus.mojo.versions.report.InputLocation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -111,11 +113,11 @@ public class DisplayDependencyUpdatesSensorTest {
 
     private DisplayDependencyUpdatesReport createReport(String effectiveKey, String analysisVersion, String artifactQualifier) {
 
-        final ArtifactUpdate.Dependency dependency = new ArtifactUpdate.Dependency();
+        final Dependency dependency = new Dependency();
 
         final ArtifactUpdate update = new ArtifactUpdate();
         update.setDependency(dependency);
-        final ArtifactUpdate.InputLocation inputLocation = new ArtifactUpdate.InputLocation();
+        final InputLocation inputLocation = new InputLocation();
         inputLocation.setLine(1);
         inputLocation.setColumn(1);
         final InputSource inputSource = new InputSource();

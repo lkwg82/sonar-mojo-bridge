@@ -24,8 +24,8 @@ import lombok.Setter;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Parent;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.versions.api.*;
-import org.codehaus.mojo.versions.api.ArtifactUpdate;
+import org.codehaus.mojo.versions.report.*;
+import org.codehaus.mojo.versions.report.ArtifactUpdate;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -110,7 +110,7 @@ public class UpdateParentPomSensorTest {
     }
 
     private DisplayParentUpdateReport createReport(String versionUpdate) {
-        ArtifactUpdate.Dependency dependency = new ArtifactUpdate.Dependency();
+        Dependency dependency = new Dependency();
         dependency.setGroupId("group");
         dependency.setArtifactId("artifact");
         dependency.setVersion("1");

@@ -36,7 +36,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         initAPI();
     }
 
-    @Test()
+    @Test
     public void shouldHaveHaveOldDependency() throws Exception {
         skipTestIfNotMaven3();
 
@@ -68,7 +68,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
     }
 
-    @Test(enabled = false)  // TODO
+    @Test
     public void shouldHaveViolationsOfPluginUpdate() throws Exception {
         skipTestIfNotMaven3();
 

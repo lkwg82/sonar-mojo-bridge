@@ -28,7 +28,7 @@ import de.lgohlke.sonar.maven.Rules;
 import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.versions.api.DisplayParentUpdateReport;
+import org.codehaus.mojo.versions.report.DisplayParentUpdateReport;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
