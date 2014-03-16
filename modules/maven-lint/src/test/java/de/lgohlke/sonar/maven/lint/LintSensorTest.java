@@ -43,75 +43,74 @@ import static org.mockito.Mockito.mock;
 
 public class LintSensorTest {
 
-  private MavenProject mavenProject;
-  private LintSensor sensor;
+    private MavenProject mavenProject;
+    private LintSensor sensor;
 
-  @BeforeTest(alwaysRun = true)
-  public void beforeTest() {
-    mavenProject = new MavenProject();
-    mavenProject.setFile(new File("."));
+    @BeforeTest(alwaysRun = true)
+    public void beforeTest() {
+        mavenProject = new MavenProject();
+        mavenProject.setFile(new File("."));
 
-    RulesProfile rulesProfile = RulesProfile.create("mine", "java");
-    sensor = new LintSensor(mavenProject, rulesProfile, mock(ResourcePerspectives.class), mock(Settings.class));
-  }
-
-  @Test
-  public void testNotImplementedNullReturn() {
-
-    Violation violation = new Violation();
-    violation.setRule("xy");
-
-    Rule rule = sensor.createRuleFromViolation(violation);
-
-    assertThat(rule).isNull();
-  }
-
-  @Test
-  public void testRuleMatchingViolation() {
-
-    Violation violation = new Violation();
-    violation.setRule("DuplicateDep");
-
-    Rule ruleFromViolation = sensor.createRuleFromViolation(violation);
-
-    assertThat(ruleFromViolation).isNotNull();
-  }
-
-  @Test
-  public void testConfiguredAllRulesInAnnotation() {
-
-    class StringComparator implements Comparator<String> {
-      @Override
-      public int compare(String o1, String o2) {
-        return o1.compareTo(o2);
-      }
-    }
-    ;
-
-    Reflections reflections = new Reflections("de.lgohlke.sonar.maven.lint.rules");
-    Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
-
-    Rules rules = LintSensor.class.getAnnotation(Rules.class);
-
-    TreeSet<String> configuredRules = new TreeSet<String>(new StringComparator());
-    for (Class clazz : rules.values()) {
-      configuredRules.add(clazz.getCanonicalName());
-    }
-    TreeSet<String> implementedRules = new TreeSet<String>(new StringComparator());
-    for (Class clazz : rulesImplemented) {
-      implementedRules.add(clazz.getCanonicalName());
+        RulesProfile rulesProfile = RulesProfile.create("mine", "java");
+        sensor = new LintSensor(mavenProject, rulesProfile, mock(ResourcePerspectives.class), mock(Settings.class));
     }
 
-    assertThat(configuredRules).isEqualTo(implementedRules);
-  }
+    @Test
+    public void testNotImplementedNullReturn() {
 
-  @Test
-  public void testMavenHandler() {
-    MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
+        Violation violation = new Violation();
+        violation.setRule("xy");
 
-    assertThat(mavenPluginHandler.getGoals()).hasSize(1);
-    assertThat(mavenPluginHandler.getGoals()).contains("check");
-    assertThat(mavenProject.getProperties()).containsKey("maven-lint.failOnViolation");
-    assertThat(mavenProject.getProperties()).containsKey("maven-lint.output.file.xml");
-  }
+        Rule rule = sensor.createRuleFromViolation(violation);
+
+        assertThat(rule).isNull();
+    }
+
+    @Test
+    public void testRuleMatchingViolation() {
+
+        Violation violation = new Violation();
+        violation.setRule("DuplicateDep");
+
+        Rule ruleFromViolation = sensor.createRuleFromViolation(violation);
+
+        assertThat(ruleFromViolation).isNotNull();
+    }
+
+    @Test
+    public void testConfiguredAllRulesInAnnotation() {
+
+        class StringComparator implements Comparator<String> {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        }
+
+        Reflections reflections = new Reflections("de.lgohlke.sonar.maven.lint.rules");
+        Set<Class<? extends MavenRule>> rulesImplemented = reflections.getSubTypesOf(MavenRule.class);
+
+        Rules rules = LintSensor.class.getAnnotation(Rules.class);
+
+        TreeSet<String> configuredRules = new TreeSet<String>(new StringComparator());
+        for (Class clazz : rules.values()) {
+            configuredRules.add(clazz.getCanonicalName());
+        }
+        TreeSet<String> implementedRules = new TreeSet<String>(new StringComparator());
+        for (Class clazz : rulesImplemented) {
+            implementedRules.add(clazz.getCanonicalName());
+        }
+
+        assertThat(configuredRules).isEqualTo(implementedRules);
+    }
+
+    @Test
+    public void testMavenHandler() {
+        MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
+
+        assertThat(mavenPluginHandler.getGoals()).hasSize(1);
+        assertThat(mavenPluginHandler.getGoals()).contains("check");
+        assertThat(mavenProject.getProperties()).containsKey("maven-lint.failOnViolation");
+        assertThat(mavenProject.getProperties()).containsKey("maven-lint.output.file.xml");
+    }
 }
