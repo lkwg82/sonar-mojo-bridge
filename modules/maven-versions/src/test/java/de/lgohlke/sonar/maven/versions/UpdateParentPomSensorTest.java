@@ -24,7 +24,8 @@ import lombok.Setter;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Parent;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.versions.api.DisplayParentUpdateReport;
+import org.codehaus.mojo.versions.api.*;
+import org.codehaus.mojo.versions.api.ArtifactUpdate;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -76,11 +77,7 @@ public class UpdateParentPomSensorTest {
 
         issues.clear();
 
-        DisplayParentUpdateReport report = new DisplayParentUpdateReport();
-        report.setParentGroupId("group");
-        report.setParentArtifactId("artifact");
-        report.setCurrentVersion("1");
-        report.setLatestVersion(null);
+        DisplayParentUpdateReport report = createReport(null);
 
         sensor.setReport(report);
 
@@ -101,11 +98,7 @@ public class UpdateParentPomSensorTest {
 
         MyUpdateParentPomSensor sensor = initSensor(mavenProject);
 
-        DisplayParentUpdateReport report = new DisplayParentUpdateReport();
-        report.setParentGroupId("group");
-        report.setParentArtifactId("artifact");
-        report.setCurrentVersion("1");
-        report.setLatestVersion("2");
+        DisplayParentUpdateReport report = createReport("1");
 
         sensor.setReport(report);
 
@@ -114,6 +107,21 @@ public class UpdateParentPomSensorTest {
         assertThat(issues).hasSize(1);
         assertThat(issues.get(0).line()).isEqualTo(1);
         assertThat(issues.get(0).ruleKey()).isEqualTo(RuleKey.of("maven", ParentPomVersion.KEY));
+    }
+
+    private DisplayParentUpdateReport createReport(String versionUpdate) {
+        ArtifactUpdate.Dependency dependency = new ArtifactUpdate.Dependency();
+        dependency.setGroupId("group");
+        dependency.setArtifactId("artifact");
+        dependency.setVersion("1");
+
+        ArtifactUpdate update = new ArtifactUpdate();
+        update.setDependency(dependency);
+        update.setVersionUpdate(versionUpdate);
+
+        DisplayParentUpdateReport report = new DisplayParentUpdateReport();
+        report.setUpdate(update);
+        return report;
     }
 
     @Test

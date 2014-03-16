@@ -63,9 +63,9 @@ public class UpdateParentPomSensor extends MavenBaseSensorNG {
         if (null != mavenProject.getModel().getParent()) {
             DisplayParentUpdateReport report = getReport(XML_REPORT);
 
-            if (null != report.getLatestVersion()) {
-                String message = ParentPomVersion.DESCRIPTION + ", currently used is " + report.getCurrentVersion() + " but " +
-                        report.getLatestVersion() + " is available";
+            if (null != report.getUpdate().getVersionUpdate()) {
+                String message = ParentPomVersion.DESCRIPTION + ", currently used is " + report.getUpdate().getDependency().getVersion() + " but " +
+                        report.getUpdate().getVersionUpdate() + " is available";
 
                 int line = mavenProject.getModel().getParent().getLocation("version").getLineNumber();
 
