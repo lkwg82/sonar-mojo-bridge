@@ -73,8 +73,8 @@
     <test.jdbcUrl>jdbc:h2:tcp://localhost:9092/sonar</test.jdbcUrl>
 
     <aether.version>1.13.1</aether.version>
-    <commons-beanutils.version>1.8.3</commons-beanutils.version>
-    <commons-codec.version>1.8</commons-codec.version>
+    <commons-beanutils.version>1.9.1</commons-beanutils.version>
+    <commons-codec.version>1.9</commons-codec.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-digester.version>2.1</commons-digester.version>
     <commons-io.version>2.4</commons-io.version>
@@ -84,13 +84,13 @@
     <fest-assert-core.version>2.0M10</fest-assert-core.version>
     <fest-reflect.version>1.4.1</fest-reflect.version>
     <fest-util.version>1.2.5</fest-util.version>
-    <groovy.version>2.1.4</groovy.version>
+    <groovy.version>2.2.2</groovy.version>
     <guava.version>14.0.1</guava.version>
     <hibernate-core.version>3.3.2.GA</hibernate-core.version>
     <javassist.version>3.12.1.GA</javassist.version>
     <junit.version>4.11</junit.version>
-    <logback.version>1.0.13</logback.version>
-    <lombok.version>0.11.8</lombok.version>
+    <logback.version>1.1.1</logback.version>
+    <lombok.version>1.12.6</lombok.version>
     <maven-reporting-api.version>3.0</maven-reporting-api.version>
     <maven-reporting-impl.version>2.2</maven-reporting-impl.version>
     <maven-project.version>2.2.0</maven-project.version>
@@ -100,10 +100,10 @@
     <plexus-interpolation.version>1.16</plexus-interpolation.version>
     <plexus-utils.version>3.0.15</plexus-utils.version>
     <sisu-inject-plexus.version>2.4.3</sisu-inject-plexus.version>
-    <testng.version>6.8.7</testng.version>
-    <slf4j-api.version>1.7.5</slf4j-api.version>
-    <versions-maven-plugin.version>2.1.3-SNAPSHOT</versions-maven-plugin.version>
-    <wagon-provider-api.version>2.5</wagon-provider-api.version>
+    <testng.version>6.8.8</testng.version>
+    <slf4j-api.version>1.7.6</slf4j-api.version>
+    <versions-maven-plugin.version>2.1.3</versions-maven-plugin.version>
+    <wagon-provider-api.version>2.6</wagon-provider-api.version>
     <xml-apis.version>2.0.2</xml-apis.version>
 
 
@@ -113,6 +113,10 @@
     <version.sonar-dev.plugin>1.7</version.sonar-dev.plugin>
     <version.sonar-packaging.plugin>1.9</version.sonar-packaging.plugin>
   </properties>
+
+  <prerequisites>
+    <maven>3.0.0</maven>
+  </prerequisites>
 
   <modules>
     <!-- order of inheritence //-->
@@ -387,7 +391,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.3</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
@@ -398,7 +402,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.3</version>
+        <version>4.3.2</version>
       </dependency>
       <dependency>
         <groupId>de.lgohlke.mojo</groupId>
