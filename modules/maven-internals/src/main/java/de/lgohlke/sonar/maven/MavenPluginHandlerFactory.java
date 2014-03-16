@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.sonar.api.batch.maven.MavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.resources.Project;
+
 import static com.google.common.base.Preconditions.*;
 
 
@@ -33,43 +34,43 @@ import static com.google.common.base.Preconditions.*;
  * @author Lars Gohlke
  */
 public final class MavenPluginHandlerFactory {
-  private MavenPluginHandlerFactory() {
-  }
-
-  public static MavenPluginHandler createHandler(final String groupArtifactVersionGoalString) {
-    checkNotNull(groupArtifactVersionGoalString);
-    checkState(groupArtifactVersionGoalString.length() > 0, "no empty string allowed");
-
-    final String[] parts = groupArtifactVersionGoalString.split(":");
-
-    checkArgument(parts.length == 4,
-      "the string must be consist of four parts, seperated by : e.g.: org.codehaus.mojo:versions-maven-plugin:1.3.1:help ");
-
-    return new InnerMavenPluginHandler(parts[0], parts[1], parts[2], parts[3]);
-  }
-
-  @Data
-  @RequiredArgsConstructor
-  private static class InnerMavenPluginHandler implements MavenPluginHandler {
-    private final String groupId;
-    private final String artifactId;
-    private final String version;
-    private final String goal;
-
-    public String[] getGoals() {
-      return new String[] { goal };
+    private MavenPluginHandlerFactory() {
     }
 
-    @Override
-    public void configure(final Project project, final MavenPlugin plugin) {
-      // no need for
+    public static MavenPluginHandler createHandler(final String groupArtifactVersionGoalString) {
+        checkNotNull(groupArtifactVersionGoalString);
+        checkState(groupArtifactVersionGoalString.length() > 0, "no empty string allowed");
+
+        final String[] parts = groupArtifactVersionGoalString.split(":");
+
+        checkArgument(parts.length == 4,
+                "the string must be consist of four parts, seperated by : e.g.: org.codehaus.mojo:versions-maven-plugin:1.3.1:help was '" + groupArtifactVersionGoalString + "'");
+
+        return new InnerMavenPluginHandler(parts[0], parts[1], parts[2], parts[3]);
     }
 
-    @Override
-    public boolean isFixedVersion() {
-      // so far it makes no sense, to be not fixed to a specific version
-      return true;
+    @Data
+    @RequiredArgsConstructor
+    private static class InnerMavenPluginHandler implements MavenPluginHandler {
+        private final String groupId;
+        private final String artifactId;
+        private final String version;
+        private final String goal;
+
+        public String[] getGoals() {
+            return new String[]{goal};
+        }
+
+        @Override
+        public void configure(final Project project, final MavenPlugin plugin) {
+            // no need for
+        }
+
+        @Override
+        public boolean isFixedVersion() {
+            // so far it makes no sense, to be not fixed to a specific version
+            return true;
+        }
     }
-  }
 
 }

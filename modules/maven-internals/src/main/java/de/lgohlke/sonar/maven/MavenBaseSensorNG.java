@@ -29,10 +29,14 @@ import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
+import org.sonar.api.issue.Issuable;
+import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
+import org.sonar.plugins.xml.language.Xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,5 +90,21 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
             rules.add(RuleUtils.createRuleFrom(ruleClass));
         }
         return rules;
+    }
+
+    protected void addIssue(String message, int line, Rule rule) {
+        org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
+        file.setLanguage(Xml.INSTANCE);
+
+        Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+        RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
+
+        Issue issue = issuable.newIssueBuilder().
+                line(line).
+                message(message).
+                ruleKey(ruleKey).
+                build();
+
+        issuable.addIssue(issue);
     }
 }
