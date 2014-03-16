@@ -78,7 +78,7 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         return activatedByConfiguration && activatedByRules;
     }
 
-    private boolean checkIfAtLeastOneRuleIsEnabled() {
+    protected boolean checkIfAtLeastOneRuleIsEnabled() {
         List<Rule> associatedRules = getAssociatedRules();
         for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
             if (associatedRules.contains(activeRule.getRule())) {
