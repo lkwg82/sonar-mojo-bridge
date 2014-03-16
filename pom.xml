@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
     <artifactId>parent</artifactId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <artifactId>sonar-mojo-bridge-parent</artifactId>
@@ -63,7 +63,7 @@
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>3.7.2</sonar.version>
+    <sonar.version>3.7.4</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
     <sonar-xml-plugin.version>1.0</sonar-xml-plugin.version>
     <!-- this code has a lot of violations, by design -->
