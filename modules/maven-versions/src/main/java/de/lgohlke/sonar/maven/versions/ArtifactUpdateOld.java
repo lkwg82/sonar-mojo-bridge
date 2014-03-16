@@ -26,7 +26,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Dependency;
 
 @RequiredArgsConstructor
-public class ArtifactUpdate {
+public class ArtifactUpdateOld {
 
     @Getter
     @NonNull
@@ -57,11 +57,11 @@ public class ArtifactUpdate {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ArtifactUpdate)) {
+        if (!(o instanceof ArtifactUpdateOld)) {
             return false;
         }
 
-        ArtifactUpdate that = (ArtifactUpdate) o;
+        ArtifactUpdateOld that = (ArtifactUpdateOld) o;
 
         return artifactVersion.compareTo(that.artifactVersion) == 0 && dependency.toString().equals(that.dependency.toString());
     }

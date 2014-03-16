@@ -94,11 +94,6 @@
           <level><![CDATA[MINOR]]></level>
         </active-rule>
         <active-rule>
-          <key><![CDATA[Old Dependency]]></key>
-          <plugin><![CDATA[maven]]></plugin>
-          <level><![CDATA[MINOR]]></level>
-        </active-rule>
-        <active-rule>
           <key><![CDATA[Old Plugin]]></key>
           <plugin><![CDATA[maven]]></plugin>
           <level><![CDATA[BLOCKER]]></level>
@@ -115,6 +110,11 @@
         </active-rule-->
         <active-rule>
           <key><![CDATA[Old Parent Pom]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+        <active-rule>
+          <key><![CDATA[Old Dependency]]></key>
           <plugin><![CDATA[maven]]></plugin>
           <level><![CDATA[MINOR]]></level>
         </active-rule>

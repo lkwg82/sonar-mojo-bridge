@@ -20,6 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import de.lgohlke.sonar.Configuration;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
@@ -35,12 +36,15 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
 import org.sonar.plugins.xml.language.Xml;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Sensor {
@@ -106,5 +110,26 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
                 build();
 
         issuable.addIssue(issue);
+    }
+
+    protected Map<String, String> createRulePropertiesMapFromQualityProfile(Class<? extends MavenRule> ruleClass) {
+        Map<String, String> mappedParams = Maps.newHashMap();
+        String ruleKey = RuleUtils.createRuleFrom(ruleClass).getKey();
+        ActiveRule activeRuleByConfigKey = rulesProfile.getActiveRuleByConfigKey(Configuration.REPOSITORY_KEY, ruleKey);
+        if (null != activeRuleByConfigKey) {
+            List<ActiveRuleParam> activeRuleParams = activeRuleByConfigKey.getActiveRuleParams();
+            for (ActiveRuleParam activeRuleParam : activeRuleParams) {
+                mappedParams.put(activeRuleParam.getKey(), activeRuleParam.getValue());
+            }
+
+            // fill with default values for params not set
+            final List<RuleParam> params = activeRuleByConfigKey.getRule().getParams();
+            for (RuleParam ruleParam : params) {
+                if (!mappedParams.containsKey(ruleParam.getKey())) {
+                    mappedParams.put(ruleParam.getKey(), ruleParam.getDefaultValue());
+                }
+            }
+        }
+        return mappedParams;
     }
 }

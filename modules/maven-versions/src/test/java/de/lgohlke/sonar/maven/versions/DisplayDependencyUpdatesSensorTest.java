@@ -19,16 +19,15 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.InputLocation;
+import lombok.Setter;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.versions.api.ArtifactUpdate;
+import org.codehaus.mojo.versions.api.DisplayDependencyUpdatesReport;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
@@ -39,11 +38,11 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RulePriority;
-import org.sonar.batch.scan.maven.MavenPluginExecutor;
 import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,76 +56,108 @@ import static org.mockito.Mockito.when;
  * User: lgohlke
  */
 public class DisplayDependencyUpdatesSensorTest {
-  @Test
-  public void shouldAnalyse() throws Exception {
-    RulesProfile rulesProfile = prepareRulesProfile();
-    MavenProject mavenProject = TestHelper.getMavenProject();
-    Settings settings = Settings.createForComponent(DisplayDependencyUpdatesSensor.class);
 
-    final List<Issue> issues = new ArrayList<Issue>();
+    private class MyDisplayDependencyUpdatesSensor extends DisplayDependencyUpdatesSensor {
+        @Setter
+        private DisplayDependencyUpdatesReport report;
 
-    Issuable issuable = mock(Issuable.class);
-    when(issuable.addIssue(any(Issue.class))).thenAnswer(new Answer() {
-      @Override
-      public Void answer(InvocationOnMock invocation) throws Throwable {
-        Issue issue = (Issue) invocation.getArguments()[0];
-        issues.add(issue);
-        return null;
-      }
-    });
-    when(issuable.newIssueBuilder()).thenReturn(new DefaultIssueBuilder().componentKey("xxx"));
-    ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
-    when(resourcePerspectives.as(eq(Issuable.class), any(File.class))).thenReturn(issuable);
+        public MyDisplayDependencyUpdatesSensor(RulesProfile rulesProfile, MavenProject mavenProject, Settings settings, ResourcePerspectives resourcePerspectives) {
+            super(rulesProfile, mavenProject, settings, resourcePerspectives);
+        }
 
-    DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(rulesProfile, mock(MavenPluginExecutor.class), mavenProject, settings, resourcePerspectives);
+        @Override
+        protected DisplayDependencyUpdatesReport getReport(String xmlReport) {
+            return report;
+        }
+    }
 
-    String effectiveKey = "a";
-    String analysisVersion = "1";
-    String artifactQualifier = "group:artifact:version:goal";
+    @Test
+    public void shouldAnalyse() throws Exception {
+        RulesProfile rulesProfile = prepareRulesProfile();
+        MavenProject mavenProject = TestHelper.getMavenProject();
+        Settings settings = Settings.createForComponent(DisplayDependencyUpdatesSensor.class);
 
-    Map<String, List<ArtifactUpdate>> updateMap = prepareUpdateMap(effectiveKey, analysisVersion, artifactQualifier);
-    sensor.getMojoMapper().getResultTransferHandler().setUpdateMap(updateMap);
+        final List<Issue> issues = new ArrayList<Issue>();
 
-    Project project = new Project(effectiveKey).setAnalysisVersion(analysisVersion);
+        Issuable issuable = mock(Issuable.class);
+        when(issuable.addIssue(any(Issue.class))).thenAnswer(new Answer() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                Issue issue = (Issue) invocation.getArguments()[0];
+                issues.add(issue);
+                return null;
+            }
+        });
+        when(issuable.newIssueBuilder()).thenReturn(new DefaultIssueBuilder().componentKey("xxx"));
+        ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
+        when(resourcePerspectives.as(eq(Issuable.class), any(File.class))).thenReturn(issuable);
 
-    sensor.analyse(project, null);
+        MyDisplayDependencyUpdatesSensor sensor = new MyDisplayDependencyUpdatesSensor(rulesProfile, mavenProject, settings, resourcePerspectives);
 
-    assertThat(issues).hasSize(1);
-    assertThat(issues.get(0).message()).contains(artifactQualifier);
-  }
+        String effectiveKey = "a";
+        String analysisVersion = "1";
+        String artifactQualifier = "group:artifact:version:goal";
 
-  private Map<String, List<ArtifactUpdate>> prepareUpdateMap(String effectiveKey, String analysisVersion, String artifactQualifier) {
-    Map<String, List<ArtifactUpdate>> updateMap = Maps.newHashMap();
-    ArtifactUpdate artifactUpdate = mock(ArtifactUpdate.class);
-    InputSource inputSource = new InputSource();
-    inputSource.setModelId(effectiveKey + ":" + analysisVersion);
-    InputLocation inputLocation = new InputLocation(1, 1, inputSource);
+        sensor.setReport(createReport(effectiveKey, analysisVersion, artifactQualifier));
 
-    Dependency mockDependency = mock(Dependency.class);
-    when(mockDependency.getLocation("version")).thenReturn(new InputLocation(1, 1));
-    when(mockDependency.getLocation("")).thenReturn(inputLocation);
+        Project project = new Project(effectiveKey).setAnalysisVersion(analysisVersion);
 
-    when(artifactUpdate.getDependency()).thenReturn(mockDependency);
+        sensor.analyse(project, null);
 
-    ArtifactVersion mockArtifactVersion = mock(ArtifactVersion.class);
-    when(mockArtifactVersion.toString()).thenReturn(artifactQualifier);
-    when(artifactUpdate.getArtifactVersion()).thenReturn(mockArtifactVersion);
+        assertThat(issues).hasSize(1);
+        assertThat(issues.get(0).message()).contains(artifactQualifier);
+        assertThat(issues.get(0).line()).isEqualTo(1);
+    }
 
-    List<ArtifactUpdate> updateList = Lists.newArrayList(artifactUpdate);
-    when(updateList.get(0).toString()).thenReturn(artifactQualifier);
-    updateMap.put(DisplayDependencyUpdatesBridgeMojo.DEPENDENCIES, updateList);
-    return updateMap;
-  }
+    private DisplayDependencyUpdatesReport createReport(String effectiveKey, String analysisVersion, String artifactQualifier) {
 
-  private RulesProfile prepareRulesProfile() {
-    RulesProfile rulesProfile = RulesProfile.create("mine", "java");
-    Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, DependencyVersion.KEY, DependencyVersion.NAME);
-    rule.createParameter(DependencyVersion.RULE_PROPERTY_WHITELIST);
-    rule.createParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST);
+        final ArtifactUpdate.Dependency dependency = new ArtifactUpdate.Dependency();
 
-    ActiveRule activeRule = rulesProfile.activateRule(rule, RulePriority.MAJOR);
-    activeRule.setParameter(DependencyVersion.RULE_PROPERTY_WHITELIST, ".*");
-    activeRule.setParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST, "");
-    return rulesProfile;
-  }
+        final ArtifactUpdate update = new ArtifactUpdate();
+        update.setDependency(dependency);
+        final ArtifactUpdate.InputLocation inputLocation = new ArtifactUpdate.InputLocation();
+        inputLocation.setLine(1);
+        inputLocation.setColumn(1);
+        final InputSource inputSource = new InputSource();
+        inputSource.setModelId(effectiveKey + ":" + analysisVersion);
+        inputLocation.setInputSource(inputSource);
+        dependency.getInputLocationMap().put("version", inputLocation);
+        dependency.getInputLocationMap().put("", inputLocation);
+
+        update.setVersionUpdate(artifactQualifier);
+
+        ArrayList<ArtifactUpdate> artifactUpdates = new ArrayList<ArtifactUpdate>();
+        artifactUpdates.add(update);
+
+        Map<String, List<ArtifactUpdate>> updateMap = new HashMap<String, List<ArtifactUpdate>>();
+        updateMap.put("Dependencies", artifactUpdates);
+
+        DisplayDependencyUpdatesReport report = new DisplayDependencyUpdatesReport();
+        report.getUpdatePerSectionMap().putAll(updateMap);
+        return report;
+    }
+
+    private RulesProfile prepareRulesProfile() {
+        RulesProfile rulesProfile = RulesProfile.create("mine", "java");
+        Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, DependencyVersion.KEY, DependencyVersion.NAME);
+        rule.createParameter(DependencyVersion.RULE_PROPERTY_WHITELIST);
+        rule.createParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST);
+
+        ActiveRule activeRule = rulesProfile.activateRule(rule, RulePriority.MAJOR);
+        activeRule.setParameter(DependencyVersion.RULE_PROPERTY_WHITELIST, ".*");
+        activeRule.setParameter(DependencyVersion.RULE_PROPERTY_BLACKLIST, "");
+        return rulesProfile;
+    }
+
+    @Test
+    public void testMavenHandler() {
+        final MavenProject mavenProject = new MavenProject();
+        DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(RulesProfile.create(), mavenProject, new Settings(), mock(ResourcePerspectives.class));
+
+        MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
+
+        assertThat(mavenPluginHandler.getGoals()).hasSize(1);
+        assertThat(mavenPluginHandler.getGoals()).contains("display-dependency-updates");
+        assertThat(mavenProject.getProperties()).containsKey("xmlReport");
+    }
 }

@@ -36,7 +36,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         initAPI();
     }
 
-    @Test(enabled = false)  // TODO
+    @Test()
     public void shouldHaveHaveOldDependency() throws Exception {
         skipTestIfNotMaven3();
 

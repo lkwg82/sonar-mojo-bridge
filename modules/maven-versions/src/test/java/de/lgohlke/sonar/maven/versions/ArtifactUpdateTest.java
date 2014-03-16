@@ -19,7 +19,6 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.maven.versions.ArtifactUpdate;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.testng.annotations.Test;
@@ -36,7 +35,7 @@ public class ArtifactUpdateTest {
         dependency.setGroupId("g");
         dependency.setArtifactId("a");
         dependency.setVersion("2.0");
-        ArtifactUpdate artifactUpdate = new ArtifactUpdate(dependency, new DefaultArtifactVersion("2.1.0"));
+        ArtifactUpdateOld artifactUpdate = new ArtifactUpdateOld(dependency, new DefaultArtifactVersion("2.1.0"));
 
         assertThat(artifactUpdate.toString()).isEqualTo("g:a:2.0 has newer version (2.1.0) available");
     }
