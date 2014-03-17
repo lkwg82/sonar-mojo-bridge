@@ -66,8 +66,8 @@ public class DisplayPluginUpdatesSensorTest {
         }
 
         @Override
-        protected DisplayPluginUpdatesReport getReport(String xmlReport) {
-            return report;
+        protected <T> T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
+            return (T) report;
         }
     }
 
@@ -110,7 +110,7 @@ public class DisplayPluginUpdatesSensorTest {
     @Test
     public void shouldHaveNoMinimumVersion() throws Exception {
         init();
-        sensor.getReport("").warnNoMinimumVersion();
+        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).warnNoMinimumVersion();
 
         sensor.analyse(null, null);
 
@@ -139,7 +139,7 @@ public class DisplayPluginUpdatesSensorTest {
         ArtifactUpdate update = new ArtifactUpdate();
         update.setDependency(dependency);
 
-        sensor.getReport("").getPluginUpdates().add(update);
+        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).getPluginUpdates().add(update);
 
         sensor.analyse(null, null);
 
@@ -152,7 +152,7 @@ public class DisplayPluginUpdatesSensorTest {
     public void shouldHaveIncompatibleVersion() throws Exception {
         init();
         IncompatibleParentAndProjectMavenVersion incompatibleVersion = mock(IncompatibleParentAndProjectMavenVersion.class);
-        sensor.getReport("").warn(incompatibleVersion);
+        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).warn(incompatibleVersion);
 
         sensor.analyse(null, null);
 
@@ -170,7 +170,7 @@ public class DisplayPluginUpdatesSensorTest {
         Dependency dependency = new Dependency();
         dependency.getInputLocationMap().put("artifactId", inputLocation);
 
-        sensor.getReport("").addMissingVersionPlugin(dependency);
+        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).addMissingVersionPlugin(dependency);
 
         sensor.analyse(null, null);
 

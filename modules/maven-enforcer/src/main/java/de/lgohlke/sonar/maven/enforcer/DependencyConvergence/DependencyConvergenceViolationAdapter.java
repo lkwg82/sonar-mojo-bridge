@@ -21,7 +21,6 @@ package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
-import com.thoughtworks.xstream.XStream;
 import de.lgohlke.sonar.maven.XmlReader;
 import de.lgohlke.sonar.maven.enforcer.ConfigurableEnforceMavenPluginHandler;
 import de.lgohlke.sonar.maven.enforcer.Violation;
@@ -67,11 +66,7 @@ public class DependencyConvergenceViolationAdapter extends ViolationAdapter {
 
     @VisibleForTesting
     protected DependencyConvergenceReport getReport() {
-        XStream xstream = new XStream();
-        xstream.setClassLoader(getClass().getClassLoader());
-        // TODO move casting into
-        String xml = new XmlReader().readXmlFromFile(getProjectDir(), XML_REPORT);
-        return (DependencyConvergenceReport) xstream.fromXML(xml);
+        return new XmlReader().readXmlFromFile(getProjectDir(), XML_REPORT, DependencyConvergenceReport.class);
     }
 
     private String createMessage(DependencyConvergenceViolation violation) {

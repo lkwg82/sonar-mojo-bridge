@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.thoughtworks.xstream.XStream;
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
@@ -115,7 +113,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
 
     @Override
     public void analyse(final Project project, final SensorContext context) {
-        DisplayPluginUpdatesReport report = getReport(XML_REPORT);
+        DisplayPluginUpdatesReport report = getXmlAsFromReport(XML_REPORT, DisplayPluginUpdatesReport.class);
 
         // minimum version warning
         if (report.isWarnNoMinimumVersion()) {
@@ -167,14 +165,5 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
         ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
 
         return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
-    }
-
-    @VisibleForTesting
-    protected DisplayPluginUpdatesReport getReport(String xmlReport) {
-        XStream xstream = new XStream();
-        xstream.setClassLoader(getClass().getClassLoader());
-
-        String xml = getXmlFromReport(xmlReport);
-        return (DisplayPluginUpdatesReport) xstream.fromXML(xml);
     }
 }

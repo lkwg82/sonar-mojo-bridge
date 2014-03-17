@@ -27,7 +27,7 @@ import org.sonar.api.Extension;
 import java.util.*;
 
 public interface Configuration {
-    String BASE_IDENTIFIER = "org.apache.maven.plugins:maven-enforcer-plugin:1.3.2-SNAPSHOT:";
+    String BASE_IDENTIFIER = "de.lgohlke.mojo:maven-enforcer-plugin:1.3.1.1:";
 
     Map<Class<? extends MavenRule>, ViolationAdapter> RULE_ADAPTER_MAP =
             new HashMap<Class<? extends MavenRule>, ViolationAdapter>() {

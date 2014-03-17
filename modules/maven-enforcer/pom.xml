@@ -33,9 +33,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
+      <groupId>de.lgohlke.mojo</groupId>
       <artifactId>maven-enforcer-plugin</artifactId>
-      <version>${version.enforcer.plugin}</version>
+      <version>${version.enforcer.plugin-fork}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.maven</groupId>

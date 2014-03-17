@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.thoughtworks.xstream.XStream;
 import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.RuleUtils;
@@ -104,7 +102,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
 
     @Override
     public void analyse(final Project project, final SensorContext context) {
-        DisplayDependencyUpdatesReport report = getReport(XML_REPORT);
+        DisplayDependencyUpdatesReport report = getXmlAsFromReport(XML_REPORT, DisplayDependencyUpdatesReport.class);
 
         Rule rule = RuleUtils.createRuleFrom(DependencyVersion.class);
         ArtifactFilter filter = createFilter(settings);
@@ -149,14 +147,5 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
         ArtifactFilter filterFromSettings = ArtifactFilterFactory.createFilterFromSettings(settings, WHITELIST_KEY, BLACKLIST_KEY);
 
         return ArtifactFilterFactory.createFilterFromMerge(filterFromSettings, filterFromRules);
-    }
-
-    @VisibleForTesting
-    protected DisplayDependencyUpdatesReport getReport(String xmlReport) {
-        XStream xstream = new XStream();
-        xstream.setClassLoader(getClass().getClassLoader());
-
-        String xml = getXmlFromReport(xmlReport);
-        return (DisplayDependencyUpdatesReport) xstream.fromXML(xml);
     }
 }

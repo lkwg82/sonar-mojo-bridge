@@ -21,7 +21,10 @@ package de.lgohlke.sonar.maven.lint;
 
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.Rules;
+import de.lgohlke.sonar.maven.XmlReader;
+import de.lgohlke.sonar.maven.lint.xml.Results;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
 import org.reflections.Reflections;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -34,6 +37,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -112,5 +116,41 @@ public class LintSensorTest {
         assertThat(mavenPluginHandler.getGoals()).contains("check");
         assertThat(mavenProject.getProperties()).containsKey("maven-lint.failOnViolation");
         assertThat(mavenProject.getProperties()).containsKey("maven-lint.output.file.xml");
+    }
+
+    @Test
+    public void testXmlDeserialisationWithZeroResults() throws IOException {
+        String xml = "<results status=\"PASS\" violations=\"0\"/>";
+
+        Results results = getResultsFromXml(xml);
+
+        assertThat(results.getViolations()).isNull();
+    }
+
+    @Test
+    public void testXmlDeserialisationWithSomeResults() throws IOException {
+        String xml = "" +
+                "<results status=\"FAIL\" violations=\"1\">\n" +
+                "  <violation rule=\"DuplicateDep\">\n" +
+                "    <message>Dependency &apos;org.codehaus.sonar:sonar-maven3-plugin:jar&apos; is declared multiple times with the same version: 47:17</message>\n" +
+                "    <description>Multiple dependencies, in &lt;dependencies&gt; or &lt;managedDependencies&gt;, with the same co-ordinates are reduntant, and can be confusing.  If they have different versions, they can lead to unexpected behaviour.</description>\n" +
+                "    <location file=\"/home/lars/development/workspaces/sonar/sonar-mojo-bridge/modules/maven-lint/pom.xml\" line=\"41\" column=\"17\"/>\n" +
+                "  </violation>\n" +
+                "</results>";
+
+        Results results = getResultsFromXml(xml);
+
+        assertThat(results.getViolations()).hasSize(1);
+        assertThat(results.getViolations().get(0).getLocation().getLine()).isEqualTo(41);
+    }
+
+    private Results getResultsFromXml(String xml) throws IOException {
+        File tempFile = File.createTempFile(Math.random() + "", Math.random() + "");
+        FileUtils.write(tempFile, xml);
+        tempFile.deleteOnExit();
+
+        File projectDir = tempFile.getParentFile();
+        String xmlReport = tempFile.getAbsoluteFile().getName();
+        return new XmlReader().readXmlFromFile(projectDir, xmlReport, Results.class);
     }
 }

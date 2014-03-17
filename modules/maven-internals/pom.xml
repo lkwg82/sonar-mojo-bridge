@@ -61,7 +61,7 @@
       <artifactId>sonar-maven-batch-plugin</artifactId>
       <version>${sonar.version}</version>
     </dependency>
-    <dependency>
+    <dependency> <!-- TODO still needed? -->
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-xml-plugin</artifactId>
       <version>${sonar-xml-plugin.version}</version>

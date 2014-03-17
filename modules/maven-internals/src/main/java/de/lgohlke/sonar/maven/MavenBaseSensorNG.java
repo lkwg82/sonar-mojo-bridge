@@ -52,9 +52,9 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
     private final ResourcePerspectives resourcePerspectives;
     private final Settings settings;
 
-    protected String getXmlFromReport(String pathToXmlReport) {
+    protected <T>T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
         final File projectDirectory = mavenProject.getOriginalModel().getPomFile().getParentFile();
-        return new XmlReader().readXmlFromFile(projectDirectory, pathToXmlReport);
+        return new XmlReader().readXmlFromFile(projectDirectory, pathToXmlReport,clazz);
     }
 
     @Override

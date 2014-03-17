@@ -68,8 +68,8 @@ public class DisplayDependencyUpdatesSensorTest {
         }
 
         @Override
-        protected DisplayDependencyUpdatesReport getReport(String xmlReport) {
-            return report;
+        protected <T>T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
+            return (T) report;
         }
     }
 

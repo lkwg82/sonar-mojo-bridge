@@ -19,10 +19,12 @@
  */
 package de.lgohlke.sonar.maven.lint.xml;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import lombok.Data;
 
 @Data
+@XStreamAlias("location")
 public class Location {
     @XStreamAsAttribute
     private String file;

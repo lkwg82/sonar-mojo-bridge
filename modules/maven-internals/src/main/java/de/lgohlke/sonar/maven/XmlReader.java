@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -28,7 +29,7 @@ import java.io.IOException;
 @Slf4j
 public class XmlReader {
 
-    public String readXmlFromFile(File projectDirectory, String pathToXmlReport) {
+    private String readXmlFromFile(File projectDirectory, String pathToXmlReport) {
         final File xmlReport = new File(projectDirectory, pathToXmlReport);
         try {
             return FileUtils.readFileToString(xmlReport);
@@ -36,5 +37,15 @@ public class XmlReader {
             log.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
+    }
+
+    public <T>T readXmlFromFile(File projectDir, String xmlReport, Class<T> clazz) {
+        XStream xstream = new XStream();
+        xstream.setClassLoader(getClass().getClassLoader());
+
+        xstream.autodetectAnnotations(true);
+        xstream.processAnnotations(clazz);
+        String xml = readXmlFromFile(projectDir,xmlReport);
+        return (T) xstream.fromXML(xml);
     }
 }

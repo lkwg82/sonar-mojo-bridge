@@ -106,8 +106,8 @@
     <wagon-provider-api.version>2.6</wagon-provider-api.version>
     <xml-apis.version>2.0.2</xml-apis.version>
 
-    <!-- TODO change SNAPSHOT -->
-    <version.enforcer.plugin>1.3.2-SNAPSHOT</version.enforcer.plugin>
+    <version.enforcer.plugin>1.3.1</version.enforcer.plugin>
+    <version.enforcer.plugin-fork>1.3.1.1</version.enforcer.plugin-fork>
     <version.failsafe.plugin>2.16</version.failsafe.plugin>
     <version.surefire.plugin>2.16</version.surefire.plugin>
     <version.sonar-dev.plugin>1.7</version.sonar-dev.plugin>
@@ -525,21 +525,15 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <groupId>de.lgohlke.mojo</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${version.enforcer.plugin-fork}</version>
         <executions>
           <execution>
             <id>enforce</id>
             <configuration>
               <rules>
                 <DependencyConvergence/>
-                <requirePluginVersions>
-                  <message>Build reproducibility : always define plugin versions!</message>
-
-                  <!-- TODO just for dev -->
-                  <banSnapshots>false</banSnapshots>
-                  <phases>clean,deploy</phases>
-                </requirePluginVersions>
               </rules>
             </configuration>
             <goals>

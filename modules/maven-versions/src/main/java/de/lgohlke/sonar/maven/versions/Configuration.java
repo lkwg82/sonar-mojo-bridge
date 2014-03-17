@@ -29,7 +29,7 @@ import java.util.Set;
 
 public interface Configuration {
     // TODO release a new version
-    String BASE_IDENTIFIER = "de.lgohlke.mojo:versions-maven-plugin:2.1.3-SNAPSHOT:";
+    String BASE_IDENTIFIER = "de.lgohlke.mojo:versions-maven-plugin:2.1.3:";
     String REGEX_DESCRIPTION = "<i>examples:</i><br/>" +
             "exact pattern <tt>org.apache.karaf.features:spring:3.0.0.RC1</tt><br/>" +
             "wildcard <tt>org.apache..*?:spring:.*</tt><br/>" +

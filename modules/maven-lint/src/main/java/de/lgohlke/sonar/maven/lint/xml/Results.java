@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.lint.xml;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.Data;
@@ -26,6 +27,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
+@XStreamAlias("results")
 public class Results {
     @XStreamAsAttribute
     private String status;

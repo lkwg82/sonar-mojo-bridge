@@ -69,13 +69,14 @@ public class LintSensor extends MavenBaseSensorNG {
 
     @Override
     public void analyse(Project project, SensorContext context) {
-        String xml = getXmlFromReport(LINT_FILENAME);
-        Results results = getResults(xml);
+        Results results = getXmlAsFromReport(LINT_FILENAME, Results.class);
 
-        for (Violation violation : results.getViolations()) {
-            Rule rule = createRuleFromViolation(violation);
-            if (rule != null) {
-                addIssue(violation, rule);
+        if (null != results.getViolations()) {
+            for (Violation violation : results.getViolations()) {
+                Rule rule = createRuleFromViolation(violation);
+                if (rule != null) {
+                    addIssue(violation, rule);
+                }
             }
         }
     }
@@ -90,6 +91,7 @@ public class LintSensor extends MavenBaseSensorNG {
 
     private void addIssue(Violation violation, Rule rule) {
         org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
+        // TODO get rid of xml plugin??
         file.setLanguage(new AbstractLanguage("xml") {
             @Override
             public String[] getFileSuffixes() {
@@ -107,10 +109,6 @@ public class LintSensor extends MavenBaseSensorNG {
                 build();
 
         issuable.addIssue(issue);
-    }
-
-    private Results getResults(String xml) {
-        return new ResultsReader().read(xml);
     }
 
     @VisibleForTesting

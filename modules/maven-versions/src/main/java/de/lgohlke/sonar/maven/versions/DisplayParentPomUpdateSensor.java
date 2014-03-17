@@ -19,8 +19,6 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.thoughtworks.xstream.XStream;
 import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.RuleUtils;
@@ -61,7 +59,7 @@ public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
     @Override
     public void analyse(Project project, SensorContext context) {
         if (null != mavenProject.getModel().getParent()) {
-            DisplayParentUpdateReport report = getReport(XML_REPORT);
+            DisplayParentUpdateReport report = getXmlAsFromReport(XML_REPORT, DisplayParentUpdateReport.class);
 
             if (null != report.getUpdate().getVersionUpdate()) {
                 String message = ParentPomVersion.DESCRIPTION + ", currently used is " + report.getUpdate().getDependency().getVersion() + " but " +
@@ -75,12 +73,4 @@ public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
         }
     }
 
-    @VisibleForTesting
-    protected DisplayParentUpdateReport getReport(String xmlReport) {
-        XStream xstream = new XStream();
-        xstream.setClassLoader(getClass().getClassLoader());
-
-        String xml = getXmlFromReport(xmlReport);
-        return (DisplayParentUpdateReport) xstream.fromXML(xml);
-    }
 }
