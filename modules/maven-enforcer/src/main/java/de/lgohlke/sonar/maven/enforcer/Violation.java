@@ -20,11 +20,9 @@
 package de.lgohlke.sonar.maven.enforcer;
 
 import lombok.Data;
-import org.sonar.api.rules.Rule;
 
 @Data
 public class Violation {
-  private int line;
-  private String message;
-  private Rule rule;
+    private int line;
+    private String message;
 }

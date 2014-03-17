@@ -21,6 +21,7 @@ package de.lgohlke.sonar.maven.enforcer;
 
 import de.lgohlke.sonar.maven.*;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceRule;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -30,73 +31,59 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
-import org.sonar.batch.scan.maven.MavenPluginExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static de.lgohlke.sonar.maven.enforcer.Configuration.BASE_IDENTIFIER;
-import static org.fest.reflect.core.Reflection.constructor;
-
 @Rules(values = {DependencyConvergenceRule.class})
-@SensorConfiguration(
-    bridgeMojo = EnforceBridgeMojo.class, //
-    resultTransferHandler = RuleTransferHandler.class, //
-    mavenBaseIdentifier = BASE_IDENTIFIER
-)
-public class EnforceSensor extends MavenBaseSensor<RuleTransferHandler> {
-  private final EnforceMavenPluginHandler mavenPluginHandler;
+@Slf4j
+public class EnforceSensor extends MavenBaseSensorNG {
+    private final static String GOAL = "enforce";
 
-  public EnforceSensor(RulesProfile rulesProfile, MavenPluginExecutor mavenPluginExecutor, MavenProject mavenProject, Project project, ResourcePerspectives resourcePerspectives, Settings settings) {
-    super(rulesProfile, mavenPluginExecutor, mavenProject, resourcePerspectives, settings);
-    this.mavenPluginHandler = new EnforceMavenPluginHandler(super.getMavenPluginHandler(project));
+    private final List<ViolationAdapter> violationAdapters = new ArrayList<ViolationAdapter>();
+    private final EnforceMavenPluginHandler mavenPluginHandler;
+    private final MavenProject mavenProject;
 
-    configureMavenPluginHandler(rulesProfile, mavenProject);
-  }
+    public EnforceSensor(RulesProfile rulesProfile, MavenProject mavenProject, ResourcePerspectives resourcePerspectives, Settings settings) {
+        super(log, mavenProject, rulesProfile, resourcePerspectives, settings);
+        this.mavenProject = mavenProject;
 
-  private void configureMavenPluginHandler(RulesProfile rulesProfile, MavenProject mavenProject) {
-    for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
-      Rule rule = RuleUtils.createRuleFrom(ruleClass);
-      for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
-        if (rule.equals(activeRule.getRule())) {
-          initEnforcerRule(mavenProject, ruleClass);
+        final MavenPluginHandler pluginHandler = MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER + GOAL);
+        this.mavenPluginHandler = new EnforceMavenPluginHandler(pluginHandler);
+        initViolationAdapterPerActiveRule(rulesProfile, mavenProject);
+    }
+
+    @Override
+    public MavenPluginHandler getMavenPluginHandler(final Project project) {
+        final java.util.Properties mavenProjectProperties = mavenProject.getProperties();
+        mavenProjectProperties.setProperty("fail", "false");
+        return mavenPluginHandler;
+    }
+
+    private void initViolationAdapterPerActiveRule(RulesProfile rulesProfile, MavenProject mavenProject) {
+        // TODO generalisieren getActiveRules
+        for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
+            Rule rule = RuleUtils.createRuleFrom(ruleClass);
+            for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
+                if (rule.equals(activeRule.getRule())) {
+
+                    ViolationAdapter adapter = Configuration.RULE_ADAPTER_MAP.get(ruleClass);
+                    adapter.setRule(rule);
+                    adapter.setProjectDir(mavenProject.getOriginalModel().getPomFile().getParentFile());
+                    adapter.configure(mavenPluginHandler);
+
+                    violationAdapters.add(adapter);
+                }
+            }
         }
-      }
     }
-  }
 
-  @SuppressWarnings("unchecked")
-  private void initEnforcerRule(final MavenProject mavenProject, final Class<? extends MavenRule> ruleClass) {
-    Class<? extends EnforcerRule> aClass = Configuration.RULE_ADAPTER_MAP.get(ruleClass);
-    EnforcerRule enforcerRule = constructor().in(aClass).newInstance();
-
-    getMojoMapper().getResultTransferHandler().getRules().add(enforcerRule);
-    enforcerRule.configure(mavenPluginHandler);
-
-    Class<ViolationAdapter> violationAdapterClass = enforcerRule.getViolationAdapterClass();
-    ViolationAdapter adapter = constructor().withParameterTypes(MavenProject.class).in(violationAdapterClass).newInstance(mavenProject);
-
-    enforcerRule.setViolationAdapter(adapter);
-  }
-
-  @Override
-  public boolean shouldExecuteOnProject(final Project project) {
-    boolean rulesEmpty = getMojoMapper().getResultTransferHandler().getRules().isEmpty();
-    return !rulesEmpty && super.shouldExecuteOnProject(project);
-  }
-
-  @Override
-  public void analyse(Project project, SensorContext context) {
-    List<EnforcerRule> rules = getMojoMapper().getResultTransferHandler().getRules();
-    for (EnforcerRule rule : rules) {
-      ViolationAdapter violationAdapter = rule.getViolationAdapter();
-      for (Violation violation : violationAdapter.getViolations()) {
-        addIssue(violation.getMessage(), violation.getLine(), violation.getRule());
-      }
+    @Override
+    public void analyse(Project project, SensorContext context) {
+        for (ViolationAdapter adapter : violationAdapters) {
+            for (Violation violation : adapter.getViolations()) {
+                addIssue(violation.getMessage(), violation.getLine(), adapter.getRule());
+            }
+        }
     }
-  }
-
-  @Override
-  public MavenPluginHandler getMavenPluginHandler(Project project) {
-    return mavenPluginHandler;
-  }
 }

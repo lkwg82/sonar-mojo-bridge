@@ -19,52 +19,69 @@
  */
 package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import de.lgohlke.sonar.maven.enforcer.EnforceMavenPluginHandler;
 import de.lgohlke.sonar.maven.enforcer.Violation;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
+import lombok.Setter;
+import org.apache.maven.plugins.enforcer.report.Dependency;
+import org.apache.maven.plugins.enforcer.report.DependencyConvergenceReport;
+import org.apache.maven.plugins.enforcer.report.DependencyConvergenceViolation;
+import org.fest.assertions.data.MapEntry;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DependencyConvergenceViolationAdapterTest {
-  @Test
-  public void test() {
-    List<DependencyNode> nodeList = Lists.newArrayList();
-    List<List<DependencyNode>> errors = Lists.newArrayList();
-    errors.add(nodeList);
 
-    String groupId = "org.codehaus.plexus";
-    String artifactId = "plexus-classworlds";
-    String classifier = "x";
-    String v1 = "2.4";
-    String v2 = "2.2.2";
-    String v3 = "2.2.3";
+    @Test
+    public void testConfiguredMavenPluginHandler() {
+        DependencyConvergenceViolationAdapter adapter = new DependencyConvergenceViolationAdapter();
+        EnforceMavenPluginHandler handler = new EnforceMavenPluginHandler(null);
+        adapter.configure(handler);
 
-    nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v1, "compile", "jar", classifier, null)));
-    nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v2, "compile", "jar", classifier, null)));
-    nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v2, "compile", "jar", classifier, null)));
-    nodeList.add(new DependencyNode(new DefaultArtifact(groupId, artifactId, v3, "provided", "jar", classifier, null)));
+        assertThat(handler.getParameters()).contains(MapEntry.entry("rules/DependencyConvergence", null));
+        assertThat(handler.getParameters()).containsKey("rules/DependencyConvergence/xmlReport");
+    }
 
-    DependencyConvergenceViolationAdapter violationAdapter = getViolationAdapter();
-    violationAdapter.setErrors(errors);
+    class MyDependencyConvergenceViolationAdapter extends DependencyConvergenceViolationAdapter {
+        @Setter
+        private DependencyConvergenceReport report;
 
-    List<Violation> violations = violationAdapter.getViolations();
+        @Override
+        protected DependencyConvergenceReport getReport() {
+            return report;
+        }
+    }
 
-    assertThat(violations).hasSize(1);
-    String expected = "found multiple version for " + groupId + ":" + artifactId + " (" + Joiner.on(",").join(v2, v3, v1) + ")";
-    assertThat(violations.get(0).getMessage()).isEqualTo(expected);
-  }
+    @Test
+    public void testGetViolations() {
 
-  private DependencyConvergenceViolationAdapter getViolationAdapter() {
-    MavenProject mavenProject = new MavenProject();
-    mavenProject.setFile(new File(""));
-    return new DependencyConvergenceViolationAdapter(mavenProject);
-  }
+        Dependency dependency = new Dependency();
+        dependency.setGroupId("g");
+        dependency.setArtifactId("a");
 
+        DependencyConvergenceViolation violation = new DependencyConvergenceViolation();
+        violation.setDependency(dependency);
+        violation.getVersions().add("1");
+        violation.getVersions().add("2");
+        violation.getVersions().add("3");
+
+        DependencyConvergenceReport report = new DependencyConvergenceReport();
+        report.getDependencyConvergencesViolations().add(violation);
+
+        MyDependencyConvergenceViolationAdapter adapter = new MyDependencyConvergenceViolationAdapter();
+        adapter.setReport(report);
+
+        List<Violation> violations = adapter.getViolations();
+
+        assertThat(violations).hasSize(1);
+
+        Violation firstViolation = violations.get(0);
+
+        assertThat(firstViolation.getLine()).isEqualTo(1);
+
+        String expected = "found multiple version for g:a (3,2,1)";
+        assertThat(firstViolation.getMessage()).isEqualTo(expected);
+    }
 }

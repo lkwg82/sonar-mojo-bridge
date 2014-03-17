@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.Configuration;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.sonar.api.batch.Sensor;
@@ -42,7 +41,6 @@ import org.sonar.api.rules.RuleParam;
 import org.sonar.plugins.xml.language.Xml;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -56,13 +54,7 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
 
     protected String getXmlFromReport(String pathToXmlReport) {
         final File projectDirectory = mavenProject.getOriginalModel().getPomFile().getParentFile();
-        final File xmlReport = new File(projectDirectory, pathToXmlReport);
-        try {
-            return FileUtils.readFileToString(xmlReport);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
+        return new XmlReader().readXmlFromFile(projectDirectory, pathToXmlReport);
     }
 
     @Override

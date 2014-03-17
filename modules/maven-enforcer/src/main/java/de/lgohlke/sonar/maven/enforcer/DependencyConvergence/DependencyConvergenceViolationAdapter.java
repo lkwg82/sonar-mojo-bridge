@@ -19,16 +19,16 @@
  */
 package de.lgohlke.sonar.maven.enforcer.DependencyConvergence;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-import de.lgohlke.sonar.maven.RuleUtils;
+import com.thoughtworks.xstream.XStream;
+import de.lgohlke.sonar.maven.XmlReader;
+import de.lgohlke.sonar.maven.enforcer.ConfigurableEnforceMavenPluginHandler;
 import de.lgohlke.sonar.maven.enforcer.Violation;
 import de.lgohlke.sonar.maven.enforcer.ViolationAdapter;
-import lombok.Setter;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.sonar.api.rules.Rule;
+import org.apache.maven.plugins.enforcer.report.Dependency;
+import org.apache.maven.plugins.enforcer.report.DependencyConvergenceReport;
+import org.apache.maven.plugins.enforcer.report.DependencyConvergenceViolation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,36 +38,46 @@ import java.util.Set;
  * User: lgohlke
  */
 public class DependencyConvergenceViolationAdapter extends ViolationAdapter {
-  @Setter
-  private List<List<DependencyNode>> errors;
 
-  public DependencyConvergenceViolationAdapter(MavenProject mavenProject) {
-    super(mavenProject);
-  }
+    private final static String XML_REPORT = "target/enforcer_dependencyConvergence_report.xml";
 
-  @Override
-  public List<Violation> getViolations() {
-    List<Violation> violations = new ArrayList<Violation>();
-
-    Rule rule = RuleUtils.createRuleFrom(DependencyConvergenceRule.class);
-
-    for (List<DependencyNode> error : errors) {
-      Violation violation = new Violation();
-      violation.setRule(rule);
-      violation.setLine(1);
-      violation.setMessage(createMessage(error));
-      violations.add(violation);
+    @Override
+    public void configure(ConfigurableEnforceMavenPluginHandler handler) {
+        handler.setParameter("fail", "false");
+        handler.setParameter("rules/DependencyConvergence", null);
+        handler.setParameter("rules/DependencyConvergence/xmlReport", XML_REPORT);
     }
-    return violations;
-  }
 
-  private String createMessage(List<DependencyNode> nodeList) {
-    final DependencyNode dependencyNode = nodeList.get(0);
-    final Artifact artifact = dependencyNode.getArtifact();
-    Set<String> versions = Sets.newTreeSet();
-    for (DependencyNode node : nodeList) {
-      versions.add(node.getArtifact().getVersion());
+    @Override
+    public List<Violation> getViolations() {
+
+        List<Violation> violations = new ArrayList<Violation>();
+
+        DependencyConvergenceReport report = getReport();
+
+        for (DependencyConvergenceViolation dcViolation : report.getDependencyConvergencesViolations()) {
+            Violation violation = new Violation();
+            violation.setLine(1);
+            violation.setMessage(createMessage(dcViolation));
+
+            violations.add(violation);
+        }
+        return violations;
     }
-    return "found multiple version for " + artifact.getGroupId() + ":" + artifact.getArtifactId() + " (" + Joiner.on(",").join(versions) + ")";
-  }
+
+    @VisibleForTesting
+    protected DependencyConvergenceReport getReport() {
+        XStream xstream = new XStream();
+        xstream.setClassLoader(getClass().getClassLoader());
+        // TODO move casting into
+        String xml = new XmlReader().readXmlFromFile(getProjectDir(), XML_REPORT);
+        return (DependencyConvergenceReport) xstream.fromXML(xml);
+    }
+
+    private String createMessage(DependencyConvergenceViolation violation) {
+        Dependency artifact = violation.getDependency();
+        Set<String> versions = violation.getVersions();
+
+        return "found multiple version for " + artifact.getGroupId() + ":" + artifact.getArtifactId() + " (" + Joiner.on(",").join(versions) + ")";
+    }
 }

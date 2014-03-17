@@ -19,7 +19,9 @@
  */
 package de.lgohlke.sonar.maven.enforcer;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.sonar.api.batch.maven.MavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -31,12 +33,14 @@ import java.util.Map;
  * this mavenplugin handler enables us to configure dynamically the rules, activated
  */
 @RequiredArgsConstructor
-class EnforceMavenPluginHandler implements MavenPluginHandler, ConfigurableEnforceMavenPluginHandler {
+public class EnforceMavenPluginHandler implements MavenPluginHandler, ConfigurableEnforceMavenPluginHandler {
   private final MavenPluginHandler mavenPluginHandler;
 
   /**
    * key,value,key,value
    */
+  @VisibleForTesting
+  @Getter
   private final Map<String, String> parameters = Maps.newHashMap();
 
   @Override

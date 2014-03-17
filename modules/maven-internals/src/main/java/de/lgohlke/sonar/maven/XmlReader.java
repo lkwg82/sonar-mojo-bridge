@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-enforcer
+ * sonar-mojo-bridge-maven-internals
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,12 +17,24 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.enforcer;
+package de.lgohlke.sonar.maven;
 
-public interface HasViolationAdapter<T extends ViolationAdapter> {
-  void setViolationAdapter(T adapter);
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
-  T getViolationAdapter();
+import java.io.File;
+import java.io.IOException;
 
-  Class<T> getViolationAdapterClass();
+@Slf4j
+public class XmlReader {
+
+    public String readXmlFromFile(File projectDirectory, String pathToXmlReport) {
+        final File xmlReport = new File(projectDirectory, pathToXmlReport);
+        try {
+            return FileUtils.readFileToString(xmlReport);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new IllegalStateException(e);
+        }
+    }
 }
