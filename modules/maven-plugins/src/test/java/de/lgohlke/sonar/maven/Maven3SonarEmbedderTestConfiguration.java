@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * Sonar mojo bridge plugin
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -19,10 +19,15 @@
  */
 package de.lgohlke.sonar.maven;
 
-public class BridgeMojoMapperException extends Exception {
-  private static final long serialVersionUID = -107270059713086960L;
+import java.io.File;
 
-  public BridgeMojoMapperException(final String string) {
-    super(string);
+/**
+ * User: lars
+ */
+public final class Maven3SonarEmbedderTestConfiguration {
+  private Maven3SonarEmbedderTestConfiguration() {
   }
+
+  // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
+  public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 }

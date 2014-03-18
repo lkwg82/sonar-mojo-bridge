@@ -123,8 +123,8 @@
 
     <module>modules/maven-plugins</module>
 
-    <module>modules/sonar-plugin</module>
-    <module>modules/maven-integration-tests</module>
+    <!--<module>modules/sonar-plugin</module>-->
+    <!--<module>modules/maven-integration-tests</module>-->
   </modules>
 
   <dependencies>

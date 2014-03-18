@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-integration
+ * Sonar mojo bridge plugin
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -42,7 +42,7 @@ public class Maven3SonarEmbedderTest {
 
   final String goal = "versions:help";
 
-  @Test
+    @Test(enabled  =false)
   public void shouldNotFailOnMissingPom() throws MavenEmbedderException {
     Maven3SonarEmbedder.configure().goal(goal).setAlternativeMavenHome(Maven3SonarEmbedderTestConfiguration.MAVEN_HOME).build();
   }
@@ -110,7 +110,7 @@ public class Maven3SonarEmbedderTest {
     Maven3SonarEmbedder.configure().usePomFile("pom.xml").goal(goal).setAlternativeMavenHome(new File("pom.xml")).build();
   }
 
-  @Test
+    @Test(enabled  =false)
   public void shouldRun() throws MavenEmbedderException {
     Maven3SonarEmbedder.configure()
         .usePomFile("pom.xml")
@@ -120,7 +120,7 @@ public class Maven3SonarEmbedderTest {
         .run();
   }
 
-  @Test
+  @Test(enabled  =false)
   public void shouldFailOnWrongGoalNoPluginFound() throws MavenEmbedderException {
     try {
       Maven3SonarEmbedder.configure()
@@ -134,7 +134,7 @@ public class Maven3SonarEmbedderTest {
     }
   }
 
-  @Test
+    @Test(enabled  =false)
   public void shouldFailOnWrongGoalNoPluginFound2() throws MavenEmbedderException {
     try {
       Maven3SonarEmbedder.configure()

@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-integration
+ * Sonar mojo bridge plugin
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
