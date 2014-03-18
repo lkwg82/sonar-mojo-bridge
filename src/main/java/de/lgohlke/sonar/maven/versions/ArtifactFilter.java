@@ -20,10 +20,10 @@
 package de.lgohlke.sonar.maven.versions;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.fest.util.Preconditions;
 
 import java.util.List;
 
@@ -81,7 +81,7 @@ public class ArtifactFilter {
     }
 
     public final ArtifactFilter addWhitelistRegex(String regex) {
-        Preconditions.checkNotNullOrEmpty(regex);
+        Preconditions.checkArgument(regex != null || !regex.isEmpty());
         ArtifactFilter.log.debug("adding whitelist regex {}", regex);
         whitelistRegexList.add(regex);
         whitelistRegex = null;
@@ -89,7 +89,7 @@ public class ArtifactFilter {
     }
 
     public final ArtifactFilter addBlacklistRegex(String regex) {
-        Preconditions.checkNotNullOrEmpty(regex);
+        Preconditions.checkArgument(regex != null || !regex.isEmpty());
         ArtifactFilter.log.debug("adding blacklist regex {}", regex);
         blacklistRegexList.add(regex);
         blacklistRegex = null;

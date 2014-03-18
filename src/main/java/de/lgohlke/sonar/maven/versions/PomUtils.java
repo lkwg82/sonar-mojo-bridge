@@ -20,9 +20,9 @@
 package de.lgohlke.sonar.maven.versions;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 import org.codehaus.mojo.versions.report.Dependency;
-import org.fest.util.Preconditions;
 
 import java.util.Arrays;
 

@@ -117,11 +117,6 @@
 
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.easytesting</groupId>
-      <artifactId>fest-util</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-batch</artifactId>
@@ -514,8 +509,8 @@
               <rules>
                 <DependencyConvergence/>
                 <requireFilesSize>
-                  <maxsize>200000</maxsize>
-                  <minsize>100000</minsize>
+                  <maxsize>100000</maxsize>
+                  <minsize>50000</minsize>
                   <files>
                     <file>
                       ${project.build.directory}/${project.artifactId}-${project.internal.version}.jar
