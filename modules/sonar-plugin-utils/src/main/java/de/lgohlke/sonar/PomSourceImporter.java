@@ -28,7 +28,7 @@ import org.sonar.api.batch.SonarIndex;
 import org.sonar.api.batch.SupportedEnvironment;
 import org.sonar.api.resources.Java;
 import org.sonar.api.resources.ProjectFileSystem;
-import org.sonar.plugins.xml.language.Xml;
+
 import java.io.File;
 import java.util.List;
 
@@ -58,12 +58,6 @@ public class PomSourceImporter extends AbstractSourceImporter implements BatchCo
   public String getSourceOfPom() {
     final org.sonar.api.resources.File file = new org.sonar.api.resources.File("", project.getFile().getName());
     return index.getSource(file);
-  }
-
-  public org.sonar.api.resources.File getPomFile() {
-    final org.sonar.api.resources.File file = new org.sonar.api.resources.File("", project.getFile().getName());
-    file.setLanguage(Xml.INSTANCE);
-    return file;
   }
 
   @Override
