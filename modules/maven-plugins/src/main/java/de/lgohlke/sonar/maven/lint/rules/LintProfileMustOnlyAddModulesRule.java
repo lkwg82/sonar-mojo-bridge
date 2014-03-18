@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,20 +17,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.lint.xml;
+package de.lgohlke.sonar.maven.lint.rules;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import lombok.Data;
+import de.lgohlke.sonar.maven.MavenRule;
+import org.sonar.check.Priority;
+import org.sonar.check.Rule;
 
-import java.util.List;
+@Rule(
+        description = LintProfileMustOnlyAddModulesRule.DESCRIPTION,
+        key = LintProfileMustOnlyAddModulesRule.KEY,
+        name = LintProfileMustOnlyAddModulesRule.NAME,
+        priority = Priority.MAJOR
 
-@Data
-@XStreamAlias("results")
-public class Results {
-    @XStreamAsAttribute
-    private String status;
-    @XStreamImplicit
-    private List<Violation> violations;
+)
+public interface LintProfileMustOnlyAddModulesRule extends MavenRule {
+    String DESCRIPTION = "Profiles who's ids match the pattern with-.* must only add modules to the reactor.";
+    String KEY = "lint.ProfileOnlyAddModules";
+    String NAME = "[POM] profile must only add modules";
 }

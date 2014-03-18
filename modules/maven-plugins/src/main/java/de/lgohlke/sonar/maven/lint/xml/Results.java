@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,15 +21,16 @@ package de.lgohlke.sonar.maven.lint.xml;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.Data;
 
-@Data
-@XStreamAlias("violation")
-public class Violation {
+import java.util.List;
 
+@Data
+@XStreamAlias("results")
+public class Results {
     @XStreamAsAttribute
-    private String rule;
-    private String message;
-    private String description;
-    private Location location;
+    private String status;
+    @XStreamImplicit
+    private List<Violation> violations;
 }

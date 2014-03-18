@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,14 +24,16 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-    description = LintMissingIssueManagementRule.DESCRIPTION,
-    key = LintMissingIssueManagementRule.KEY,
-    name = LintMissingIssueManagementRule.NAME,
-    priority = Priority.MAJOR
+        description = LintRedundantDependencyVersionsRule.DESCRIPTION,
+        key = LintRedundantDependencyVersionsRule.KEY,
+        name = LintRedundantDependencyVersionsRule.NAME,
+        priority = Priority.MINOR
 
 )
-public interface LintMissingIssueManagementRule extends MavenRule {
-  String DESCRIPTION = "For reporting bugs or request features give a linkto your issue tracker.";
-  String KEY = "lint.OSSIssueManagementSectionRule";
-  String NAME = "[POM] missing section of issue-management";
+public interface LintRedundantDependencyVersionsRule extends MavenRule {
+    String DESCRIPTION = "Dependency versions should be set in one place, and not overridden without changing the version. " +
+            "If, for example, <dependencyManagement> sets a version, and <dependencies> somewhere overrides it, " +
+            "but with the same version, this can make version upgrades more difficult, due to the repetition.";
+    String KEY = "lint.RedundantDepVersion";
+    String NAME = "[POM] redundant dependency versions";
 }

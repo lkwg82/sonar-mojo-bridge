@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,16 +24,14 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-        description = LintRedundantDependencyVersionsRule.DESCRIPTION,
-        key = LintRedundantDependencyVersionsRule.KEY,
-        name = LintRedundantDependencyVersionsRule.NAME,
+        description = LintVersionPropertiesMustUseProjectVersionRule.DESCRIPTION,
+        key = LintVersionPropertiesMustUseProjectVersionRule.KEY,
+        name = LintVersionPropertiesMustUseProjectVersionRule.NAME,
         priority = Priority.MINOR
 
 )
-public interface LintRedundantDependencyVersionsRule extends MavenRule {
-    String DESCRIPTION = "Dependency versions should be set in one place, and not overridden without changing the version. " +
-            "If, for example, <dependencyManagement> sets a version, and <dependencies> somewhere overrides it, " +
-            "but with the same version, this can make version upgrades more difficult, due to the repetition.";
-    String KEY = "lint.RedundantDepVersion";
-    String NAME = "[POM] redundant dependency versions";
+public interface LintVersionPropertiesMustUseProjectVersionRule extends MavenRule {
+    String DESCRIPTION = "The ${version} property is deprecated.  Use ${project.version} instead.";
+    String KEY = "lint.VersionProp";
+    String NAME = "[POM] deprecated version property";
 }

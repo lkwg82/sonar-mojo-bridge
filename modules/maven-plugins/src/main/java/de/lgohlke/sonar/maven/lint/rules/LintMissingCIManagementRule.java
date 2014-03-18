@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,14 +24,14 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-        description = LintProfileMustOnlyAddModulesRule.DESCRIPTION,
-        key = LintProfileMustOnlyAddModulesRule.KEY,
-        name = LintProfileMustOnlyAddModulesRule.NAME,
+        description = LintMissingCIManagementRule.DESCRIPTION,
+        key = LintMissingCIManagementRule.KEY,
+        name = LintMissingCIManagementRule.NAME,
         priority = Priority.MAJOR
 
 )
-public interface LintProfileMustOnlyAddModulesRule extends MavenRule {
-    String DESCRIPTION = "Profiles who's ids match the pattern with-.* must only add modules to the reactor.";
-    String KEY = "lint.ProfileOnlyAddModules";
-    String NAME = "[POM] profile must only add modules";
+public interface LintMissingCIManagementRule extends MavenRule {
+    String DESCRIPTION = "For better understanding the project a link to the used integration system helps users to trust.";
+    String KEY = "lint.OSSContinuousIntegrationManagementSectionRule";
+    String NAME = "[POM] missing section of ci-management";
 }

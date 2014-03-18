@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,14 +24,14 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-        description = LintMissingCIManagementRule.DESCRIPTION,
-        key = LintMissingCIManagementRule.KEY,
-        name = LintMissingCIManagementRule.NAME,
-        priority = Priority.MAJOR
+        description = LintExecutionIdRule.DESCRIPTION,
+        key = LintExecutionIdRule.KEY,
+        name = LintExecutionIdRule.NAME,
+        priority = Priority.CRITICAL
 
 )
-public interface LintMissingCIManagementRule extends MavenRule {
-    String DESCRIPTION = "For better understanding the project a link to the used integration system helps users to trust.";
-    String KEY = "lint.OSSContinuousIntegrationManagementSectionRule";
-    String NAME = "[POM] missing section of ci-management";
+public interface LintExecutionIdRule extends MavenRule {
+    String DESCRIPTION = "Executions should always specify an id, so they can be overridden in child modules, and uniquely identified in build logs.";
+    String KEY = "lint.ExecutionId";
+    String NAME = "[POM] missing execution ids";
 }

@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,21 +17,19 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.lint.rules;
+package de.lgohlke.sonar.maven.lint.xml;
 
-import de.lgohlke.sonar.maven.MavenRule;
-import org.sonar.check.Priority;
-import org.sonar.check.Rule;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lombok.Data;
 
-@Rule(
-        description = LintVersionPropertiesMustUseProjectVersionRule.DESCRIPTION,
-        key = LintVersionPropertiesMustUseProjectVersionRule.KEY,
-        name = LintVersionPropertiesMustUseProjectVersionRule.NAME,
-        priority = Priority.MINOR
-
-)
-public interface LintVersionPropertiesMustUseProjectVersionRule extends MavenRule {
-    String DESCRIPTION = "The ${version} property is deprecated.  Use ${project.version} instead.";
-    String KEY = "lint.VersionProp";
-    String NAME = "[POM] deprecated version property";
+@Data
+@XStreamAlias("location")
+public class Location {
+    @XStreamAsAttribute
+    private String file;
+    @XStreamAsAttribute
+    private int line;
+    @XStreamAsAttribute
+    private int column;
 }

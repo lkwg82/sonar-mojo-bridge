@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -80,7 +80,7 @@ public class LintSensor extends MavenBaseSensorNG {
         final Properties mavenProjectProperties = mavenProject.getProperties();
         mavenProjectProperties.setProperty("maven-lint.failOnViolation", "false");
         mavenProjectProperties.setProperty("maven-lint.output.file.xml", LINT_FILENAME);
-        return MavenPluginHandlerFactory.createHandler(de.lgohlke.sonar.maven.lint.Configuration.BASE_IDENTIFIER);
+        return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER);
     }
 
     @VisibleForTesting

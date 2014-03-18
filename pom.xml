@@ -125,8 +125,7 @@
     <module>modules/sonar-plugin-utils</module>
     <module>modules/sonar-plugin-testing</module>
 
-    <module>modules/maven-enforcer</module>
-    <module>modules/maven-lint</module>
+    <module>modules/maven-plugins</module>
 
     <module>modules/sonar-plugin</module>
     <module>modules/maven-integration-tests</module>

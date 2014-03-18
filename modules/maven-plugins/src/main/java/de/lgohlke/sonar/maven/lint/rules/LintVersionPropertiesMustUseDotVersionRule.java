@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,14 +24,15 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-        description = LintExecutionIdRule.DESCRIPTION,
-        key = LintExecutionIdRule.KEY,
-        name = LintExecutionIdRule.NAME,
-        priority = Priority.CRITICAL
+        description = LintVersionPropertiesMustUseDotVersionRule.DESCRIPTION,
+        key = LintVersionPropertiesMustUseDotVersionRule.KEY,
+        name = LintVersionPropertiesMustUseDotVersionRule.NAME,
+        priority = Priority.MINOR
 
 )
-public interface LintExecutionIdRule extends MavenRule {
-    String DESCRIPTION = "Executions should always specify an id, so they can be overridden in child modules, and uniquely identified in build logs.";
-    String KEY = "lint.ExecutionId";
-    String NAME = "[POM] missing execution ids";
+public interface LintVersionPropertiesMustUseDotVersionRule extends MavenRule {
+    String DESCRIPTION = "The convention is to specify properties used to hold versions as \"some.library.version\", or some-library.version, " +
+            "but never some-library-version or some.library-version.";
+    String KEY = "lint.DotVersionProperty";
+    String NAME = "[POM] version property must use dot version";
 }

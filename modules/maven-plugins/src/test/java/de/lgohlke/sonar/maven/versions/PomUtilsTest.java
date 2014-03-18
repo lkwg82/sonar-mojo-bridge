@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-enforcer
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *

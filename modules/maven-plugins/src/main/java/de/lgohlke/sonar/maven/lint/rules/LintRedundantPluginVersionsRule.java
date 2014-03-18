@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-lint
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -24,15 +24,16 @@ import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
 @Rule(
-        description = LintVersionPropertiesMustUseDotVersionRule.DESCRIPTION,
-        key = LintVersionPropertiesMustUseDotVersionRule.KEY,
-        name = LintVersionPropertiesMustUseDotVersionRule.NAME,
+        description = LintRedundantPluginVersionsRule.DESCRIPTION,
+        key = LintRedundantPluginVersionsRule.KEY,
+        name = LintRedundantPluginVersionsRule.NAME,
         priority = Priority.MINOR
 
 )
-public interface LintVersionPropertiesMustUseDotVersionRule extends MavenRule {
-    String DESCRIPTION = "The convention is to specify properties used to hold versions as \"some.library.version\", or some-library.version, " +
-            "but never some-library-version or some.library-version.";
-    String KEY = "lint.DotVersionProperty";
-    String NAME = "[POM] version property must use dot version";
+public interface LintRedundantPluginVersionsRule extends MavenRule {
+    String DESCRIPTION = "Plugin versions should be set in one place, and not overridden without changing the version. " +
+            "If, for example, <pluginManagement> sets a version, and <plugins> somewhere overrides it, " +
+            "but with the same version, this can make version upgrades more difficult, due to the repetition.";
+    String KEY = "lint.RedundantPluginVersion";
+    String NAME = "[POM] redundant plugin versions";
 }
