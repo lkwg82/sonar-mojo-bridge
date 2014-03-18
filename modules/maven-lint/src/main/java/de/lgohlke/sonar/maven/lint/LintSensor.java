@@ -30,12 +30,8 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
-import org.sonar.api.issue.Issuable;
-import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.AbstractLanguage;
 import org.sonar.api.resources.Project;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.Rule;
 
 import java.util.Properties;
@@ -59,12 +55,10 @@ public class LintSensor extends MavenBaseSensorNG {
     private final static Object BASE_PREFIX = "lint";
 
     private final MavenProject mavenProject;
-    private final ResourcePerspectives resourcePerspectives;
 
     public LintSensor(MavenProject mavenProject, RulesProfile rulesProfile, ResourcePerspectives resourcePerspectives, Settings settings) {
         super(log, mavenProject, rulesProfile, resourcePerspectives, settings);
         this.mavenProject = mavenProject;
-        this.resourcePerspectives = resourcePerspectives;
     }
 
     @Override
@@ -75,7 +69,7 @@ public class LintSensor extends MavenBaseSensorNG {
             for (Violation violation : results.getViolations()) {
                 Rule rule = createRuleFromViolation(violation);
                 if (rule != null) {
-                    addIssue(violation, rule);
+                    addIssue(violation.getMessage(), violation.getLocation().getLine()+1, rule);
                 }
             }
         }
@@ -87,28 +81,6 @@ public class LintSensor extends MavenBaseSensorNG {
         mavenProjectProperties.setProperty("maven-lint.failOnViolation", "false");
         mavenProjectProperties.setProperty("maven-lint.output.file.xml", LINT_FILENAME);
         return MavenPluginHandlerFactory.createHandler(de.lgohlke.sonar.maven.lint.Configuration.BASE_IDENTIFIER);
-    }
-
-    private void addIssue(Violation violation, Rule rule) {
-        org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-        // TODO get rid of xml plugin??
-        file.setLanguage(new AbstractLanguage("xml") {
-            @Override
-            public String[] getFileSuffixes() {
-                return new String[]{"xml"};
-            }
-        });
-
-        Issuable issuable = resourcePerspectives.as(Issuable.class, file);
-        RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
-
-        Issue issue = issuable.newIssueBuilder().
-                line(violation.getLocation().getLine() + 1).
-                message(violation.getMessage()).
-                ruleKey(ruleKey).
-                build();
-
-        issuable.addIssue(issue);
     }
 
     @VisibleForTesting
