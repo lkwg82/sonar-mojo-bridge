@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -19,8 +19,26 @@
  */
 package de.lgohlke.sonar.maven;
 
+import de.lgohlke.sonar.Configuration;
+import org.sonar.api.rules.Rule;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * marker interface
+ * User: lars
  */
-public interface MavenRule {
+public final class RuleUtils {
+  private RuleUtils() {
+  }
+
+  public static Rule createRuleFrom(Class<? extends MavenRule> ruleClass) {
+    final org.sonar.check.Rule annotation = ruleClass.getAnnotation(org.sonar.check.Rule.class);
+    checkNotNull(annotation, "each " + MavenRule.class + " needs a " + org.sonar.check.Rule.class + " annotation");
+
+    final String key = annotation.key();
+    checkArgument(key.length() > 0, "key should be empty");
+
+    return Rule.create(Configuration.REPOSITORY_KEY, key);
+  }
 }

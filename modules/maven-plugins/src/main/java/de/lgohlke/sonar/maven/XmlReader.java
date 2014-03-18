@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -34,7 +34,7 @@ public class XmlReader {
         try {
             return FileUtils.readFileToString(xmlReport);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            XmlReader.log.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }

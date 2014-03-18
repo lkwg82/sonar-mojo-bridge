@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-configuration
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,15 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar;
+package de.lgohlke.sonar.maven;
 
 /**
- * User: lars
+ * marker interface
  */
-public interface Configuration {
-  String PLUGIN_KEY = "sonar.maven";
-  String ANALYSIS_ENABLED = PLUGIN_KEY + ".analysis";
-  String REPOSITORY_KEY = "maven";
-  String DEFAULT = "true";
-  String REPOSITORY_NAME = "Maven";
+public interface MavenRule {
 }

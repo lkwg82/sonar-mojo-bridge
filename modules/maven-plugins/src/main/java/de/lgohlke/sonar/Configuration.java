@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-maven-plugins
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,13 +17,15 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven;
+package de.lgohlke.sonar;
 
-import java.lang.annotation.*;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface Rules {
-  Class<? extends MavenRule>[] values() default {};
+/**
+ * User: lars
+ */
+public interface Configuration {
+  String PLUGIN_KEY = "sonar.maven";
+  String ANALYSIS_ENABLED = PLUGIN_KEY + ".analysis";
+  String REPOSITORY_KEY = "maven";
+  String DEFAULT = "true";
+  String REPOSITORY_NAME = "Maven";
 }
