@@ -7,7 +7,7 @@ pluginDir=$sonarDir/extensions/plugins/
 baseName=sonar-mojo-bridge-*.jar
 
 rm -v $pluginDir/$baseName
-mv -v ./modules/sonar-plugin/target/$baseName $pluginDir
+mv -v target/$baseName $pluginDir
 
 $sonarBin restart &
 tail -f $sonarDir/logs/*log
