@@ -56,6 +56,7 @@ import static org.mockito.Mockito.when;
 public class DisplayPluginUpdatesSensorTest {
     private List<Issue> issues;
     private MyDisplayPluginUpdatesSensor sensor;
+    private RulesProfile rulesProfile = RulesProfile.create("mine", "java");
 
     class MyDisplayPluginUpdatesSensor extends DisplayPluginUpdatesSensor {
         @Setter
@@ -90,15 +91,11 @@ public class DisplayPluginUpdatesSensorTest {
 
         sensor = getPluginUpdatesSensor(resourcePerspectives);
         sensor.setReport(new DisplayPluginUpdatesReport());
+
+        rulesProfile.getActiveRules().clear();
     }
 
     private MyDisplayPluginUpdatesSensor getPluginUpdatesSensor(ResourcePerspectives resourcePerspectives) {
-        RulesProfile rulesProfile = RulesProfile.create("mine", "java");
-        Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, PluginVersion.KEY, PluginVersion.NAME);
-        rule.createParameter(PluginVersion.RULE_PROPERTY_WHITELIST).setDefaultValue(".*");
-        rule.createParameter(PluginVersion.RULE_PROPERTY_BLACKLIST).setDefaultValue("");
-        rulesProfile.activateRule(rule, RulePriority.MAJOR);
-
         MavenProject mavenProject = TestHelper.getMavenProject();
         Settings settings = Settings.createForComponent(DisplayPluginUpdatesSensor.class);
 
@@ -110,7 +107,10 @@ public class DisplayPluginUpdatesSensorTest {
     @Test
     public void shouldHaveNoMinimumVersion() throws Exception {
         init();
-        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).warnNoMinimumVersion();
+        sensor.getXmlAsFromReport("", DisplayPluginUpdatesReport.class).warnNoMinimumVersion();
+
+        Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, NoMinimumMavenVersion.KEY, PluginVersion.NAME);
+        rulesProfile.activateRule(rule, RulePriority.MAJOR);
 
         sensor.analyse(null, null);
 
@@ -139,7 +139,12 @@ public class DisplayPluginUpdatesSensorTest {
         ArtifactUpdate update = new ArtifactUpdate();
         update.setDependency(dependency);
 
-        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).getPluginUpdates().add(update);
+        sensor.getXmlAsFromReport("", DisplayPluginUpdatesReport.class).getPluginUpdates().add(update);
+
+        Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, PluginVersion.KEY, PluginVersion.NAME);
+        rule.createParameter(PluginVersion.RULE_PROPERTY_WHITELIST).setDefaultValue(".*");
+        rule.createParameter(PluginVersion.RULE_PROPERTY_BLACKLIST).setDefaultValue("");
+        rulesProfile.activateRule(rule, RulePriority.MAJOR);
 
         sensor.analyse(null, null);
 
@@ -152,7 +157,10 @@ public class DisplayPluginUpdatesSensorTest {
     public void shouldHaveIncompatibleVersion() throws Exception {
         init();
         IncompatibleParentAndProjectMavenVersion incompatibleVersion = mock(IncompatibleParentAndProjectMavenVersion.class);
-        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).warn(incompatibleVersion);
+        sensor.getXmlAsFromReport("", DisplayPluginUpdatesReport.class).warn(incompatibleVersion);
+
+        Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, IncompatibleMavenVersion.KEY, PluginVersion.NAME);
+        rulesProfile.activateRule(rule, RulePriority.MAJOR);
 
         sensor.analyse(null, null);
 
@@ -170,7 +178,10 @@ public class DisplayPluginUpdatesSensorTest {
         Dependency dependency = new Dependency();
         dependency.getInputLocationMap().put("artifactId", inputLocation);
 
-        sensor.getXmlAsFromReport("",DisplayPluginUpdatesReport.class).addMissingVersionPlugin(dependency);
+        sensor.getXmlAsFromReport("", DisplayPluginUpdatesReport.class).addMissingVersionPlugin(dependency);
+
+        Rule rule = Rule.create(de.lgohlke.sonar.Configuration.REPOSITORY_KEY, MissingPluginVersion.KEY, PluginVersion.NAME);
+        rulesProfile.activateRule(rule, RulePriority.MAJOR);
 
         sensor.analyse(null, null);
 

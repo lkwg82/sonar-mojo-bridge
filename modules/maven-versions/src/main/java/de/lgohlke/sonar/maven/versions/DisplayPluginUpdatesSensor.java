@@ -115,45 +115,59 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
     public void analyse(final Project project, final SensorContext context) {
         DisplayPluginUpdatesReport report = getXmlAsFromReport(XML_REPORT, DisplayPluginUpdatesReport.class);
 
-        // minimum version warning
-        if (report.isWarnNoMinimumVersion()) {
+        analyseRuleNoMinimumMavenVersion(report);
+        analyseIncompatibleMavenVersion(report);
+        analyseMissingVersion(report);
+        analysePluginUpdates(report);
+    }
+
+    private void analysePluginUpdates(DisplayPluginUpdatesReport report) {
+        if (isRuleActive(PluginVersion.class)) {
+            Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
+            ArtifactFilter filter = createFilter(settings);
+            for (ArtifactUpdate update : report.getPluginUpdates()) {
+                if (filter.acceptArtifact(update.toString())) {
+                    int line = update.getDependency().getInputLocationMap().get("version").getLine();
+                    addIssue(update.toString(), (line > 0) ? line : 1, rule);
+                }
+            }
+        }
+    }
+
+    private void analyseMissingVersion(DisplayPluginUpdatesReport report) {
+        if (isRuleActive(MissingPluginVersion.class)) {
+            String sourceOfPom = pomSourceImporter.getSourceOfPom();
+            Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
+            for (Dependency dependency : report.getMissingVersionPlugins()) {
+                int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
+
+                String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
+                String message = artifact + " has no version";
+                addIssue(message, (line > 0) ? line : 1, missingVersionRule);
+            }
+        }
+    }
+
+    private void analyseIncompatibleMavenVersion(DisplayPluginUpdatesReport report) {
+        if (isRuleActive(IncompatibleMavenVersion.class)) {
+            IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion = report.getIncompatibleParentAndProjectMavenVersion();
+            if (incompatibleParentAndProjectMavenVersion != null) {
+
+                String parentVersion = incompatibleParentAndProjectMavenVersion.getParentVersion();
+                String projectVersion = incompatibleParentAndProjectMavenVersion.getProjectVersion();
+                String message = "Project does define incompatible minimum versions:  in parent pom " + parentVersion +
+                        " and in project pom " + projectVersion;
+                Rule rule = RuleUtils.createRuleFrom(IncompatibleMavenVersion.class);
+                addIssue(message, 1, rule);
+            }
+        }
+    }
+
+    private void analyseRuleNoMinimumMavenVersion(DisplayPluginUpdatesReport report) {
+        if (isRuleActive(NoMinimumMavenVersion.class) && report.isWarnNoMinimumVersion()) {
             Rule rule = RuleUtils.createRuleFrom(NoMinimumMavenVersion.class);
             String message = "Project does not define minimum Maven version, default is: 2.0";
             addIssue(message, 1, rule);
-        }
-
-        // incompatible minimum versions
-        IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion = report.getIncompatibleParentAndProjectMavenVersion();
-        if (incompatibleParentAndProjectMavenVersion != null) {
-
-            String parentVersion = incompatibleParentAndProjectMavenVersion.getParentVersion();
-            String projectVersion = incompatibleParentAndProjectMavenVersion.getProjectVersion();
-            String message = "Project does define incompatible minimum versions:  in parent pom " + parentVersion +
-                    " and in project pom " + projectVersion;
-            Rule rule = RuleUtils.createRuleFrom(IncompatibleMavenVersion.class);
-            addIssue(message, 1, rule);
-        }
-
-        String sourceOfPom = pomSourceImporter.getSourceOfPom();
-
-        // missing versions
-        Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
-        for (Dependency dependency : report.getMissingVersionPlugins()) {
-            int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
-
-            String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
-            String message = artifact + " has no version";
-            addIssue(message, (line > 0) ? line : 1, missingVersionRule);
-        }
-
-        // updates
-        Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
-        ArtifactFilter filter = createFilter(settings);
-        for (ArtifactUpdate update : report.getPluginUpdates()) {
-            if (filter.acceptArtifact(update.toString())) {
-                int line = update.getDependency().getInputLocationMap().get("version").getLine();
-                addIssue(update.toString(), (line > 0) ? line : 1, rule);
-            }
         }
     }
 

@@ -52,9 +52,9 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
     private final ResourcePerspectives resourcePerspectives;
     private final Settings settings;
 
-    protected <T>T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
+    protected <T> T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
         final File projectDirectory = mavenProject.getOriginalModel().getPomFile().getParentFile();
-        return new XmlReader().readXmlFromFile(projectDirectory, pathToXmlReport,clazz);
+        return new XmlReader().readXmlFromFile(projectDirectory, pathToXmlReport, clazz);
     }
 
     @Override
@@ -74,6 +74,16 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         List<Rule> associatedRules = getAssociatedRules();
         for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
             if (associatedRules.contains(activeRule.getRule())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isRuleActive(Class<? extends MavenRule> mavenRule) {
+        Rule rule = RuleUtils.createRuleFrom(mavenRule);
+        for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
+            if (rule.equals(activeRule.getRule())) {
                 return true;
             }
         }
