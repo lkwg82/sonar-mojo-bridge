@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
     <artifactId>parent</artifactId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
-  <artifactId>sonar-mojo-bridge-parent</artifactId>
+  <artifactId>sonar-mojo-bridge</artifactId>
   <version>0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>sonar-mojo-bridge-parent</name>
+  <packaging>sonar-plugin</packaging>
+  <name>Sonar Mojo Bridge</name>
   <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
   <inceptionYear>2012</inceptionYear>
 
@@ -58,23 +58,21 @@
   </developers>
 
   <properties>
-    <project.internal.version>0.1-is24-20131017</project.internal.version>
+    <project.internal.version>0.1-is24-20140315</project.internal.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>3.7.2</sonar.version>
+    <sonar.version>3.7.4</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
-    <sonar-xml-plugin.version>1.0</sonar-xml-plugin.version>
-    <!-- this code has a lot of violations, by design -->
-    <sonar.exclusions>**/*BridgeMojo.java</sonar.exclusions>
+
     <test.database>h2</test.database>
     <test.jdbcDriver>org.h2.Driver</test.jdbcDriver>
-    <test.jdbcUrl>jdbc:h2:tcp://localhost:9092/sonar</test.jdbcUrl>
+    <test.jdbcUrl>jdbc:${test.database}:tcp://localhost:9092/sonar</test.jdbcUrl>
 
     <aether.version>1.13.1</aether.version>
-    <commons-beanutils.version>1.8.3</commons-beanutils.version>
-    <commons-codec.version>1.8</commons-codec.version>
+    <commons-beanutils.version>1.9.1</commons-beanutils.version>
+    <commons-codec.version>1.9</commons-codec.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-digester.version>2.1</commons-digester.version>
     <commons-io.version>2.4</commons-io.version>
@@ -84,50 +82,114 @@
     <fest-assert-core.version>2.0M10</fest-assert-core.version>
     <fest-reflect.version>1.4.1</fest-reflect.version>
     <fest-util.version>1.2.5</fest-util.version>
-    <groovy.version>2.1.4</groovy.version>
-    <guava.version>14.0.1</guava.version>
+    <groovy.version>2.2.2</groovy.version>
+    <guava.version>16.0.1</guava.version>
     <hibernate-core.version>3.3.2.GA</hibernate-core.version>
     <javassist.version>3.12.1.GA</javassist.version>
     <junit.version>4.11</junit.version>
-    <logback.version>1.0.13</logback.version>
-    <lombok.version>1.12.2</lombok.version>
+    <logback.version>1.1.1</logback.version>
+    <lombok.version>1.12.6</lombok.version>
     <maven-reporting-api.version>3.0</maven-reporting-api.version>
     <maven-reporting-impl.version>2.2</maven-reporting-impl.version>
     <maven-project.version>2.2.0</maven-project.version>
     <plexus-cipher.version>1.7</plexus-cipher.version>
     <plexus-classworlds.version>2.5.1</plexus-classworlds.version>
     <plexus-container-default.version>1.5.5</plexus-container-default.version>
-    <plexus-interpolation.version>1.16</plexus-interpolation.version>
-    <plexus-utils.version>3.0.15</plexus-utils.version>
+    <plexus-interpolation.version>1.19</plexus-interpolation.version>
+    <plexus-utils.version>3.0.17</plexus-utils.version>
     <sisu-inject-plexus.version>2.4.3</sisu-inject-plexus.version>
-    <testng.version>6.8.7</testng.version>
-    <slf4j-api.version>1.7.5</slf4j-api.version>
-    <versions-maven-plugin.version>1.3.1</versions-maven-plugin.version>
-    <wagon-provider-api.version>2.5</wagon-provider-api.version>
+    <testng.version>6.8.8</testng.version>
+    <slf4j-api.version>1.7.6</slf4j-api.version>
+    <versions-maven-plugin.version>2.1.3</versions-maven-plugin.version>
+    <wagon-provider-api.version>2.6</wagon-provider-api.version>
     <xml-apis.version>2.0.2</xml-apis.version>
 
-
     <version.enforcer.plugin>1.3.1</version.enforcer.plugin>
-    <version.failsafe.plugin>2.16</version.failsafe.plugin>
-    <version.surefire.plugin>2.16</version.surefire.plugin>
+    <version.failsafe.plugin>2.17</version.failsafe.plugin>
+    <version.surefire.plugin>2.17</version.surefire.plugin>
     <version.sonar-dev.plugin>1.7</version.sonar-dev.plugin>
     <version.sonar-packaging.plugin>1.9</version.sonar-packaging.plugin>
   </properties>
 
-  <modules>
-    <!-- order of inheritence //-->
-    <module>modules/sonar-plugin-configuration</module>
-    <module>modules/maven-internals</module>
-    <module>modules/sonar-plugin-utils</module>
-    <module>modules/sonar-plugin-testing</module>
-    <module>modules/maven-enforcer</module>
-    <module>modules/maven-lint</module>
-    <module>modules/maven-versions</module>
-    <module>modules/sonar-plugin</module>
-    <module>modules/maven-integration-tests</module>
-  </modules>
+  <prerequisites>
+    <maven>3.0.0</maven>
+  </prerequisites>
+
 
   <dependencies>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-batch</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.collections</groupId>
+          <artifactId>google-collections</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-maven-plugin</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-plugin-api</artifactId>
+      <version>${sonar-plugin-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-testing-harness</artifactId>
+      <version>${sonar.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-ws-client</artifactId>
+      <version>${sonar.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>de.lgohlke.mojo</groupId>
+      <artifactId>enforcer-rules-report</artifactId>
+      <version>1.3.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>de.lgohlke.mojo</groupId>
+      <artifactId>versions-maven-plugin-report</artifactId>
+      <version>2.1.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>hudson-maven-embedder</artifactId>
+      <version>3.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>animal-sniffer-annotations</artifactId>
+      <version>${version.animal-sniffer.plugin}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -153,11 +215,18 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.9.9-RC1</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -168,12 +237,6 @@
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>${testng.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.sonar</groupId>
-        <artifactId>sonar-plugin-api</artifactId>
-        <!-- minimum version supported -->
-        <version>${sonar-plugin-api.version}</version>
       </dependency>
 
       <dependency>
@@ -385,7 +448,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.3.1</version>
+        <version>4.3.3</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
@@ -396,106 +459,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>${versions-maven-plugin.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact-manager</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-repository-metadata</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-descriptor</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-settings</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-common-artifact-filters</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-provider-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-file</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.doxia</groupId>
-            <artifactId>doxia-sink-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.doxia</groupId>
-            <artifactId>doxia-site-renderer</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-i18n</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>wstx-asl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.reporting</groupId>
-            <artifactId>maven-reporting-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.maven.reporting</groupId>
-            <artifactId>maven-reporting-impl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-          </exclusion>
-        </exclusions>
+        <version>4.3.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -512,19 +476,89 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <extensions>true</extensions>
+        <groupId>org.codehaus.sonar</groupId>
+        <artifactId>sonar-packaging-maven-plugin</artifactId>
+        <configuration>
+          <finalName>${project.artifactId}-${project.internal.version}</finalName>
+          <pluginClass>de.lgohlke.sonar.MavenPlugin</pluginClass>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
-            <id>enforce</id>
+            <id>dependency convergence</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>process-resources</phase>
             <configuration>
               <rules>
                 <DependencyConvergence/>
               </rules>
+              <fail>true</fail>
             </configuration>
+          </execution>
+          <execution>
+            <id>plugin size</id>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <requireFilesSize>
+                <maxsize>100000</maxsize>
+                <minsize>50000</minsize>
+                <files>
+                  <file>
+                    ${project.build.directory}/${project.artifactId}-${project.internal.version}.jar
+                  </file>
+                </files>
+              </requireFilesSize>
+            <fail>true</fail>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- testing -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.sonar</groupId>
+        <artifactId>sonar-dev-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>start-server</id>
             <goals>
-              <goal>enforce</goal>
+              <goal>start</goal>
             </goals>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <runtimeVersion>${sonar.version}</runtimeVersion>
+              <background>true</background>
+              <database>${test.database}</database>
+              <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
+              <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
+              <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
+              <pluginArtifact>target/sonar-mojo-bridge-${project.internal.version}.jar
+              </pluginArtifact>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-server</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <runtimeVersion>${sonar.version}</runtimeVersion>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -558,8 +592,9 @@
             </execution>
           </executions>
           <configuration>
-            <parallel>classes</parallel>
-            <threadCount>5</threadCount>
+            <forkMode>never</forkMode>
+            <parallel>none</parallel>
+            <threadCount>1</threadCount>
             <systemProperties>
               <property>
                 <name>jdbcDriver</name>
