@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-testing
+ * sonar-mojo-bridge-integration
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -117,7 +117,7 @@ public final class SonarExecutor implements Cloneable {
         final String command = configureExecutionCommand();
 
         try {
-            log.info("calling : {}", command);
+            SonarExecutor.log.info("calling : {}", command);
 
             Process proc = Runtime.getRuntime().exec(command);
             StringBuilder outputFromMavenCall = new StringBuilder();
@@ -146,7 +146,7 @@ public final class SonarExecutor implements Cloneable {
                 fail("sonar test run failed");
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            SonarExecutor.log.error(e.getMessage(), e);
         }
     }
 

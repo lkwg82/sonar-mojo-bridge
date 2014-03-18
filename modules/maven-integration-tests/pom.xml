@@ -16,13 +16,29 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-mojo-bridge-testing</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>14.0.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>hudson-maven-embedder</artifactId>
+      <version>3.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-ws-client</artifactId>
+      <version>${sonar.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-mojo-bridge-maven-plugins</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>

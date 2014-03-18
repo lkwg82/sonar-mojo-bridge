@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-internals
+ * sonar-mojo-bridge-integration
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *

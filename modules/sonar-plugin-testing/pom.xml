@@ -19,6 +19,10 @@
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-mojo-bridge-maven-internals</artifactId>
       <version>0.1-SNAPSHOT</version>
+    </dependency> <dependency>
+      <groupId>org.codehaus.sonar-plugins</groupId>
+      <artifactId>sonar-mojo-bridge-maven-plugins</artifactId>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>

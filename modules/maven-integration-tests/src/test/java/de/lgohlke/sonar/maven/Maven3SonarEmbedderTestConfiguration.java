@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-testing
+ * sonar-mojo-bridge-integration
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -19,12 +19,15 @@
  */
 package de.lgohlke.sonar.maven;
 
-import org.testng.annotations.Test;
+import java.io.File;
 
-
-public class MavenInjectIT extends de.lgohlke.sonar.maven.MavenITAbstract {
-  @Test
-  public void shouldExecuteInstalledPluginWithoutErrors() throws Exception {
-    executor.execute();
+/**
+ * User: lars
+ */
+public final class Maven3SonarEmbedderTestConfiguration {
+  private Maven3SonarEmbedderTestConfiguration() {
   }
+
+  // public static final File MAVEN_HOME = new File("/data/home/lgohlke/development/tools/apache-maven-3.0.4");
+  public static final File MAVEN_HOME = new File("/home/lars/development/tools/apache-maven-3.0.4");
 }

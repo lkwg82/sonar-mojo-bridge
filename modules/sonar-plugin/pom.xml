@@ -20,20 +20,9 @@
     <!-- internal dependencies //-->
     <dependency>
       <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-mojo-bridge-maven-versions</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>sonar-mojo-bridge-maven-plugins</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar-plugins</groupId>
-      <artifactId>sonar-mojo-bridge-maven-lint</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>
-
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
@@ -68,7 +57,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>de.lgohlke.mojo</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
@@ -89,6 +77,12 @@
                     </file>
                   </files>
                 </requireFilesSize>
+                <requirePluginVersions>
+                  <!-- TODO just for dev -->
+                  <message>Build reproducibility : always define plugin versions!</message>
+                  <banSnapshots>false</banSnapshots>
+                  <phases>clean,deploy</phases>
+                </requirePluginVersions>
               </rules>
               <fail>true</fail>
             </configuration>
