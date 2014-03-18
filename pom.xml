@@ -83,7 +83,7 @@
     <fest-reflect.version>1.4.1</fest-reflect.version>
     <fest-util.version>1.2.5</fest-util.version>
     <groovy.version>2.2.2</groovy.version>
-    <guava.version>14.0.1</guava.version>
+    <guava.version>16.0.1</guava.version>
     <hibernate-core.version>3.3.2.GA</hibernate-core.version>
     <javassist.version>3.12.1.GA</javassist.version>
     <junit.version>4.11</junit.version>
@@ -95,8 +95,8 @@
     <plexus-cipher.version>1.7</plexus-cipher.version>
     <plexus-classworlds.version>2.5.1</plexus-classworlds.version>
     <plexus-container-default.version>1.5.5</plexus-container-default.version>
-    <plexus-interpolation.version>1.16</plexus-interpolation.version>
-    <plexus-utils.version>3.0.15</plexus-utils.version>
+    <plexus-interpolation.version>1.19</plexus-interpolation.version>
+    <plexus-utils.version>3.0.17</plexus-utils.version>
     <sisu-inject-plexus.version>2.4.3</sisu-inject-plexus.version>
     <testng.version>6.8.8</testng.version>
     <slf4j-api.version>1.7.6</slf4j-api.version>
@@ -105,8 +105,8 @@
     <xml-apis.version>2.0.2</xml-apis.version>
 
     <version.enforcer.plugin>1.3.1</version.enforcer.plugin>
-    <version.failsafe.plugin>2.16</version.failsafe.plugin>
-    <version.surefire.plugin>2.16</version.surefire.plugin>
+    <version.failsafe.plugin>2.17</version.failsafe.plugin>
+    <version.surefire.plugin>2.17</version.surefire.plugin>
     <version.sonar-dev.plugin>1.7</version.sonar-dev.plugin>
     <version.sonar-packaging.plugin>1.9</version.sonar-packaging.plugin>
   </properties>
@@ -174,17 +174,12 @@
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>animal-sniffer-annotations</artifactId>
-      <version>1.9</version>
+      <version>${version.animal-sniffer.plugin}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -225,13 +220,13 @@
   </dependencies>
 
   <dependencyManagement>
-      <dependencies>
-        <dependency>
-          <groupId>org.reflections</groupId>
-          <artifactId>reflections</artifactId>
-          <version>0.9.9-RC1</version>
-          <scope>test</scope>
-        </dependency>
+    <dependencies>
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.9.9-RC1</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -466,13 +461,6 @@
         <artifactId>httpcore</artifactId>
         <version>4.3.2</version>
       </dependency>
-      <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>xstream</artifactId>
-        <!-- must be same version as is provided by sonar -->
-        <version>1.3.1</version>
-        <scope>provided</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -500,26 +488,33 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
-            <id>enforce-file-size</id>
+            <id>dependency convergence</id>
             <goals>
               <goal>enforce</goal>
             </goals>
-            <phase>verify</phase>
+            <phase>process-resources</phase>
             <configuration>
               <rules>
                 <DependencyConvergence/>
-                <requireFilesSize>
-                  <maxsize>100000</maxsize>
-                  <minsize>50000</minsize>
-                  <files>
-                    <file>
-                      ${project.build.directory}/${project.artifactId}-${project.internal.version}.jar
-                    </file>
-                  </files>
-                </requireFilesSize>
               </rules>
               <fail>true</fail>
             </configuration>
+          </execution>
+          <execution>
+            <id>plugin size</id>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <requireFilesSize>
+                <maxsize>100000</maxsize>
+                <minsize>50000</minsize>
+                <files>
+                  <file>
+                    ${project.build.directory}/${project.artifactId}-${project.internal.version}.jar
+                  </file>
+                </files>
+              </requireFilesSize>
+            <fail>true</fail>
+          </configuration>
           </execution>
         </executions>
       </plugin>
