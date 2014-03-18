@@ -61,7 +61,6 @@ public class EnforceSensor extends MavenBaseSensorNG {
     }
 
     private void initViolationAdapterPerActiveRule(RulesProfile rulesProfile, MavenProject mavenProject) {
-        // TODO generalisieren getActiveRules
         for (Class<? extends MavenRule> ruleClass : getClass().getAnnotation(Rules.class).values()) {
             Rule rule = RuleUtils.createRuleFrom(ruleClass);
             for (ActiveRule activeRule : rulesProfile.getActiveRules()) {
