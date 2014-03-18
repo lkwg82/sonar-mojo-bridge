@@ -21,7 +21,6 @@ package de.lgohlke.sonar.maven.versions;
 
 import org.codehaus.mojo.versions.report.Dependency;
 import org.testng.annotations.Test;
-import versions.PomUtils;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

@@ -38,8 +38,7 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
-import versions.DisplayParentPomUpdateSensor;
-import versions.rules.ParentPomVersion;
+import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 
 import java.io.File;
 import java.util.ArrayList;

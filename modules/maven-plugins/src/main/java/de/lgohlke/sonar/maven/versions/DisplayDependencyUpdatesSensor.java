@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package versions;
+package de.lgohlke.sonar.maven.versions;
 
 import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
@@ -37,7 +37,7 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import versions.rules.DependencyVersion;
+import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 
 import java.util.List;
 import java.util.Map;
@@ -88,7 +88,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
                                           Settings settings,
                                           ResourcePerspectives resourcePerspectives
     ) {
-        super(log, mavenProject, rulesProfile, resourcePerspectives, settings);
+        super(DisplayDependencyUpdatesSensor.log, mavenProject, rulesProfile, resourcePerspectives, settings);
         this.mavenProject = mavenProject;
         this.settings = settings;
     }

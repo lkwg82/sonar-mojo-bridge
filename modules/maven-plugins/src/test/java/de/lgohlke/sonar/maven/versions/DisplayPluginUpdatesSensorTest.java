@@ -39,11 +39,10 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RulePriority;
 import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
-import versions.DisplayPluginUpdatesSensor;
-import versions.rules.IncompatibleMavenVersion;
-import versions.rules.MissingPluginVersion;
-import versions.rules.NoMinimumMavenVersion;
-import versions.rules.PluginVersion;
+import de.lgohlke.sonar.maven.versions.rules.IncompatibleMavenVersion;
+import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
+import de.lgohlke.sonar.maven.versions.rules.NoMinimumMavenVersion;
+import de.lgohlke.sonar.maven.versions.rules.PluginVersion;
 
 import java.util.ArrayList;
 import java.util.List;

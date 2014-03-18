@@ -20,7 +20,6 @@
 package de.lgohlke.sonar.maven.versions;
 
 import org.testng.annotations.Test;
-import versions.ArtifactFilter;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

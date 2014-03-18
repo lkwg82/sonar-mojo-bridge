@@ -41,8 +41,7 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RulePriority;
 import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
-import versions.DisplayDependencyUpdatesSensor;
-import versions.rules.DependencyVersion;
+import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;

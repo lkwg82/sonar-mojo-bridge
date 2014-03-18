@@ -25,8 +25,6 @@ import org.sonar.api.Property;
 import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.api.config.Settings;
 import org.testng.annotations.Test;
-import versions.ArtifactFilter;
-import versions.ArtifactFilterFactory;
 
 import java.util.Map;
 

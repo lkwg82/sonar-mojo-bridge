@@ -17,19 +17,25 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package versions.rules;
+package de.lgohlke.sonar.maven.versions.rules;
 
 import de.lgohlke.sonar.maven.MavenRule;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 
+/**
+ * User: lars
+ */
 @Rule(
-        description = ParentPomVersion.DESCRIPTION,
-        key = ParentPomVersion.KEY,
-        name = ParentPomVersion.NAME,
-        priority = Priority.MINOR)
-public interface ParentPomVersion extends MavenRule {
-    String KEY = "Old Parent Pom";
-    String NAME = "[POM] found an newer version for the parent pom";
-    String DESCRIPTION = "a newer version of the parent pom is available";
+        description = NoMinimumMavenVersion.DESCRIPTION,
+        key = NoMinimumMavenVersion.KEY,
+        name = NoMinimumMavenVersion.NAME,
+        priority = Priority.MAJOR)
+public interface NoMinimumMavenVersion extends MavenRule {
+    String KEY = "NO MINIMUM MAVEN VERSION";
+    String NAME = "[POM] found no minimum maven version";
+    String DESCRIPTION = "Update the pom.xml to contain <br>" +
+            "&lt;prerequisites&gt;<br>" +
+            "&nbsp;&nbsp;&lt;maven&gt;&lt;!-- minimum version of Maven that the plugin works with --&gt;&lt;/maven&gt;<br>" +
+            "&lt;/prerequisites&gt;";
 }

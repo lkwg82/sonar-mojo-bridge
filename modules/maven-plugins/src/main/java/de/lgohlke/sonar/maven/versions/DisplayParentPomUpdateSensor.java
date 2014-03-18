@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package versions;
+package de.lgohlke.sonar.maven.versions;
 
 import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
@@ -33,7 +33,7 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import versions.rules.ParentPomVersion;
+import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 
 import java.util.Properties;
 
