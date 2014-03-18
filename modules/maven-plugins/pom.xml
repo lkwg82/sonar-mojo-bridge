@@ -9,7 +9,7 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>sonar-mojo-bridge-maven-enforcer</artifactId>
+  <artifactId>sonar-mojo-bridge-maven-plugins</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
