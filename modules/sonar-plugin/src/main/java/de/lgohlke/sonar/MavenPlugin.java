@@ -20,7 +20,6 @@
 package de.lgohlke.sonar;
 
 import org.sonar.api.*;
-import org.sonar.plugins.xml.language.Xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,6 @@ public class MavenPlugin extends SonarPlugin {
 
         extensions.add(RulesRepository.class);
         extensions.add(PomSourceImporter.class);
-        extensions.add(Xml.class);
         return extensions;
     }
 }

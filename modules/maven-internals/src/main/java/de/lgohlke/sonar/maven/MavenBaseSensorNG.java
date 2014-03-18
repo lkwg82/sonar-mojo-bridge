@@ -32,13 +32,13 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.AbstractLanguage;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
-import org.sonar.plugins.xml.language.Xml;
 
 import java.io.File;
 import java.util.List;
@@ -90,7 +90,12 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
 
     protected void addIssue(String message, int line, Rule rule) {
         org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-        file.setLanguage(Xml.INSTANCE);
+        file.setLanguage(new AbstractLanguage("xml", "XML") {
+            @Override
+            public String[] getFileSuffixes() {
+                return new String[]{"xml"};
+            }
+        });
 
         Issuable issuable = resourcePerspectives.as(Issuable.class, file);
         RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
