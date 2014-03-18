@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,10 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.versions;
+package versions;
 
-import de.lgohlke.sonar.maven.versions.rules.*;
 import org.sonar.api.Extension;
+import versions.rules.*;
 
 import java.util.Arrays;
 import java.util.HashSet;

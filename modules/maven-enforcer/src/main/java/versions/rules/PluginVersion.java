@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,30 +17,30 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.versions.rules;
+package versions.rules;
 
 import de.lgohlke.sonar.maven.MavenRule;
-import de.lgohlke.sonar.maven.versions.Configuration;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import versions.Configuration;
 
 @Rule(
-        description = DependencyVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION,
-        key = DependencyVersion.KEY,
-        name = DependencyVersion.NAME,
+        description = PluginVersion.DESCRIPTION + Configuration.MULTILINE_CONFIGURATION + Configuration.REGEX_DESCRIPTION,
+        key = PluginVersion.KEY,
+        name = PluginVersion.NAME,
         priority = Priority.MINOR
 )
-public interface DependencyVersion extends MavenRule {
-    String KEY = "Old Dependency";
-    String NAME = "[POM] found an newer version for a dependency in use";
-    String DESCRIPTION = "this dependency has a newer version available";
+public interface PluginVersion extends MavenRule {
+    String KEY = "Old Plugin";
+    String DESCRIPTION = "found an updated version for plugin";
+    String NAME = "[POM] " + DESCRIPTION;
 
     String RULE_PROPERTY_WHITELIST = "whitelist";
     @RuleProperty(key = RULE_PROPERTY_WHITELIST, defaultValue = ".*", type = "TEXT", description = "this regex controls whitelisting")
     String WHITE_LIST = null;
 
     String RULE_PROPERTY_BLACKLIST = "blacklist";
-    @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "[^:].*?:[^:].*?:[^:].*(alpha|Alpha|beta|Beta).*", type = "TEXT", description = "this regex controls blacklisting")
+    @RuleProperty(key = RULE_PROPERTY_BLACKLIST, defaultValue = "", type = "TEXT", description = "this regex controls blacklisting")
     String BLACK_LIST = null;
 }

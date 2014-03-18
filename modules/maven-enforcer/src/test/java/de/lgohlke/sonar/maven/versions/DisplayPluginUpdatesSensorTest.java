@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -21,10 +21,6 @@ package de.lgohlke.sonar.maven.versions;
 
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenRule;
-import de.lgohlke.sonar.maven.versions.rules.IncompatibleMavenVersion;
-import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
-import de.lgohlke.sonar.maven.versions.rules.NoMinimumMavenVersion;
-import de.lgohlke.sonar.maven.versions.rules.PluginVersion;
 import lombok.Setter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.versions.report.*;
@@ -43,6 +39,11 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RulePriority;
 import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
+import versions.DisplayPluginUpdatesSensor;
+import versions.rules.IncompatibleMavenVersion;
+import versions.rules.MissingPluginVersion;
+import versions.rules.NoMinimumMavenVersion;
+import versions.rules.PluginVersion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +131,7 @@ public class DisplayPluginUpdatesSensorTest {
     @Test
     public void shouldHaveUpdates() throws Exception {
         init();
-        final InputLocation inputLocation = new InputLocation();
+        InputLocation inputLocation = new InputLocation();
         inputLocation.setLine(1);
 
         Dependency dependency = new Dependency();

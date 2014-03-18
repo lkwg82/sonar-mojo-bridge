@@ -65,8 +65,8 @@
     <maven.version>3.0.5</maven.version>
     <sonar.version>3.7.4</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
-    <sonar-xml-plugin.version>1.0</sonar-xml-plugin.version>
-    <!-- this code has a lot of violations, by design -->
+
+    <!-- TODO entfernen: this code has a lot of violations, by design -->
     <sonar.exclusions>**/*BridgeMojo.java</sonar.exclusions>
     <test.database>h2</test.database>
     <test.jdbcDriver>org.h2.Driver</test.jdbcDriver>
@@ -127,7 +127,6 @@
 
     <module>modules/maven-enforcer</module>
     <module>modules/maven-lint</module>
-    <module>modules/maven-versions</module>
 
     <module>modules/sonar-plugin</module>
     <module>modules/maven-integration-tests</module>

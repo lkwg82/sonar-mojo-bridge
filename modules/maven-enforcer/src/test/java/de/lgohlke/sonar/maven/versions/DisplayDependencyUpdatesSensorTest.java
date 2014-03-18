@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -19,7 +19,6 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 import lombok.Setter;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.project.MavenProject;
@@ -42,6 +41,8 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RulePriority;
 import org.sonar.core.issue.DefaultIssueBuilder;
 import org.testng.annotations.Test;
+import versions.DisplayDependencyUpdatesSensor;
+import versions.rules.DependencyVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;

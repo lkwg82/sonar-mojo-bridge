@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -17,17 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package de.lgohlke.sonar.maven.versions;
+package versions;
 
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.Rules;
-import de.lgohlke.sonar.maven.versions.rules.IncompatibleMavenVersion;
-import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
-import de.lgohlke.sonar.maven.versions.rules.NoMinimumMavenVersion;
-import de.lgohlke.sonar.maven.versions.rules.PluginVersion;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.versions.report.ArtifactUpdate;
@@ -44,6 +40,10 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
+import versions.rules.IncompatibleMavenVersion;
+import versions.rules.MissingPluginVersion;
+import versions.rules.NoMinimumMavenVersion;
+import versions.rules.PluginVersion;
 
 import java.util.Map;
 

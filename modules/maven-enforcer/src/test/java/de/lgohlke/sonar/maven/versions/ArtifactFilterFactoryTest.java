@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -25,6 +25,8 @@ import org.sonar.api.Property;
 import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.api.config.Settings;
 import org.testng.annotations.Test;
+import versions.ArtifactFilter;
+import versions.ArtifactFilterFactory;
 
 import java.util.Map;
 

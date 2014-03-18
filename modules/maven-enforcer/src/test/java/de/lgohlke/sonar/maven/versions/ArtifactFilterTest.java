@@ -1,5 +1,5 @@
 /*
- * sonar-mojo-bridge-maven-versions
+ * sonar-mojo-bridge-maven-enforcer
  * Copyright (C) 2012 Lars Gohlke
  * dev@sonar.codehaus.org
  *
@@ -19,8 +19,8 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import de.lgohlke.sonar.maven.versions.ArtifactFilter;
 import org.testng.annotations.Test;
+import versions.ArtifactFilter;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

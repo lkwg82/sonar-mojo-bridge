@@ -23,17 +23,14 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 
 /**
  * User: lars
  */
 public class TestHelper {
     static MavenProject getMavenProject() {
-        MavenProject mavenProject = mock(MavenProject.class);
-        when(mavenProject.getFile()).thenReturn(new File("."));
+        MavenProject mavenProject = new MavenProject();
+        mavenProject.setFile(new File("."));
         return mavenProject;
     }
 }
