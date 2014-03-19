@@ -592,9 +592,8 @@
             </execution>
           </executions>
           <configuration>
-            <forkMode>never</forkMode>
-            <parallel>none</parallel>
-            <threadCount>1</threadCount>
+            <parallel>classes</parallel>
+            <threadCount>3</threadCount>
             <systemProperties>
               <property>
                 <name>jdbcDriver</name>

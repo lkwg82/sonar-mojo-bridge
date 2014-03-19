@@ -42,7 +42,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom-old-dependency.xml");
         String ruleKey = createRuleKey("Old Dependency");
 
-        executor.usePom(pomXml).execute();
+        executor.useQualityProfile("testOldDependencies").usePom(pomXml).execute();
 
         String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
         Issues issues = getIssuesFor(projectKey, ruleKey);
@@ -58,12 +58,12 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom-old-dependency.xml");
         String ruleKey = createRuleKey("Old Parent Pom");
 
-        executor.usePom(pomXml).execute();
+        executor.useQualityProfile("testOldParentPom").usePom(pomXml).execute();
 
         String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
         Issues issues = getIssuesFor(projectKey, ruleKey);
 
-        assertThat(issues.list()).isNotEmpty();
+        assertThat(issues.list()).hasSize(1);
         assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
     }
 
@@ -74,13 +74,12 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom_missing_maven_version.xml");
         String ruleKey = createRuleKey("Missing Plugin Version");
 
-        executor.usePom(pomXml).execute();
+        executor.useQualityProfile("testMissingMavenVersion").usePom(pomXml).execute();
 
         String projectKey = "MavenInvoker:MavenInvoker";
         Issues issues = getIssuesFor(projectKey, ruleKey);
 
-        assertThat(issues.list()).isNotEmpty();
-
+        assertThat(issues.list().size()).isGreaterThan(6);
         assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
     }
 
@@ -91,12 +90,12 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom_dependencyConvergence.xml");
         String ruleKey = createRuleKey("DependencyConvergence");
 
-        executor.usePom(pomXml).execute();
+        executor.useQualityProfile("testDependencyConvergence").usePom(pomXml).execute();
 
         String projectKey = "MavenInvoker:MavenInvoker";
         Issues issues = getIssuesFor(projectKey, ruleKey);
 
-        assertThat(issues.list()).isNotEmpty();
+        assertThat(issues.list()).hasSize(1);
         assertThatIssuesOnlyFromThisPom(pomXml, projectKey, issues);
     }
 

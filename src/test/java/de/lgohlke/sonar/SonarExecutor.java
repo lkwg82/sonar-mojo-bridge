@@ -41,6 +41,7 @@ public final class SonarExecutor implements Cloneable {
     private boolean activateMavenDebug;
     private boolean showMavenErrorWhileAnalysis;
     private boolean showMavenOutputWhileAnalysis;
+    private String profile;
     private File pomXML = new File("pom.xml");
 
     public SonarExecutor skipTests() {
@@ -73,6 +74,11 @@ public final class SonarExecutor implements Cloneable {
     public SonarExecutor usePom(final File pom) {
         Preconditions.checkArgument(pom.isFile());
         this.pomXML = pom;
+        return this;
+    }
+
+    public SonarExecutor useQualityProfile(final String profileName) {
+        this.profile = profileName;
         return this;
     }
 
@@ -110,7 +116,8 @@ public final class SonarExecutor implements Cloneable {
                 .showMavenOutputWhileAnalysis(showMavenOutputWhileAnalysis)
                 .skipDesign(skipDesign)
                 .skipDynamicAnalysis(skipDynamicAnalysis)
-                .skipTests(skipTests);
+                .skipTests(skipTests)
+                .useQualityProfile(profile);
     }
 
     public void execute() {
@@ -179,6 +186,10 @@ public final class SonarExecutor implements Cloneable {
 
         if (showMavenErrorWhileAnalysis) {
             builder.append(" -e");
+        }
+
+        if ( null != profile){
+            builder.append(" -Dsonar.profile=").append(profile);
         }
         return builder.toString();
     }

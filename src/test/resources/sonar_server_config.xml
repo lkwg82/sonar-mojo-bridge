@@ -121,6 +121,75 @@
       </active-rules>
       <alerts/>
     </profile>
+    <profile>
+      <name><![CDATA[testOldDependencies]]></name>
+      <version><![CDATA[1]]></version>
+      <default-profile><![CDATA[false]]></default-profile>
+      <provided><![CDATA[false]]></provided>
+      <enabled><![CDATA[true]]></enabled>
+      <used><![CDATA[false]]></used>
+      <language><![CDATA[java]]></language>
+      <active-rules>
+        <active-rule>
+          <key><![CDATA[Old Dependency]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+      </active-rules>
+      <alerts/>
+    </profile>
+    <profile>
+      <name><![CDATA[testMissingMavenVersion]]></name>
+      <version><![CDATA[1]]></version>
+      <default-profile><![CDATA[false]]></default-profile>
+      <provided><![CDATA[false]]></provided>
+      <enabled><![CDATA[true]]></enabled>
+      <used><![CDATA[false]]></used>
+      <language><![CDATA[java]]></language>
+      <active-rules>
+        <active-rule>
+          <key><![CDATA[Missing Plugin Version]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+      </active-rules>
+      <alerts/>
+    </profile>
+    <profile>
+      <name><![CDATA[testOldParentPom]]></name>
+      <version><![CDATA[1]]></version>
+      <default-profile><![CDATA[false]]></default-profile>
+      <provided><![CDATA[false]]></provided>
+      <enabled><![CDATA[true]]></enabled>
+      <used><![CDATA[false]]></used>
+      <language><![CDATA[java]]></language>
+      <active-rules>
+        <active-rule>
+          <key><![CDATA[Old Parent Pom]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[MINOR]]></level>
+        </active-rule>
+      </active-rules>
+      <alerts/>
+    </profile>
+    <profile>
+      <name><![CDATA[testDependencyConvergence]]></name>
+      <version><![CDATA[1]]></version>
+      <default-profile><![CDATA[false]]></default-profile>
+      <provided><![CDATA[false]]></provided>
+      <enabled><![CDATA[true]]></enabled>
+      <used><![CDATA[false]]></used>
+      <language><![CDATA[java]]></language>
+      <active-rules>
+        <!-- enforcer -->
+        <active-rule>
+          <key><![CDATA[DependencyConvergence]]></key>
+          <plugin><![CDATA[maven]]></plugin>
+          <level><![CDATA[CRITICAL]]></level>
+        </active-rule>
+      </active-rules>
+      <alerts/>
+    </profile>
   </profiles>
   <rules/>
 </sonar-config>
