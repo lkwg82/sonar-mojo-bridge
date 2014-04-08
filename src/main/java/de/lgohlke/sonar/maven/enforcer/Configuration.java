@@ -19,25 +19,26 @@
  */
 package de.lgohlke.sonar.maven.enforcer;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import de.lgohlke.sonar.maven.MavenRule;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceRule;
 import de.lgohlke.sonar.maven.enforcer.DependencyConvergence.DependencyConvergenceViolationAdapter;
 import org.sonar.api.Extension;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 public interface Configuration {
     String BASE_IDENTIFIER = "de.lgohlke.mojo:maven-enforcer-plugin:1.3.1.1:";
 
-    Map<Class<? extends MavenRule>, ViolationAdapter> RULE_ADAPTER_MAP =
-            new HashMap<Class<? extends MavenRule>, ViolationAdapter>() {
-                {
-                    put(DependencyConvergenceRule.class, new DependencyConvergenceViolationAdapter());
-                }
-            };
+    Map<Class<? extends MavenRule>, ViolationAdapter> RULE_ADAPTER_MAP = ImmutableMap.<Class<? extends MavenRule>, ViolationAdapter>builder().
+            put(DependencyConvergenceRule.class, new DependencyConvergenceViolationAdapter()).
+            build();
 
     Set<Class<? extends MavenRule>> RULES = RULE_ADAPTER_MAP.keySet();
-    Set<Class<? extends Extension>> EXTENSIONS = new HashSet<Class<? extends Extension>>() {{
-        add(EnforceSensor.class);
-    }};
+
+    Set<Class<? extends Extension>> EXTENSIONS = ImmutableSet.<Class<? extends Extension>>builder().
+            add(EnforceSensor.class).
+            build();
 }

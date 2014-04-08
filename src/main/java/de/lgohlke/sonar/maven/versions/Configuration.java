@@ -19,11 +19,11 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import org.sonar.api.Extension;
+import com.google.common.collect.ImmutableSet;
 import de.lgohlke.sonar.maven.versions.rules.*;
+import org.sonar.api.Extension;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,9 +43,9 @@ public interface Configuration {
             IncompatibleMavenVersion.class, NoMinimumMavenVersion.class, ParentPomVersion.class
     );
 
-    Set<Class<? extends Extension>> EXTENSIONS = new HashSet<Class<? extends Extension>>() {{
-        add(DisplayPluginUpdatesSensor.class);
-        add(DisplayDependencyUpdatesSensor.class);
-        add(DisplayParentPomUpdateSensor.class);
-    }};
+    Set<Class<? extends Extension>> EXTENSIONS = ImmutableSet.<Class<? extends Extension>>builder().
+            add(DisplayPluginUpdatesSensor.class).
+            add(DisplayDependencyUpdatesSensor.class).
+            add(DisplayParentPomUpdateSensor.class).
+            build();
 }
