@@ -74,7 +74,7 @@ public class PomUtilsTest {
         dependency.setArtifactId("maven-surefire-plugin");
         dependency.setVersion("2.10");
 
-        assertThat(PomUtils.getLine(source, dependency, PomUtils.TYPE.plugin)).isEqualTo(37);
+        assertThat(PomUtils.getLine(source, dependency, PomUtils.TYPE.PLUGIN)).isEqualTo(37);
     }
 
     @Test
@@ -95,6 +95,6 @@ public class PomUtilsTest {
         dependency.setArtifactId("a");
         dependency.setVersion("");
 
-        assertThat(PomUtils.getLine(source, dependency, PomUtils.TYPE.plugin)).isEqualTo(6);
+        assertThat(PomUtils.getLine(source, dependency, PomUtils.TYPE.PLUGIN)).isEqualTo(6);
     }
 }

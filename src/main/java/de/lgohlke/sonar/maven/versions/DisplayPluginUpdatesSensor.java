@@ -139,7 +139,7 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
             String sourceOfPom = pomSourceImporter.getSourceOfPom();
             Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
             for (Dependency dependency : report.getMissingVersionPlugins()) {
-                int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.plugin);
+                int line = PomUtils.getLine(sourceOfPom, dependency, PomUtils.TYPE.PLUGIN);
 
                 String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
                 String message = artifact + " has no version";

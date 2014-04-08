@@ -31,7 +31,7 @@ import java.util.Arrays;
  */
 public final class PomUtils {
     public enum TYPE {
-        plugin {
+        PLUGIN {
             @Override
             String getStart() {
                 return "<plugin>";
