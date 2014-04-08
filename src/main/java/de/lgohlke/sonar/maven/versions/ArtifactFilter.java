@@ -81,7 +81,7 @@ public class ArtifactFilter {
     }
 
     public final ArtifactFilter addWhitelistRegex(String regex) {
-        Preconditions.checkArgument(regex != null || !regex.isEmpty());
+        Preconditions.checkArgument(regex != null && !regex.isEmpty());
         ArtifactFilter.log.debug("adding whitelist regex {}", regex);
         whitelistRegexList.add(regex);
         whitelistRegex = null;
@@ -89,7 +89,7 @@ public class ArtifactFilter {
     }
 
     public final ArtifactFilter addBlacklistRegex(String regex) {
-        Preconditions.checkArgument(regex != null || !regex.isEmpty());
+        Preconditions.checkArgument(regex != null && !regex.isEmpty());
         ArtifactFilter.log.debug("adding blacklist regex {}", regex);
         blacklistRegexList.add(regex);
         blacklistRegex = null;
