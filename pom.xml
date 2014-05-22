@@ -63,7 +63,7 @@
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>3.7.4</sonar.version>
+    <sonar.version>4.0</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
 
     <test.database>h2</test.database>
