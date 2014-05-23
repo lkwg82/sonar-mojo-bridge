@@ -37,7 +37,7 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.core.issue.DefaultIssueBuilder;
-import org.testng.annotations.Test;
+import org.junit.Test;
 import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 
 import java.io.File;

@@ -20,7 +20,7 @@
 package de.lgohlke.sonar;
 
 import org.sonar.api.rules.AnnotationRuleParser;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

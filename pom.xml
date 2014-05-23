@@ -213,8 +213,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -232,11 +232,6 @@
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>${testng.version}</version>
       </dependency>
 
       <dependency>
@@ -578,7 +573,6 @@
               <include>**/*Test.java</include>
             </includes>
             <useSystemClassLoader>true</useSystemClassLoader>
-            <parallel>both</parallel>
             <runOrder>random</runOrder>
           </configuration>
         </plugin>
@@ -596,8 +590,6 @@
             </execution>
           </executions>
           <configuration>
-            <parallel>classes</parallel>
-            <threadCount>3</threadCount>
             <systemProperties>
               <property>
                 <name>jdbcDriver</name>

@@ -22,7 +22,7 @@ package de.lgohlke.sonar.maven.enforcer;
 import org.apache.maven.model.Plugin;
 import org.sonar.api.batch.maven.MavenPlugin;
 import org.sonar.api.batch.maven.MavenPluginHandler;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

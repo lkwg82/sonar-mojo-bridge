@@ -25,18 +25,15 @@ import de.lgohlke.sonar.SonarExecutor;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.issue.IssueQuery;
 import org.sonar.wsclient.issue.Issues;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
 
 import java.io.IOException;
 
 public abstract class MavenITAbstract {
     private static final String SONAR_HOST = "http://localhost:9000";
-    protected SonarExecutor executor;
+    protected final static SonarExecutor executor;
     protected SonarClient api;
 
-    @BeforeClass
-    public void beforeAllTests() {
+    static{
         String jdbcDriver = System.getProperty("jdbcDriver");
         String jdbcUrl = System.getProperty("jdbcUrl");
 
@@ -58,7 +55,7 @@ public abstract class MavenITAbstract {
     protected void skipTestIfNotMaven3() throws IOException, InterruptedException {
         final String mavenVersion = executor.getMavenVersion();
         if (mavenVersion.startsWith("2")) {
-            throw new SkipException("could not proceed, because these tests only support maven3");
+            throw new IllegalStateException("could not proceed, because these tests only support maven3");
         }
     }
 

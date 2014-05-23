@@ -19,10 +19,10 @@
  */
 package de.lgohlke.sonar.maven;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.sonar.wsclient.issue.Issue;
 import org.sonar.wsclient.issue.Issues;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import java.io.File;
 
@@ -30,7 +30,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 
 public class CombinedIntegrationIT extends MavenITAbstract {
-    @BeforeTest(alwaysRun = true)
+    @Before
     public void beforeEachTest() {
         initAPI();
     }

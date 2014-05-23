@@ -38,7 +38,7 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RulePriority;
 import org.sonar.core.issue.DefaultIssueBuilder;
-import org.testng.annotations.Test;
+import org.junit.Test;
 import de.lgohlke.sonar.maven.versions.rules.IncompatibleMavenVersion;
 import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
 import de.lgohlke.sonar.maven.versions.rules.NoMinimumMavenVersion;

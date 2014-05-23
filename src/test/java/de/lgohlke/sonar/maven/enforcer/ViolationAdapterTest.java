@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven.enforcer;
 
 import org.fest.assertions.data.MapEntry;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

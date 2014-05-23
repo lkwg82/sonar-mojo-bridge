@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import org.sonar.check.Rule;
-import org.testng.annotations.Test;
+import org.junit.Test;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
@@ -39,12 +39,12 @@ public class RuleUtilsTest {
   private static class MavenTestRule3 implements MavenRule {
   }
 
-  @Test(expectedExceptions = NullPointerException.class)
+  @Test(expected  = NullPointerException.class)
   public void shouldFailOnMissingRuleAnnotation() {
     RuleUtils.createRuleFrom(MavenTestRule.class);
   }
 
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expected  = IllegalArgumentException.class)
   public void shouldFailOnEmptyKey() {
     RuleUtils.createRuleFrom(MavenTestRule2.class);
   }
