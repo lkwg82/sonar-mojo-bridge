@@ -28,6 +28,8 @@ import org.codehaus.mojo.versions.report.DisplayDependencyUpdatesReport;
 import org.codehaus.mojo.versions.report.InputLocation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
@@ -63,8 +65,8 @@ public class DisplayDependencyUpdatesSensorTest {
         @Setter
         private DisplayDependencyUpdatesReport report;
 
-        public MyDisplayDependencyUpdatesSensor(RulesProfile rulesProfile, MavenProject mavenProject, Settings settings, ResourcePerspectives resourcePerspectives) {
-            super(rulesProfile, mavenProject, settings, resourcePerspectives);
+        public MyDisplayDependencyUpdatesSensor(RulesProfile rulesProfile, MavenProject mavenProject, Settings settings, ResourcePerspectives resourcePerspectives,FileSystem fileSystem) {
+            super(rulesProfile, mavenProject, settings, resourcePerspectives,fileSystem);
         }
 
         @Override
@@ -94,7 +96,9 @@ public class DisplayDependencyUpdatesSensorTest {
         ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
         when(resourcePerspectives.as(eq(Issuable.class), any(File.class))).thenReturn(issuable);
 
-        MyDisplayDependencyUpdatesSensor sensor = new MyDisplayDependencyUpdatesSensor(rulesProfile, mavenProject, settings, resourcePerspectives);
+        FileSystem fileSystem = new DefaultFileSystem();
+
+        MyDisplayDependencyUpdatesSensor sensor = new MyDisplayDependencyUpdatesSensor(rulesProfile, mavenProject, settings, resourcePerspectives,fileSystem);
 
         String effectiveKey = "a";
         String analysisVersion = "1";
@@ -154,7 +158,7 @@ public class DisplayDependencyUpdatesSensorTest {
     @Test
     public void testMavenHandler() {
         final MavenProject mavenProject = new MavenProject();
-        DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(RulesProfile.create(), mavenProject, new Settings(), mock(ResourcePerspectives.class));
+        DisplayDependencyUpdatesSensor sensor = new DisplayDependencyUpdatesSensor(RulesProfile.create(), mavenProject, new Settings(), mock(ResourcePerspectives.class),mock(FileSystem.class));
 
         MavenPluginHandler mavenPluginHandler = sensor.getMavenPluginHandler(mock(Project.class));
 

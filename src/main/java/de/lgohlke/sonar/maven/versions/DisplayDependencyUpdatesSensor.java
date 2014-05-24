@@ -23,6 +23,7 @@ import de.lgohlke.sonar.maven.MavenBaseSensorNG;
 import de.lgohlke.sonar.maven.MavenPluginHandlerFactory;
 import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.Rules;
+import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.versions.report.ArtifactUpdate;
@@ -31,13 +32,13 @@ import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import de.lgohlke.sonar.maven.versions.rules.DependencyVersion;
 
 import java.util.List;
 import java.util.Map;
@@ -82,15 +83,17 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
 
     private final MavenProject mavenProject;
     private final Settings settings;
+    private final FileSystem fileSystem;
 
     public DisplayDependencyUpdatesSensor(RulesProfile rulesProfile,
                                           MavenProject mavenProject,
                                           Settings settings,
-                                          ResourcePerspectives resourcePerspectives
+                                          ResourcePerspectives resourcePerspectives,FileSystem fileSystem
     ) {
         super(DisplayDependencyUpdatesSensor.log, mavenProject, rulesProfile, resourcePerspectives, settings);
         this.mavenProject = mavenProject;
         this.settings = settings;
+        this.fileSystem = fileSystem;
     }
 
     @Override
@@ -112,7 +115,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
             for (ArtifactUpdate update : updates) {
                 if (filter.acceptArtifact(update.toString()) && verifyVersionIsFromThisProject(project, update)) {
                     int line = update.getDependency().getInputLocationMap().get("version").getLine();
-                    addIssue(updateToString(update), line, rule);
+                    addIssue(project,updateToString(update), line, rule);
                 }
             }
         }

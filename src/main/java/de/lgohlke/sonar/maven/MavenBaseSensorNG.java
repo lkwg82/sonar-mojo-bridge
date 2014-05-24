@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.component.mock.MockSourceFile;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
@@ -39,6 +40,7 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
+import org.sonar.core.component.ComponentKeys;
 
 import java.io.File;
 import java.util.List;
@@ -108,6 +110,34 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         });
 
         Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+        RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
+
+        Issue issue = issuable.newIssueBuilder().
+                line(line).
+                message(message).
+                ruleKey(ruleKey).
+                build();
+
+        issuable.addIssue(issue);
+    }
+
+    protected void addIssue(Project project, String message, int line, Rule rule) {
+        org.sonar.api.resources.File file = org.sonar.api.resources.File.fromIOFile(mavenProject.getFile(), project);
+        file.setLanguage(new AbstractLanguage("xml", "XML") {
+            @Override
+            public String[] getFileSuffixes() {
+                return new String[]{"xml"};
+            }
+        });
+
+        MockSourceFile mockSourceFile = org.sonar.api.component.mock.MockSourceFile.createMain(ComponentKeys.createEffectiveKey(project, file))
+                .setLanguage("XML")
+                .setName(file.getLongName())
+                .setLongName(file.getLongName())
+                .setPath(project.getPath() + "/" + file.getPath())
+                .setQualifier(file.getQualifier());
+
+        Issuable issuable = resourcePerspectives.as(Issuable.class, mockSourceFile);
         RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
 
         Issue issue = issuable.newIssueBuilder().

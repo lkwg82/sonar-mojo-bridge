@@ -63,7 +63,7 @@
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>4.1.2</sonar.version>
+    <sonar.version>4.2</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
 
     <test.database>h2</test.database>
@@ -217,16 +217,17 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.9-RC1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.reflections</groupId>
-        <artifactId>reflections</artifactId>
-        <version>0.9.9-RC1</version>
-        <scope>test</scope>
-      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -490,11 +491,13 @@
             <phase>process-resources</phase>
             <configuration>
               <rules>
-                <DependencyConvergence/>  <requirePluginVersions>
-                <message>Best Practice is to always define plugin versions!</message>
-                <banLatest>true</banLatest>
-                <banRelease>true</banRelease>
-                <banSnapshots>false</banSnapshots></requirePluginVersions>
+                <DependencyConvergence/>
+                <requirePluginVersions>
+                  <message>Best Practice is to always define plugin versions!</message>
+                  <banLatest>true</banLatest>
+                  <banRelease>true</banRelease>
+                  <banSnapshots>false</banSnapshots>
+                </requirePluginVersions>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -512,8 +515,8 @@
                   </file>
                 </files>
               </requireFilesSize>
-            <fail>true</fail>
-          </configuration>
+              <fail>true</fail>
+            </configuration>
           </execution>
         </executions>
       </plugin>
