@@ -58,7 +58,7 @@
   </developers>
 
   <properties>
-    <project.internal.version>0.1-is24-20140315</project.internal.version>
+    <project.internal.version>0.1-is24-20140525</project.internal.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <jdk.min.version>1.6</jdk.min.version>
