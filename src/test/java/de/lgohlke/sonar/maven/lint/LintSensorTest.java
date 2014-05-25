@@ -26,6 +26,8 @@ import de.lgohlke.sonar.maven.lint.xml.Results;
 import de.lgohlke.sonar.maven.lint.xml.Violation;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
+import org.junit.Before;
+import org.junit.Test;
 import org.reflections.Reflections;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
@@ -33,8 +35,6 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class LintSensorTest {
     private MavenProject mavenProject;
     private LintSensor sensor;
 
-    @BeforeTest(alwaysRun = true)
+    @Before
     public void beforeTest() {
         mavenProject = new MavenProject();
         mavenProject.setFile(new File("."));

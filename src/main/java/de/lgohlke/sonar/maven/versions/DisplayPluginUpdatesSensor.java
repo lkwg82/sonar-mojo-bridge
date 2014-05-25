@@ -115,26 +115,26 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
     public void analyse(final Project project, final SensorContext context) {
         DisplayPluginUpdatesReport report = getXmlAsFromReport(XML_REPORT, DisplayPluginUpdatesReport.class);
 
-        analyseRuleNoMinimumMavenVersion(report);
-        analyseIncompatibleMavenVersion(report);
-        analyseMissingVersion(report);
-        analysePluginUpdates(report);
+        analyseRuleNoMinimumMavenVersion(project,report);
+        analyseIncompatibleMavenVersion(project,report);
+        analyseMissingVersion(project,report);
+        analysePluginUpdates(project,report);
     }
 
-    private void analysePluginUpdates(DisplayPluginUpdatesReport report) {
+    private void analysePluginUpdates(Project project, DisplayPluginUpdatesReport report) {
         if (isRuleActive(PluginVersion.class)) {
             Rule rule = RuleUtils.createRuleFrom(PluginVersion.class);
             ArtifactFilter filter = createFilter(settings);
             for (ArtifactUpdate update : report.getPluginUpdates()) {
                 if (filter.acceptArtifact(update.toString())) {
                     int line = update.getDependency().getInputLocationMap().get("version").getLine();
-                    addIssue(update.toString(), (line > 0) ? line : 1, rule);
+                    addIssue(project,update.toString(), (line > 0) ? line : 1, rule);
                 }
             }
         }
     }
 
-    private void analyseMissingVersion(DisplayPluginUpdatesReport report) {
+    private void analyseMissingVersion(Project project, DisplayPluginUpdatesReport report) {
         if (isRuleActive(MissingPluginVersion.class)) {
             String sourceOfPom = pomSourceImporter.getSourceOfPom();
             Rule missingVersionRule = RuleUtils.createRuleFrom(MissingPluginVersion.class);
@@ -143,12 +143,12 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
 
                 String artifact = dependency.getGroupId() + ":" + dependency.getArtifactId();
                 String message = artifact + " has no version";
-                addIssue(message, (line > 0) ? line : 1, missingVersionRule);
+                addIssue(project,message, (line > 0) ? line : 1, missingVersionRule);
             }
         }
     }
 
-    private void analyseIncompatibleMavenVersion(DisplayPluginUpdatesReport report) {
+    private void analyseIncompatibleMavenVersion(Project project, DisplayPluginUpdatesReport report) {
         if (isRuleActive(IncompatibleMavenVersion.class)) {
             IncompatibleParentAndProjectMavenVersion incompatibleParentAndProjectMavenVersion = report.getIncompatibleParentAndProjectMavenVersion();
             if (incompatibleParentAndProjectMavenVersion != null) {
@@ -158,16 +158,16 @@ public class DisplayPluginUpdatesSensor extends MavenBaseSensorNG {
                 String message = "Project does define incompatible minimum versions:  in parent pom " + parentVersion +
                         " and in project pom " + projectVersion;
                 Rule rule = RuleUtils.createRuleFrom(IncompatibleMavenVersion.class);
-                addIssue(message, 1, rule);
+                addIssue(project,message, 1, rule);
             }
         }
     }
 
-    private void analyseRuleNoMinimumMavenVersion(DisplayPluginUpdatesReport report) {
+    private void analyseRuleNoMinimumMavenVersion(Project project, DisplayPluginUpdatesReport report) {
         if (isRuleActive(NoMinimumMavenVersion.class) && report.isWarnNoMinimumVersion()) {
             Rule rule = RuleUtils.createRuleFrom(NoMinimumMavenVersion.class);
             String message = "Project does not define minimum Maven version, default is: 2.0";
-            addIssue(message, 1, rule);
+            addIssue(project,message, 1, rule);
         }
     }
 

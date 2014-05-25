@@ -26,7 +26,7 @@ import org.apache.maven.plugins.enforcer.report.Dependency;
 import org.apache.maven.plugins.enforcer.report.DependencyConvergenceReport;
 import org.apache.maven.plugins.enforcer.report.DependencyConvergenceViolation;
 import org.fest.assertions.data.MapEntry;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.List;
 

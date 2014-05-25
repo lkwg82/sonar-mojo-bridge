@@ -21,28 +21,28 @@ package de.lgohlke.sonar.maven.versions;
 
 import de.lgohlke.sonar.PomSourceImporter;
 import de.lgohlke.sonar.maven.MavenRule;
-import lombok.Setter;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.versions.report.*;
-import org.fest.assertions.core.Condition;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.sonar.api.batch.maven.MavenPluginHandler;
-import org.sonar.api.component.ResourcePerspectives;
-import org.sonar.api.config.Settings;
-import org.sonar.api.issue.Issuable;
-import org.sonar.api.issue.Issue;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.File;
-import org.sonar.api.resources.Project;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RulePriority;
-import org.sonar.core.issue.DefaultIssueBuilder;
-import org.testng.annotations.Test;
 import de.lgohlke.sonar.maven.versions.rules.IncompatibleMavenVersion;
 import de.lgohlke.sonar.maven.versions.rules.MissingPluginVersion;
 import de.lgohlke.sonar.maven.versions.rules.NoMinimumMavenVersion;
 import de.lgohlke.sonar.maven.versions.rules.PluginVersion;
+import lombok.Setter;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.versions.report.*;
+import org.fest.assertions.core.Condition;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.sonar.api.batch.maven.MavenPluginHandler;
+import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.component.mock.MockSourceFile;
+import org.sonar.api.config.Settings;
+import org.sonar.api.issue.Issuable;
+import org.sonar.api.issue.Issue;
+import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.Project;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RulePriority;
+import org.sonar.core.issue.DefaultIssueBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +70,10 @@ public class DisplayPluginUpdatesSensorTest {
         protected <T> T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
             return (T) report;
         }
+
+        protected MockSourceFile getPOMComponent(Project project) {
+            return null;
+        }
     }
 
     //  @Before
@@ -87,7 +91,7 @@ public class DisplayPluginUpdatesSensorTest {
         });
         when(issuable.newIssueBuilder()).thenReturn(new DefaultIssueBuilder().componentKey("xxx"));
         ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
-        when(resourcePerspectives.as(eq(Issuable.class), any(File.class))).thenReturn(issuable);
+        when(resourcePerspectives.as(eq(Issuable.class), any(MockSourceFile.class))).thenReturn(issuable);
 
         sensor = getPluginUpdatesSensor(resourcePerspectives);
         sensor.setReport(new DisplayPluginUpdatesReport());

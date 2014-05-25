@@ -81,7 +81,7 @@ public class EnforceSensor extends MavenBaseSensorNG {
     public void analyse(Project project, SensorContext context) {
         for (ViolationAdapter adapter : violationAdapters) {
             for (Violation violation : adapter.getViolations()) {
-                addIssue(violation.getMessage(), violation.getLine(), adapter.getRule());
+                addIssue(project,violation.getMessage(), violation.getLine(), adapter.getRule());
             }
         }
     }

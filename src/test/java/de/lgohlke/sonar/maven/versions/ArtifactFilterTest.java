@@ -19,7 +19,7 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

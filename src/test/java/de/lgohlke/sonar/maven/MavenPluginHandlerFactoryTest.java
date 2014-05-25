@@ -20,7 +20,7 @@
 package de.lgohlke.sonar.maven;
 
 import org.sonar.api.batch.maven.MavenPluginHandler;
-import org.testng.annotations.Test;
+import org.junit.Test;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
@@ -39,12 +39,12 @@ public class MavenPluginHandlerFactoryTest {
     assertThat(handler.getGoals()).hasSize(1);
   }
 
-  @Test(expectedExceptions = IllegalStateException.class)
+  @Test(expected  = IllegalStateException.class)
   public void shouldFailOnEmptyGroupArtifactGoal() throws Exception {
     MavenPluginHandlerFactory.createHandler("");
   }
 
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expected  = IllegalArgumentException.class)
   public void shouldFailOnToShortGroupArtifactGoal() throws Exception {
     MavenPluginHandlerFactory.createHandler("a:b:c");
   }

@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven.versions;
 
+import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 import lombok.Setter;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Parent;
@@ -26,10 +27,12 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.versions.report.ArtifactUpdate;
 import org.codehaus.mojo.versions.report.Dependency;
 import org.codehaus.mojo.versions.report.DisplayParentUpdateReport;
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.component.mock.MockSourceFile;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
@@ -37,8 +40,6 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.core.issue.DefaultIssueBuilder;
-import org.testng.annotations.Test;
-import de.lgohlke.sonar.maven.versions.rules.ParentPomVersion;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,6 +63,10 @@ public class DisplayParentPomUpdateSensorTest {
         @Override
         protected <T> T getXmlAsFromReport(String pathToXmlReport, Class<T> clazz) {
             return (T) report;
+        }
+
+        protected MockSourceFile getPOMComponent(Project project) {
+            return null;
         }
     }
 
@@ -166,7 +171,7 @@ public class DisplayParentPomUpdateSensorTest {
         });
         when(issuable.newIssueBuilder()).thenReturn(new DefaultIssueBuilder().componentKey("xxx"));
         ResourcePerspectives resourcePerspectives = mock(ResourcePerspectives.class);
-        when(resourcePerspectives.as(eq(Issuable.class), any(org.sonar.api.resources.File.class))).thenReturn(issuable);
+        when(resourcePerspectives.as(eq(Issuable.class), any(MockSourceFile.class))).thenReturn(issuable);
 
         Settings settings = mock(Settings.class);
         return new MyDisplayParentPomUpdateSensor(rulesProfile, mavenProject, resourcePerspectives, settings);

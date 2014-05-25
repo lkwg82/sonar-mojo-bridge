@@ -63,7 +63,7 @@
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>3.7.4</sonar.version>
+    <sonar.version>4.2</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
 
     <test.database>h2</test.database>
@@ -107,7 +107,7 @@
     <version.enforcer.plugin>1.3.1</version.enforcer.plugin>
     <version.failsafe.plugin>2.17</version.failsafe.plugin>
     <version.surefire.plugin>2.17</version.surefire.plugin>
-    <version.sonar-dev.plugin>1.7</version.sonar-dev.plugin>
+    <version.sonar-dev.plugin>1.8-SNAPSHOT</version.sonar-dev.plugin>
     <version.sonar-packaging.plugin>1.9</version.sonar-packaging.plugin>
   </properties>
 
@@ -213,30 +213,26 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.9-RC1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
+
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.reflections</groupId>
-        <artifactId>reflections</artifactId>
-        <version>0.9.9-RC1</version>
-        <scope>test</scope>
-      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>${testng.version}</version>
       </dependency>
 
       <dependency>
@@ -488,7 +484,7 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
-            <id>dependency convergence</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
@@ -496,6 +492,12 @@
             <configuration>
               <rules>
                 <DependencyConvergence/>
+                <requirePluginVersions>
+                  <message>Best Practice is to always define plugin versions!</message>
+                  <banLatest>true</banLatest>
+                  <banRelease>true</banRelease>
+                  <banSnapshots>false</banSnapshots>
+                </requirePluginVersions>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -513,8 +515,8 @@
                   </file>
                 </files>
               </requireFilesSize>
-            <fail>true</fail>
-          </configuration>
+              <fail>true</fail>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -562,6 +564,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <id>restore-qualityprofiles</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>bash</executable>
+          <arguments>
+            <argument>restoreProfiles.sh</argument>
+          </arguments>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -574,7 +596,6 @@
               <include>**/*Test.java</include>
             </includes>
             <useSystemClassLoader>true</useSystemClassLoader>
-            <parallel>both</parallel>
             <runOrder>random</runOrder>
           </configuration>
         </plugin>
@@ -592,8 +613,6 @@
             </execution>
           </executions>
           <configuration>
-            <parallel>classes</parallel>
-            <threadCount>3</threadCount>
             <systemProperties>
               <property>
                 <name>jdbcDriver</name>

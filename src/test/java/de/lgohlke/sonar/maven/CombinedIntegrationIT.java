@@ -19,10 +19,10 @@
  */
 package de.lgohlke.sonar.maven;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.sonar.wsclient.issue.Issue;
 import org.sonar.wsclient.issue.Issues;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import java.io.File;
 
@@ -30,7 +30,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 
 public class CombinedIntegrationIT extends MavenITAbstract {
-    @BeforeTest(alwaysRun = true)
+    @Before
     public void beforeEachTest() {
         initAPI();
     }
@@ -42,7 +42,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom-old-dependency.xml");
         String ruleKey = createRuleKey("Old Dependency");
 
-        executor.useQualityProfile("testOldDependencies").usePom(pomXml).execute();
+        executor.useQualityProfile("qualityProfile_testOldDependencies").usePom(pomXml).execute();
 
         String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
         Issues issues = getIssuesFor(projectKey, ruleKey);
@@ -58,7 +58,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom-old-dependency.xml");
         String ruleKey = createRuleKey("Old Parent Pom");
 
-        executor.useQualityProfile("testOldParentPom").usePom(pomXml).execute();
+        executor.useQualityProfile("qualityProfile_testOldParentPom").usePom(pomXml).execute();
 
         String projectKey = "org.codehaus.sonar-plugins:it-old-dependency";
         Issues issues = getIssuesFor(projectKey, ruleKey);
@@ -74,7 +74,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom_missing_maven_version.xml");
         String ruleKey = createRuleKey("Missing Plugin Version");
 
-        executor.useQualityProfile("testMissingMavenVersion").usePom(pomXml).execute();
+        executor.useQualityProfile("qualityProfile_testMissingMavenVersion").usePom(pomXml).execute();
 
         String projectKey = "MavenInvoker:MavenInvoker";
         Issues issues = getIssuesFor(projectKey, ruleKey);
@@ -90,7 +90,7 @@ public class CombinedIntegrationIT extends MavenITAbstract {
         File pomXml = new File("src/test/resources/pom_dependencyConvergence.xml");
         String ruleKey = createRuleKey("DependencyConvergence");
 
-        executor.useQualityProfile("testDependencyConvergence").usePom(pomXml).execute();
+        executor.useQualityProfile("qualityProfile_testDependencyConvergence").usePom(pomXml).execute();
 
         String projectKey = "MavenInvoker:MavenInvoker";
         Issues issues = getIssuesFor(projectKey, ruleKey);

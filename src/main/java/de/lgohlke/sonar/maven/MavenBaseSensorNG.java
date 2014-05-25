@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.Configuration;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.maven.DependsUponMavenPlugin;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.component.mock.MockSourceFile;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
@@ -39,6 +41,7 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
+import org.sonar.core.component.ComponentKeys;
 
 import java.io.File;
 import java.util.List;
@@ -98,16 +101,9 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         return rules;
     }
 
-    protected void addIssue(String message, int line, Rule rule) {
-        org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-        file.setLanguage(new AbstractLanguage("xml", "XML") {
-            @Override
-            public String[] getFileSuffixes() {
-                return new String[]{"xml"};
-            }
-        });
+    protected void addIssue(Project project, String message, int line, Rule rule) {
 
-        Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+        Issuable issuable = resourcePerspectives.as(Issuable.class, getPOMComponent(project));
         RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
 
         Issue issue = issuable.newIssueBuilder().
@@ -119,18 +115,36 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         issuable.addIssue(issue);
     }
 
+    @VisibleForTesting
+    protected MockSourceFile getPOMComponent(Project project) {
+        org.sonar.api.resources.File file = org.sonar.api.resources.File.fromIOFile(mavenProject.getFile(), project);
+        file.setLanguage(new AbstractLanguage("xml", "XML") {
+            @Override
+            public String[] getFileSuffixes() {
+                return new String[]{"xml"};
+            }
+        });
+
+        return MockSourceFile.createMain(ComponentKeys.createEffectiveKey(project, file))
+                .setLanguage("XML")
+                .setName(file.getLongName())
+                .setLongName(file.getLongName())
+                .setPath(project.getPath() + "/" + file.getPath())
+                .setQualifier(file.getQualifier());
+    }
+
     protected Map<String, String> createRulePropertiesMapFromQualityProfile(Class<? extends MavenRule> ruleClass) {
         Map<String, String> mappedParams = Maps.newHashMap();
         String ruleKey = RuleUtils.createRuleFrom(ruleClass).getKey();
-        ActiveRule activeRuleByConfigKey = rulesProfile.getActiveRuleByConfigKey(Configuration.REPOSITORY_KEY, ruleKey);
-        if (null != activeRuleByConfigKey) {
-            List<ActiveRuleParam> activeRuleParams = activeRuleByConfigKey.getActiveRuleParams();
+        ActiveRule activeRule = rulesProfile.getActiveRule(Configuration.REPOSITORY_KEY, ruleKey);
+        if (null != activeRule) {
+            List<ActiveRuleParam> activeRuleParams = activeRule.getActiveRuleParams();
             for (ActiveRuleParam activeRuleParam : activeRuleParams) {
                 mappedParams.put(activeRuleParam.getKey(), activeRuleParam.getValue());
             }
 
             // fill with default values for params not set
-            final List<RuleParam> params = activeRuleByConfigKey.getRule().getParams();
+            final List<RuleParam> params = activeRule.getRule().getParams();
             for (RuleParam ruleParam : params) {
                 if (!mappedParams.containsKey(ruleParam.getKey())) {
                     mappedParams.put(ruleParam.getKey(), ruleParam.getDefaultValue());

@@ -19,50 +19,60 @@
  */
 package de.lgohlke.sonar;
 
-import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
 import org.sonar.api.BatchComponent;
-import org.sonar.api.batch.AbstractSourceImporter;
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.SonarIndex;
-import org.sonar.api.batch.SupportedEnvironment;
-import org.sonar.api.resources.Java;
-import org.sonar.api.resources.ProjectFileSystem;
+import org.sonar.api.batch.*;
+import org.sonar.api.resources.AbstractLanguage;
+import org.sonar.api.resources.File;
+import org.sonar.api.resources.Project;
 
-import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 
 @SupportedEnvironment("maven")
-public class PomSourceImporter extends AbstractSourceImporter implements BatchComponent {
-  private final MavenProject project;
-  private final SonarIndex index;
+@Phase(name = Phase.Name.PRE)
+public class PomSourceImporter implements BatchComponent, Sensor {
+    private final MavenProject project;
+    private final SonarIndex index;
+    private File pom;
 
-  public PomSourceImporter(final MavenProject project, final SonarIndex index) {
-    super(Java.INSTANCE);
-    this.project = project;
-    this.index = index;
-  }
+    public PomSourceImporter(final MavenProject project, final SonarIndex index) {
+        this.project = project;
+        this.index = index;
+    }
 
-  @Override
-  protected void analyse(final ProjectFileSystem fileSystem, final SensorContext context) {
-    List<File> files = Lists.newArrayList();
-    List<File> dirs = Lists.newArrayList();
+    public String getSourceOfPom() {
+        return index.getSource(pom);
+    }
 
-    // adding the pom.xml
-    files.add(project.getFile());
-    dirs.add(project.getFile().getParentFile());
-    parseDirs(context, files, dirs, false, fileSystem.getSourceCharset());
-  }
+    @SuppressWarnings("deprecation")
+    @Override
+    public void analyse(Project module, SensorContext context) {
 
-  public String getSourceOfPom() {
-    final org.sonar.api.resources.File file = new org.sonar.api.resources.File("", project.getFile().getName());
-    return index.getSource(file);
-  }
+        pom = getPom(module);
+        index.index(pom);
+        try {
+            String source = FileUtils.readFileToString(project.getFile());
+            index.setSource(pom, source);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-  @Override
-  public String toString() {
-    return getClass().getSimpleName();
-  }
+    private File getPom(Project module) {
+        File file = File.fromIOFile(project.getFile(), module);
+        file.setLanguage(new AbstractLanguage("xml", "XML") {
+            @Override
+            public String[] getFileSuffixes() {
+                return new String[]{"xml"};
+            }
+        });
+        return file;
+    }
 
+    @Override
+    public boolean shouldExecuteOnProject(Project project) {
+        return true;
+    }
 }
