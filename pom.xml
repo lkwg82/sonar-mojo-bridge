@@ -564,6 +564,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <id>restore-qualityprofiles</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>bash</executable>
+          <arguments>
+            <argument>restoreProfiles.sh</argument>
+          </arguments>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>

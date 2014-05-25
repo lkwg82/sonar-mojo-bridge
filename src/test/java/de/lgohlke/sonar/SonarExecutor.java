@@ -158,7 +158,7 @@ public final class SonarExecutor implements Cloneable {
     }
 
     private String configureExecutionCommand() {
-        StringBuilder builder = new StringBuilder("mvn -f " + pomXML.getAbsolutePath() + " sonar:sonar");
+        StringBuilder builder = new StringBuilder(mvn() + " -f " + pomXML.getAbsolutePath() + " sonar:sonar");
 
         if (jdbcDriver != null) {
             builder.append(" -Dsonar.jdbc.driver=").append(jdbcDriver);
@@ -194,8 +194,13 @@ public final class SonarExecutor implements Cloneable {
         return builder.toString();
     }
 
+    private String mvn() {
+//        return "/home/lars/development/tools/apache-maven-3.0.5/bin/mvn";
+        return "mvn";
+    }
+
     public String getMavenVersion() throws IOException {
-        Process proc = Runtime.getRuntime().exec("mvn -version");
+        Process proc = Runtime.getRuntime().exec(mvn() +" -version");
         BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         try {
             String line = reader.readLine();
