@@ -63,7 +63,7 @@
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>4.3</sonar.version>
+    <sonar.version>4.2</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
 
     <test.database>h2</test.database>
@@ -546,6 +546,7 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.sonar</groupId>
+        <!-- TODO maybe upgrade lifecycle to 'upload' in v1.8 -->
         <artifactId>sonar-dev-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -560,6 +561,7 @@
               <database>${test.database}</database>
               <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
               <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
+              <!-- TODO still necessary?? -->
               <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
               <pluginArtifact>target/sonar-mojo-bridge-${project.internal.version}.jar
               </pluginArtifact>
