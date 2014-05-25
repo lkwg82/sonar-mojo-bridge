@@ -63,7 +63,7 @@
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>4.2</sonar.version>
+    <sonar.version>4.3</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
 
     <test.database>h2</test.database>
@@ -228,6 +228,19 @@
 
   <dependencyManagement>
     <dependencies>
+
+
+      <dependency>
+        <groupId>org.codehaus.sonar</groupId>
+        <artifactId>sonar-check-api</artifactId>
+        <version>${sonar.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.sonar</groupId>
+        <artifactId>sonar-graph</artifactId>
+        <version>${sonar.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
