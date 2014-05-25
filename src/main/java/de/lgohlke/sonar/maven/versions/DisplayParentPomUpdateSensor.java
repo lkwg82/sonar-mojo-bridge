@@ -25,6 +25,7 @@ import de.lgohlke.sonar.maven.RuleUtils;
 import de.lgohlke.sonar.maven.Rules;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.versions.report.ArtifactUpdate;
 import org.codehaus.mojo.versions.report.DisplayParentUpdateReport;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.maven.MavenPluginHandler;
@@ -61,7 +62,7 @@ public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
         if (null != mavenProject.getModel().getParent()) {
             DisplayParentUpdateReport report = getXmlAsFromReport(XML_REPORT, DisplayParentUpdateReport.class);
 
-            if (null != report.getUpdate().getVersionUpdate()) {
+            if (null != report.getUpdate().getVersionUpdate()  && isNotTheSameVersionBug(report.getUpdate())) {
                 String message = ParentPomVersion.DESCRIPTION + ", currently used is " + report.getUpdate().getDependency().getVersion() + " but " +
                         report.getUpdate().getVersionUpdate() + " is available";
 
@@ -71,6 +72,10 @@ public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
                 addIssue(project,message, line, rule);
             }
         }
+    }
+
+    private static boolean isNotTheSameVersionBug(ArtifactUpdate update) {
+        return !update.getVersionUpdate().equals(update.getDependency().getVersion());
     }
 
 }

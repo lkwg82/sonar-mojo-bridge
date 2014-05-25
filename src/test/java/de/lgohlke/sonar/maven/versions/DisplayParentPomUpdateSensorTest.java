@@ -104,7 +104,7 @@ public class DisplayParentPomUpdateSensorTest {
 
         MyDisplayParentPomUpdateSensor sensor = initSensor(mavenProject);
 
-        DisplayParentUpdateReport report = createReport("1");
+        DisplayParentUpdateReport report = createReport("2");
 
         sensor.setReport(report);
 
