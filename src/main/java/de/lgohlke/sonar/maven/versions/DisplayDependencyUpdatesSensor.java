@@ -110,7 +110,7 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
         for (Map.Entry<String, List<ArtifactUpdate>> entry : report.getUpdatePerSectionMap().entrySet()) {
             List<ArtifactUpdate> updates = entry.getValue();
             for (ArtifactUpdate update : updates) {
-                if (filter.acceptArtifact(update.toString()) && verifyVersionIsFromThisProject(project, update)) {
+                if (update.getVersionUpdate()!=null && filter.acceptArtifact(update.toString()) && verifyVersionIsFromThisProject(project, update)) {
                     int line = update.getDependency().getInputLocationMap().get("version").getLine();
                     addIssue(project,updateToString(update), line, rule);
                 }
