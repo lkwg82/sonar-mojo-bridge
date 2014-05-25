@@ -19,6 +19,7 @@
  */
 package de.lgohlke.sonar.maven;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.lgohlke.sonar.Configuration;
@@ -100,16 +101,9 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         return rules;
     }
 
-    protected void addIssue(String message, int line, Rule rule) {
-        org.sonar.api.resources.File file = new org.sonar.api.resources.File("", mavenProject.getFile().getName());
-        file.setLanguage(new AbstractLanguage("xml", "XML") {
-            @Override
-            public String[] getFileSuffixes() {
-                return new String[]{"xml"};
-            }
-        });
+    protected void addIssue(Project project, String message, int line, Rule rule) {
 
-        Issuable issuable = resourcePerspectives.as(Issuable.class, file);
+        Issuable issuable = resourcePerspectives.as(Issuable.class, getPOMComponent(project));
         RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
 
         Issue issue = issuable.newIssueBuilder().
@@ -121,7 +115,8 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
         issuable.addIssue(issue);
     }
 
-    protected void addIssue(Project project, String message, int line, Rule rule) {
+    @VisibleForTesting
+    protected MockSourceFile getPOMComponent(Project project) {
         org.sonar.api.resources.File file = org.sonar.api.resources.File.fromIOFile(mavenProject.getFile(), project);
         file.setLanguage(new AbstractLanguage("xml", "XML") {
             @Override
@@ -130,23 +125,12 @@ public abstract class MavenBaseSensorNG implements DependsUponMavenPlugin, Senso
             }
         });
 
-        MockSourceFile mockSourceFile = org.sonar.api.component.mock.MockSourceFile.createMain(ComponentKeys.createEffectiveKey(project, file))
+        return MockSourceFile.createMain(ComponentKeys.createEffectiveKey(project, file))
                 .setLanguage("XML")
                 .setName(file.getLongName())
                 .setLongName(file.getLongName())
                 .setPath(project.getPath() + "/" + file.getPath())
                 .setQualifier(file.getQualifier());
-
-        Issuable issuable = resourcePerspectives.as(Issuable.class, mockSourceFile);
-        RuleKey ruleKey = RuleKey.of(rule.getRepositoryKey(), rule.getKey());
-
-        Issue issue = issuable.newIssueBuilder().
-                line(line).
-                message(message).
-                ruleKey(ruleKey).
-                build();
-
-        issuable.addIssue(issue);
     }
 
     protected Map<String, String> createRulePropertiesMapFromQualityProfile(Class<? extends MavenRule> ruleClass) {

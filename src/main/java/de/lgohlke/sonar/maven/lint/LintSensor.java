@@ -69,7 +69,7 @@ public class LintSensor extends MavenBaseSensorNG {
             for (Violation violation : results.getViolations()) {
                 Rule rule = createRuleFromViolation(violation);
                 if (rule != null) {
-                    addIssue(violation.getMessage(), violation.getLocation().getLine()+1, rule);
+                    addIssue(project,violation.getMessage(), violation.getLocation().getLine()+1, rule);
                 }
             }
         }

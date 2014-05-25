@@ -68,7 +68,7 @@ public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
                 int line = mavenProject.getModel().getParent().getLocation("version").getLineNumber();
 
                 Rule rule = RuleUtils.createRuleFrom(ParentPomVersion.class);
-                addIssue(message, line, rule);
+                addIssue(project,message, line, rule);
             }
         }
     }

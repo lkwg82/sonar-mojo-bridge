@@ -32,7 +32,6 @@ import org.sonar.api.Properties;
 import org.sonar.api.Property;
 import org.sonar.api.PropertyType;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.maven.MavenPluginHandler;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
@@ -83,17 +82,15 @@ public class DisplayDependencyUpdatesSensor extends MavenBaseSensorNG {
 
     private final MavenProject mavenProject;
     private final Settings settings;
-    private final FileSystem fileSystem;
 
     public DisplayDependencyUpdatesSensor(RulesProfile rulesProfile,
                                           MavenProject mavenProject,
                                           Settings settings,
-                                          ResourcePerspectives resourcePerspectives,FileSystem fileSystem
+                                          ResourcePerspectives resourcePerspectives
     ) {
         super(DisplayDependencyUpdatesSensor.log, mavenProject, rulesProfile, resourcePerspectives, settings);
         this.mavenProject = mavenProject;
         this.settings = settings;
-        this.fileSystem = fileSystem;
     }
 
     @Override
