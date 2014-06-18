@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>sonar-mojo-bridge</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1-is24-20140525</version>
   <packaging>sonar-plugin</packaging>
   <name>Sonar Mojo Bridge</name>
   <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
@@ -58,12 +58,11 @@
   </developers>
 
   <properties>
-    <project.internal.version>0.1-is24-20140525</project.internal.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <jdk.min.version>1.6</jdk.min.version>
     <maven.version>3.0.5</maven.version>
-    <sonar.version>4.2</sonar.version>
+    <sonar.version>4.3</sonar.version>
     <sonar-plugin-api.version>${sonar.version}</sonar-plugin-api.version>
 
     <test.database>h2</test.database>
@@ -107,7 +106,7 @@
     <version.enforcer.plugin>1.3.1</version.enforcer.plugin>
     <version.failsafe.plugin>2.17</version.failsafe.plugin>
     <version.surefire.plugin>2.17</version.surefire.plugin>
-    <version.sonar-dev.plugin>1.8-SNAPSHOT</version.sonar-dev.plugin>
+    <version.sonar-dev.plugin>1.8</version.sonar-dev.plugin>
     <version.sonar-packaging.plugin>1.9</version.sonar-packaging.plugin>
   </properties>
 
@@ -489,7 +488,7 @@
         <groupId>org.codehaus.sonar</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
         <configuration>
-          <finalName>${project.artifactId}-${project.internal.version}</finalName>
+          <finalName>${project.artifactId}-${project.version}</finalName>
           <pluginClass>de.lgohlke.sonar.MavenPlugin</pluginClass>
         </configuration>
       </plugin>
@@ -524,7 +523,7 @@
                 <minsize>50000</minsize>
                 <files>
                   <file>
-                    ${project.build.directory}/${project.artifactId}-${project.internal.version}.jar
+                    ${project.build.directory}/${project.artifactId}-${project.version}.jar
                   </file>
                 </files>
               </requireFilesSize>
@@ -539,65 +538,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.sonar</groupId>
-        <!-- TODO maybe upgrade lifecycle to 'upload' in v1.8 -->
-        <artifactId>sonar-dev-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>start-server</id>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <runtimeVersion>${sonar.version}</runtimeVersion>
-              <background>true</background>
-              <database>${test.database}</database>
-              <jdbcDriver>${test.jdbcDriver}</jdbcDriver>
-              <jdbcUrl>${test.jdbcUrl}</jdbcUrl>
-              <!-- TODO still necessary?? -->
-              <configBackup>src/test/resources/sonar_server_config.xml</configBackup>
-              <pluginArtifact>target/sonar-mojo-bridge-${project.internal.version}.jar
-              </pluginArtifact>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop-server</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <phase>post-integration-test</phase>
-            <configuration>
-              <runtimeVersion>${sonar.version}</runtimeVersion>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.3</version>
-        <executions>
-          <execution>
-            <id>restore-qualityprofiles</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <executable>bash</executable>
-          <arguments>
-            <argument>restoreProfiles.sh</argument>
-          </arguments>
-        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -614,36 +554,107 @@
             <runOrder>random</runOrder>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${version.failsafe.plugin}</version>
-          <executions>
-            <execution>
-              <id>integration-tests</id>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <systemProperties>
-              <property>
-                <name>jdbcDriver</name>
-                <value>${test.jdbcDriver}</value>
-              </property>
-              <property>
-                <name>jdbcUrl</name>
-                <value>${test.jdbcUrl}</value>
-              </property>
-            </systemProperties>
-            <includes>
-              <include>**/*IT.java</include>
-            </includes>
-          </configuration>
-        </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>IT</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-dev-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>upload</id>
+                <goals>
+                  <goal>upload</goal>
+                </goals>
+                <phase>pre-integration-test</phase>
+                <configuration>
+                  <sonarHome>/data/home/lgohlke/development/tools/sonarqube-${sonar.version}</sonarHome>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <!--<plugin>-->
+            <!--<artifactId>maven-antrun-plugin</artifactId>-->
+            <!--<version>1.7</version>-->
+            <!--<dependencies>-->
+              <!--<dependency>-->
+                <!--<groupId>ant-contrib</groupId>-->
+                <!--<artifactId>ant-contrib</artifactId>-->
+                <!--<version>20020829</version>-->
+              <!--</dependency>-->
+            <!--</dependencies>-->
+            <!--<executions>-->
+              <!--<execution>-->
+                <!--<id>get server status</id>-->
+                <!--<phase>pre-integration-test</phase>-->
+                <!--<configuration>-->
+                  <!--<target>&lt;!&ndash; add the ant tasks from ant-contrib &ndash;&gt;-->
+                    <!--<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>-->
+                    <!--<tempfile property="temp.file"/>-->
+                    <!--<get dest="${temp.file}" verbose="yes" src="http://localhost:9000/api/server"/>-->
+                    <!---->
+                    <!---->
+                    <!--<foreach list="a b c" delimiter=" " param="profile">-->
+                    <!--<echo>destroying profile ${profile} if exists</echo>-->
+                    <!--<exec executable="curl">-->
+                      <!--<arg line="-s -XPOST -u 'admin:admin' -d 'language=java&amp;name=x' 'http://localhost:9000/api/profiles/destroy'" />-->
+                    <!--</exec>-->
+                    <!--</foreach>-->
+                    <!---->
+                  <!--</target>-->
+                <!--</configuration>-->
+                <!--<goals>-->
+                  <!--<goal>run</goal>-->
+                <!--</goals>-->
+              <!--</execution>-->
+            <!--</executions>-->
+          <!--</plugin>-->
+        </plugins>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>${version.failsafe.plugin}</version>
+              <executions>
+                <execution>
+                  <id>integration-tests</id>
+                  <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <systemProperties>
+                  <property>
+                    <name>jdbcDriver</name>
+                    <value>${test.jdbcDriver}</value>
+                  </property>
+                  <property>
+                    <name>jdbcUrl</name>
+                    <value>${test.jdbcUrl}</value>
+                  </property>
+                </systemProperties>
+                <includes>
+                  <include>**/*IT.java</include>
+                </includes>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>
