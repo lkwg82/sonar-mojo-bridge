@@ -584,42 +584,46 @@
               </execution>
             </executions>
           </plugin>
-          <!--<plugin>-->
-            <!--<artifactId>maven-antrun-plugin</artifactId>-->
-            <!--<version>1.7</version>-->
-            <!--<dependencies>-->
-              <!--<dependency>-->
-                <!--<groupId>ant-contrib</groupId>-->
-                <!--<artifactId>ant-contrib</artifactId>-->
-                <!--<version>20020829</version>-->
-              <!--</dependency>-->
-            <!--</dependencies>-->
-            <!--<executions>-->
-              <!--<execution>-->
-                <!--<id>get server status</id>-->
-                <!--<phase>pre-integration-test</phase>-->
-                <!--<configuration>-->
-                  <!--<target>&lt;!&ndash; add the ant tasks from ant-contrib &ndash;&gt;-->
-                    <!--<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>-->
-                    <!--<tempfile property="temp.file"/>-->
-                    <!--<get dest="${temp.file}" verbose="yes" src="http://localhost:9000/api/server"/>-->
-                    <!---->
-                    <!---->
-                    <!--<foreach list="a b c" delimiter=" " param="profile">-->
-                    <!--<echo>destroying profile ${profile} if exists</echo>-->
-                    <!--<exec executable="curl">-->
-                      <!--<arg line="-s -XPOST -u 'admin:admin' -d 'language=java&amp;name=x' 'http://localhost:9000/api/profiles/destroy'" />-->
-                    <!--</exec>-->
-                    <!--</foreach>-->
-                    <!---->
-                  <!--</target>-->
-                <!--</configuration>-->
-                <!--<goals>-->
-                  <!--<goal>run</goal>-->
-                <!--</goals>-->
-              <!--</execution>-->
-            <!--</executions>-->
-          <!--</plugin>-->
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <dependencies>
+              <dependency>
+                <groupId>ant-contrib</groupId>
+                <artifactId>ant-contrib</artifactId>
+                <version>20020829</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>get server status</id>
+                <phase>pre-integration-test</phase>
+                <configuration>
+                  <target><!-- add the ant tasks from ant-contrib -->
+                    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+                    <tempfile property="temp.file"/>
+                    <get dest="${temp.file}" verbose="yes" src="http://localhost:9000/api/server"/>
+
+                    <exec executable="curl">
+                      <arg line="-s -XPOST -u 'admin:admin' -F 'backup=@src/test/resources/qualityProfile_testDependencyConvergence.xml' 'http://localhost:9000/api/profiles/restore'"/>
+                    </exec>
+                    <exec executable="curl">
+                      <arg line="-s -XPOST -u 'admin:admin' -F 'backup=@src/test/resources/qualityProfile_testMissingMavenVersion.xml' 'http://localhost:9000/api/profiles/restore'"/>
+                    </exec>
+                    <exec executable="curl">
+                      <arg line="-s -XPOST -u 'admin:admin' -F 'backup=@src/test/resources/qualityProfile_testOldParentPom.xml' 'http://localhost:9000/api/profiles/restore'"/>
+                    </exec>
+                    <exec executable="curl">
+                      <arg line="-s -XPOST -u 'admin:admin' -F 'backup=@src/test/resources/qualityProfile_testOldDependencies.xml' 'http://localhost:9000/api/profiles/restore'"/>
+                    </exec>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
         <pluginManagement>
           <plugins>
