@@ -54,6 +54,7 @@ public class DisplayParentPomUpdateSensor extends MavenBaseSensorNG {
     public MavenPluginHandler getMavenPluginHandler(final Project project) {
         final Properties mavenProjectProperties = mavenProject.getProperties();
         mavenProjectProperties.setProperty("xmlReport", XML_REPORT);
+        mavenProjectProperties.setProperty("allowSnapshots", "true");
         return MavenPluginHandlerFactory.createHandler(Configuration.BASE_IDENTIFIER + GOAL);
     }
 
