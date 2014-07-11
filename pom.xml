@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>sonar-mojo-bridge</artifactId>
-  <version>0.1-is24-20140525</version>
+  <version>0.1-is24-20140711</version>
   <packaging>sonar-plugin</packaging>
   <name>Sonar Mojo Bridge</name>
   <description>uses maven mojos to introduce some checks into sonar and raises violations</description>
