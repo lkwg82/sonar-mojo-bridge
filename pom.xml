@@ -72,7 +72,7 @@
     <aether.version>1.13.1</aether.version>
     <commons-beanutils.version>1.9.1</commons-beanutils.version>
     <commons-codec.version>1.9</commons-codec.version>
-    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-digester.version>2.1</commons-digester.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang3.version>3.1</commons-lang3.version>
