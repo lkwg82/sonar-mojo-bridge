@@ -70,7 +70,7 @@
     <test.jdbcUrl>jdbc:${test.database}:tcp://localhost:9092/sonar</test.jdbcUrl>
 
     <aether.version>1.13.1</aether.version>
-    <commons-beanutils.version>1.9.1</commons-beanutils.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-codec.version>1.9</commons-codec.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-digester.version>2.1</commons-digester.version>
