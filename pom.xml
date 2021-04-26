@@ -74,7 +74,7 @@
     <commons-codec.version>1.9</commons-codec.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-digester.version>2.1</commons-digester.version>
-    <commons-io.version>2.4</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <commons-lang3.version>3.1</commons-lang3.version>
     <commons-lang.version>2.6</commons-lang.version>
     <doxia.version>1.4</doxia.version>
